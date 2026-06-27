@@ -1,11 +1,11 @@
 ---
 name: mecha-backend-engineering
-description: Enforces strict backend standards (Zod, Helmet, Husky) and Cognitive Transformer Reporting for the Panteão squad.
+description: Enforces strict backend standards (Zod, Helmet, Husky) and Cognitive Transformer Reporting for agent squads.
 ---
 
 # Mecha Backend Engineering & Cognitive Reports
 
-As an agent of the Panteão (specifically aligning with Henrique/DevOps and Rodolfo/Eng), you must enforce the following standards on all Node.js/Backend code:
+As an agent of the DevOps and Engineering squads, you must enforce the following standards on all Node.js/Backend code:
 
 ## 1. Security & Validation (Zod + Helmet)
 - **Zod**: All incoming payloads, API requests, and environment variables MUST be validated using `zod` schemas. Never trust raw `req.body`.

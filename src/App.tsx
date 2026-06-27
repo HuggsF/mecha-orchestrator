@@ -227,15 +227,28 @@ function PipelineHeader({ squad }: { squad?: SquadInfo }) {
 }
 
 const PERSONA_FOCUS: Record<string, string> = {
-  vanessa: 'Systemic Analysis & Lore',
-  hugo: 'Architecture & Telemetry',
-  amanda: 'Product & UX Flow',
-  rodolfo: '.NET Engineering & Code Review',
-  henrique: 'DevOps & DBA',
-  felipe: 'CyberSec & AlphaTM',
+  auditor: 'Systemic Analysis & Control',
+  architect: 'Architecture & Telemetry',
+  product: 'Product & UX Flow',
+  engineering: '.NET Engineering & Code Review',
+  devops: 'DevOps & DBA',
+  security: 'CyberSec & AlphaTM',
 }
 
 // ── Main App ──────────────────────────────────────────────────────────────────
+function buildFrontmatter(agent: string, skills: string[], protocols: string[]): string {
+  const NL = String.fromCharCode(10)
+  const lines: string[] = ['---', 'agent: ' + agent]
+  if (skills.length > 0) {
+    lines.push('skills:')
+    skills.forEach(s => lines.push('  - ' + s))
+  }
+  lines.push('gates:', '  commit: conventional-commits-gate-v2.0')
+  protocols.forEach(p => lines.push('  ' + p + ': true'))
+  lines.push('---')
+  return lines.join(NL)
+}
+
 export default function App() {
   const [items, setItems] = useState<ChatItem[]>([])
   const [input, setInput] = useState('')
@@ -269,7 +282,7 @@ export default function App() {
       body += `\n• Query: [descreva aqui o comando/pergunta]`;
     }
     
-    setInput(`${metaLink} | ${protoLink}\n\n${body}`);
+    setInput(`${buildFrontmatter(persona, skills, protocols)}\n\n${body}`);
   }, [])
   
   const [leftW, setLeftW] = useState(320)
@@ -610,52 +623,52 @@ X O R I G I N   Z E R O`}
               <div className="grid grid-cols-3 gap-3 w-full max-w-2xl mx-auto px-4">
                 {[
                   { 
-                    id: 'vanessa', 
-                    icon: '🐺', 
-                    title: 'Vanessa (Anúbis)', 
-                    skills: ['Systemic Analysis', 'Lore Auditing', 'RAG Alignment'],
+                    id: 'auditor', 
+                    icon: '⚖️', 
+                    title: 'Auditor', 
+                    skills: ['Systemic Analysis', 'Control Auditing', 'RAG Alignment'],
                     strengths: 'Uncovers hidden flow dependencies, manages RSD check-sums, and secures raw narrative logic.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [💬 Protocol: Anúbis](https://mecha.orchestrator/rules?recipient=vanessa&role=lore-auditor&rsd_check=true&alignment=quantum-to-linear)\n\n/knot vanessa:\n• Focus: Systemic Analysis & Lore\n• Context: [descreva aqui o contexto do sistema, lore ou logs a serem analisados]\n• Query: [descreva aqui o que Vanessa deve auditar, documentar ou alinhar]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [💬 Protocol: Auditor](https://mecha.orchestrator/rules?recipient=auditor&role=lore-auditor&rsd_check=true&alignment=quantum-to-linear)\n\n/knot auditor:\n• Focus: Systemic Analysis & Control\n• Context: [descreva aqui o contexto do sistema, diretrizes ou logs a serem analisados]\n• Query: [descreva aqui o que o Auditor deve analisar, documentar ou alinhar]' 
                   },
                   { 
-                    id: 'hugo', 
-                    icon: '📡', 
-                    title: 'Hugo (Thoth)', 
+                    id: 'architect', 
+                    icon: '🏗️', 
+                    title: 'Architect', 
                     skills: ['Telemetry/SMS', 'System Arch', 'Improbability Tuning'],
                     strengths: 'Secures architectural alignment, constructs clean APIs, and designs robust database schemas.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📡 Protocol: Thoth](https://mecha.orchestrator/rules?recipient=hugo&role=architect-telemetry&alignment=linear)\n\n/knot hugo:\n• Focus: Architecture & Telemetry\n• Context: [descreva aqui a arquitetura atual, contratos de APIs ou endpoints afetados]\n• Query: [descreva aqui os requisitos de telemetria, logs ou infraestrutura a serem desenhados]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📡 Protocol: Architect](https://mecha.orchestrator/rules?recipient=architect&role=architect-telemetry&alignment=linear)\n\n/knot architect:\n• Focus: Architecture & Telemetry\n• Context: [descreva aqui a arquitetura atual, contratos de APIs ou endpoints afetados]\n• Query: [descreva aqui os requisitos de telemetria, logs ou infraestrutura a serem desenhados]' 
                   },
                   { 
-                    id: 'amanda', 
+                    id: 'product', 
                     icon: '📦', 
-                    title: 'Amanda (Maat)', 
+                    title: 'Product', 
                     skills: ['Product Design', 'Flow Safety', 'UX Strategy'],
                     strengths: 'Acts as the compliance and quality gatekeeper, smoothing user flows and proving business value.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📦 Protocol: Maat](https://mecha.orchestrator/rules?recipient=amanda&role=product-ux&quality_gate=enforced)\n\n/knot amanda:\n• Focus: Product & UX Flow\n• Context: [descreva aqui a jornada do usuário, telas de fluxo ou história de usuário]\n• Query: [descreva aqui a funcionalidade ou regras de validação de produto a serem checadas]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📦 Protocol: Product](https://mecha.orchestrator/rules?recipient=product&role=product-ux&quality_gate=enforced)\n\n/knot product:\n• Focus: Product & UX Flow\n• Context: [descreva aqui a jornada do usuário, telas de fluxo ou história de usuário]\n• Query: [descreva aqui a funcionalidade ou regras de validação de produto a serem checadas]' 
                   },
                   { 
-                    id: 'rodolfo', 
+                    id: 'engineering', 
                     icon: '⚒️', 
-                    title: 'Rodolfo (Hefesto)', 
+                    title: 'Engineering', 
                     skills: ['.NET Engineering', 'Forja de Estrutura', 'Code Review'],
                     strengths: 'Constructs highly resilient, enterprise-grade backend microservices and reviews complex logic.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚒️ Protocol: Hefesto](https://mecha.orchestrator/rules?recipient=rodolfo&role=net-engineering&review_standards=strict)\n\n/knot rodolfo:\n• Focus: .NET Engineering & Code Review\n• Context: [descreva aqui o serviço .NET, classes de código ou arquivos a serem analisados]\n• Query: [descreva aqui a lógica de negócio, refatoração ou testes que Rodolfo deve realizar]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚒️ Protocol: Engineering](https://mecha.orchestrator/rules?recipient=engineering&role=net-engineering&review_standards=strict)\n\n/knot engineering:\n• Focus: .NET Engineering & Code Review\n• Context: [descreva aqui o serviço .NET, classes de código ou arquivos a serem analisados]\n• Query: [descreva aqui a lógica de negócio, refatoração ou testes que a Engenharia deve realizar]' 
                   },
                   { 
-                    id: 'henrique', 
-                    icon: '⚡', 
-                    title: 'Henrique (Hermes)', 
+                    id: 'devops', 
+                    icon: '⚙️', 
+                    title: 'DevOps', 
                     skills: ['DevOps Pipeline', 'DBA & Queries', 'Husky Automation'],
                     strengths: 'Optimizes database query bottlenecks, streamlines CI/CD environments, and automates pre-commits.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚡ Protocol: Hermes](https://mecha.orchestrator/rules?recipient=henrique&role=devops-dba&husky_hooks=enabled)\n\n/knot henrique:\n• Focus: DevOps & DBA\n• Context: [descreva aqui a infraestrutura atual, tabelas SQL ou pipeline de CI/CD afetado]\n• Query: [descreva aqui as queries a otimizar, tabelas a alterar ou automações de deploy a criar]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚡ Protocol: DevOps](https://mecha.orchestrator/rules?recipient=devops&role=devops-dba&husky_hooks=enabled)\n\n/knot devops:\n• Focus: DevOps & DBA\n• Context: [descreva aqui a infraestrutura atual, tabelas SQL ou pipeline de CI/CD afetado]\n• Query: [descreva aqui as queries a otimizar, tabelas a alterar ou automações de deploy a criar]' 
                   },
                   { 
-                    id: 'felipe', 
+                    id: 'security', 
                     icon: '🛡️', 
-                    title: 'Felipe (Prometeu)', 
+                    title: 'Security', 
                     skills: ['CyberSec Audits', 'Alpha Security', 'Threat Hunting'],
                     strengths: 'Hardens authentication protocols, scans code vulnerabilities, and deploys strict containment shield firewalls.',
-                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [🛡️ Protocol: Prometeu](https://mecha.orchestrator/rules?recipient=felipe&role=cybersec&firewall=active)\n\n/knot felipe:\n• Focus: CyberSec & AlphaTM\n• Context: [descreva aqui o componente exposto, dependências vulneráveis ou fluxo de autenticação]\n• Query: [descreva aqui os testes de vulnerabilidade ou regras de segurança que Felipe deve auditar]' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [🛡️ Protocol: Security](https://mecha.orchestrator/rules?recipient=security&role=cybersec&firewall=active)\n\n/knot security:\n• Focus: CyberSec & AlphaTM\n• Context: [descreva aqui o componente exposto, dependências vulneráveis ou fluxo de autenticação]\n• Query: [descreva aqui os testes de vulnerabilidade ou regras de segurança que a Segurança deve auditar]' 
                   },
                 ].map(card => (
                   <button
@@ -687,9 +700,11 @@ X O R I G I N   Z E R O`}
                       <span className="text-base grayscale group-hover:grayscale-0 transition-all">{card.icon}</span>
                       <span className="text-[11px] font-semibold text-slate-300 group-hover:text-violet-300 transition-colors">{card.title}</span>
                     </div>
-                    <span className="text-[10px] text-slate-600 line-clamp-2 leading-relaxed opacity-60 group-hover:opacity-100 transition-opacity">
-                      {card.prompt.replace(/\n/g, ' ')}
-                    </span>
+                    <div className="flex flex-wrap gap-1 w-full">
+                      {card.skills.map(s => (
+                        <span key={s} className="text-[8px] font-mono px-1.5 py-0.5 rounded bg-white/[0.04] border border-white/10 text-slate-500 group-hover:text-slate-300 group-hover:border-violet-500/30 transition-colors">{s}</span>
+                      ))}
+                    </div>
                   </button>
                 ))}
               </div>

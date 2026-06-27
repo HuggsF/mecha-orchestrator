@@ -98,11 +98,11 @@ try {
   // Render Enriched Report
   console.log(`
 ${BOLD}${MAGENTA}========================================================================${RESET}
-${BOLD}${CYAN}                🛡️  QUALITY GATE: DEVOPS / HENRIQUE v2.0${RESET}
+${BOLD}${CYAN}                🛡️  DEVOPS QUALITY GATE v2.0${RESET}
 ${BOLD}${MAGENTA}========================================================================${RESET}
 
 ${BOLD}[COGNITIVE STATE]:${RESET}
-Auditoria de sanidade ativada para o commit ${CYAN}${commitHash}${RESET}. Avaliando a integridade dos padrões de arquitetura do Panteão (Validação com Zod, Headers com Helmet e ausência de pendências técnicas críticas).
+Auditoria de sanidade ativada para o commit ${CYAN}${commitHash}${RESET}. Avaliando a integridade dos padrões de arquitetura do sistema (Validação com Zod, Headers com Helmet e ausência de pendências técnicas críticas).
 
 ${BOLD}[TRANSFORMER LAYER]:${RESET}
 - ${YELLOW}Static Analysis:${RESET} Escaneamento de ${changedFiles.length} arquivos modificados no último commit.

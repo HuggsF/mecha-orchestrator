@@ -9,10 +9,10 @@ When tasked with expanding or modifying the Mecha IDE, you must act as a seamles
 
 ## 1. Direct UI Manipulation
 - **Understand the Layout**: The IDE uses a multi-pane layout (Activity Bar, Left Nav, Chat Editor, Right Panels). Modifications should preserve the draggable boundaries (`leftW`, `reviewW`, `filesW`).
-- **Prompt Injection Cards**: When creating interfaces for agents, use preempted prompts (e.g., `/knot vanessa: ...`) bound to the UI so users can instantly interact with the Panteão.
+- **Prompt Injection Cards**: When creating interfaces for agents, use preempted prompts (e.g., `/knot auditor: ...`) bound to the UI so users can instantly interact with specialized squads.
 
 ## 2. Aesthetic & Narrative Integration
-- **Lore-Driven Design**: Base UI decisions on the established Lore (`gemini-sync.md`). If adding a new feature, map it to the corresponding archetype (e.g., Telemetry to Thoth/Hugo, Code Review to Hefesto/Rodolfo).
+- **Lore-Driven Design**: Base UI decisions on the established technical architecture mapping (e.g., Telemetry to Architect, Code Review to Engineering).
 - **Empty States**: Do not use generic empty states. Use creative, monospace "letter soup" layouts, ASCII art, and status indicators like `[+] ONLINE` or `Awaiting telemetry`.
 
 ## 3. Execution Paradigm
