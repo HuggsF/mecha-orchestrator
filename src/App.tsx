@@ -579,7 +579,7 @@ X O R I G I N   Z E R O`}
                     title: 'Vanessa (Anúbis)', 
                     skills: ['Systemic Analysis', 'Lore Auditing', 'RAG Alignment'],
                     strengths: 'Uncovers hidden flow dependencies, manages RSD check-sums, and secures raw narrative logic.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Vanessa (Anúbis - Lore / Control)\n---\n/knot vanessa:\n\nFocus: Systemic Analysis & Lore\nContext: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [💬 Protocol: Anúbis](https://mecha.orchestrator/rules?recipient=vanessa&role=lore-auditor&rsd_check=true&alignment=quantum-to-linear)\n\n/knot vanessa:\n• Focus: Systemic Analysis & Lore\n• Context: [descreva aqui o contexto do sistema, lore ou logs a serem analisados]\n• Query: [descreva aqui o que Vanessa deve auditar, documentar ou alinhar]' 
                   },
                   { 
                     id: 'hugo', 
@@ -587,7 +587,7 @@ X O R I G I N   Z E R O`}
                     title: 'Hugo (Thoth)', 
                     skills: ['Telemetry/SMS', 'System Arch', 'Improbability Tuning'],
                     strengths: 'Secures architectural alignment, constructs clean APIs, and designs robust database schemas.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Hugo (Thoth - Telemetry / SMS)\n---\n/knot hugo:\n\nFocus: Architecture & Telemetry\nFeature: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📡 Protocol: Thoth](https://mecha.orchestrator/rules?recipient=hugo&role=architect-telemetry&alignment=linear)\n\n/knot hugo:\n• Focus: Architecture & Telemetry\n• Context: [descreva aqui a arquitetura atual, contratos de APIs ou endpoints afetados]\n• Query: [descreva aqui os requisitos de telemetria, logs ou infraestrutura a serem desenhados]' 
                   },
                   { 
                     id: 'amanda', 
@@ -595,7 +595,7 @@ X O R I G I N   Z E R O`}
                     title: 'Amanda (Maat)', 
                     skills: ['Product Design', 'Flow Safety', 'UX Strategy'],
                     strengths: 'Acts as the compliance and quality gatekeeper, smoothing user flows and proving business value.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Amanda (Maat - Product / UX Flow)\n---\n/knot amanda:\n\nFocus: Product & UX Flow\nFeature: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [📦 Protocol: Maat](https://mecha.orchestrator/rules?recipient=amanda&role=product-ux&quality_gate=enforced)\n\n/knot amanda:\n• Focus: Product & UX Flow\n• Context: [descreva aqui a jornada do usuário, telas de fluxo ou história de usuário]\n• Query: [descreva aqui a funcionalidade ou regras de validação de produto a serem checadas]' 
                   },
                   { 
                     id: 'rodolfo', 
@@ -603,7 +603,7 @@ X O R I G I N   Z E R O`}
                     title: 'Rodolfo (Hefesto)', 
                     skills: ['.NET Engineering', 'Forja de Estrutura', 'Code Review'],
                     strengths: 'Constructs highly resilient, enterprise-grade backend microservices and reviews complex logic.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Rodolfo (Hefesto - .NET Engineering / Code Review)\n---\n/knot rodolfo:\n\nFocus: .NET Engineering & Code Review\nService: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚒️ Protocol: Hefesto](https://mecha.orchestrator/rules?recipient=rodolfo&role=net-engineering&review_standards=strict)\n\n/knot rodolfo:\n• Focus: .NET Engineering & Code Review\n• Context: [descreva aqui o serviço .NET, classes de código ou arquivos a serem analisados]\n• Query: [descreva aqui a lógica de negócio, refatoração ou testes que Rodolfo deve realizar]' 
                   },
                   { 
                     id: 'henrique', 
@@ -611,7 +611,7 @@ X O R I G I N   Z E R O`}
                     title: 'Henrique (Hermes)', 
                     skills: ['DevOps Pipeline', 'DBA & Queries', 'Husky Automation'],
                     strengths: 'Optimizes database query bottlenecks, streamlines CI/CD environments, and automates pre-commits.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Henrique (Hermes - DevOps / DBA)\n---\n/knot henrique:\n\nFocus: DevOps & DBA\nInfrastructure: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [⚡ Protocol: Hermes](https://mecha.orchestrator/rules?recipient=henrique&role=devops-dba&husky_hooks=enabled)\n\n/knot henrique:\n• Focus: DevOps & DBA\n• Context: [descreva aqui a infraestrutura atual, tabelas SQL ou pipeline de CI/CD afetado]\n• Query: [descreva aqui as queries a otimizar, tabelas a alterar ou automações de deploy a criar]' 
                   },
                   { 
                     id: 'felipe', 
@@ -619,7 +619,7 @@ X O R I G I N   Z E R O`}
                     title: 'Felipe (Prometeu)', 
                     skills: ['CyberSec Audits', 'Alpha Security', 'Threat Hunting'],
                     strengths: 'Hardens authentication protocols, scans code vulnerabilities, and deploys strict containment shield firewalls.',
-                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Felipe (Prometeu - CyberSec / AlphaTM)\n---\n/knot felipe:\n\nFocus: CyberSec & AlphaTM\nComponent: \nQuery: ' 
+                    prompt: '[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=front-end-system-design,mecha-backend-engineering,mecha-agentic-workflow&commit=conventional-commits-gate-v2.0) | [🛡️ Protocol: Prometeu](https://mecha.orchestrator/rules?recipient=felipe&role=cybersec&firewall=active)\n\n/knot felipe:\n• Focus: CyberSec & AlphaTM\n• Context: [descreva aqui o componente exposto, dependências vulneráveis ou fluxo de autenticação]\n• Query: [descreva aqui os testes de vulnerabilidade ou regras de segurança que Felipe deve auditar]' 
                   },
                 ].map(card => (
                   <button
