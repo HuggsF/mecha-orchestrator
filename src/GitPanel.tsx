@@ -163,25 +163,6 @@ export function GitPanel({ root }: { root: string }) {
 
       {repo === true && (
         <div className="flex-1 flex flex-col min-h-0">
-          
-          {/* Quality Gate Console Output */}
-          {qualityGateOutput && (
-            <div className="mx-3 mt-3 p-3 bg-black/40 rounded-xl border border-white/[0.05] flex flex-col min-h-0 shrink-0">
-              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/5 shrink-0">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">DevOps Telemetry Output</span>
-                <button 
-                  onClick={() => setQualityGateOutput(null)}
-                  className="text-[8px] text-slate-600 hover:text-slate-400 font-bold"
-                >
-                  FECHAR
-                </button>
-              </div>
-              <pre className="text-[9.5px] font-mono leading-normal overflow-y-auto max-h-56 whitespace-pre-wrap select-text text-slate-400 scrollbar-none">
-                {parseAnsi(qualityGateOutput)}
-              </pre>
-            </div>
-          )}
-
           <div className="flex-1 overflow-y-auto">
             {files.length === 0 && (
               <div className="px-4 py-6 text-center text-[11px] text-slate-600">nenhuma alteração pendente</div>
@@ -208,6 +189,24 @@ export function GitPanel({ root }: { root: string }) {
               );
             })}
           </div>
+
+          {/* Quality Gate Console Output (Integrated at the bottom) */}
+          {qualityGateOutput && (
+            <div className="mx-3 mb-3 p-3 bg-black/40 rounded-xl border border-white/[0.05] flex flex-col min-h-0 h-96 shrink-0">
+              <div className="flex items-center justify-between pb-1.5 mb-1.5 border-b border-white/5 shrink-0">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500">DevOps Telemetry Output</span>
+                <button 
+                  onClick={() => setQualityGateOutput(null)}
+                  className="text-[8px] text-slate-600 hover:text-slate-400 font-bold"
+                >
+                  FECHAR
+                </button>
+              </div>
+              <pre className="text-[9.5px] font-mono leading-normal overflow-y-auto flex-1 whitespace-pre-wrap select-text text-slate-400 scrollbar-none">
+                {parseAnsi(qualityGateOutput)}
+              </pre>
+            </div>
+          )}
         </div>
       )}
     </div>

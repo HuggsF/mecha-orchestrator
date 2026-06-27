@@ -69,6 +69,32 @@ try {
     }
   });
 
+  // Extract actual added and removed lines of code
+  let diffContent = "";
+  try {
+    const diffRaw = execSync('git show --unified=0 --format="" HEAD').toString().trim();
+    if (diffRaw) {
+      const lines = diffRaw.split('\n');
+      const addedLines = lines.filter(l => l.startsWith('+') && !l.startsWith('+++')).map(l => l.substring(1));
+      const removedLines = lines.filter(l => l.startsWith('-') && !l.startsWith('---')).map(l => l.substring(1));
+      
+      if (addedLines.length > 0 || removedLines.length > 0) {
+        diffContent = `
+  • ${BOLD}Código que Entrou (+):${RESET}\n` + 
+          (addedLines.length > 0 
+            ? addedLines.slice(0, 15).map(l => `    ${GREEN}+ ${l}${RESET}`).join('\n') + (addedLines.length > 15 ? `\n    ${YELLOW}... (${addedLines.length - 15} mais linhas)${RESET}` : '')
+            : `    ${YELLOW}(Nenhuma linha adicionada)${RESET}`) + `
+
+  • ${BOLD}Código que Saiu (-):${RESET}\n` + 
+          (removedLines.length > 0 
+            ? removedLines.slice(0, 15).map(l => `    ${RED}- ${l}${RESET}`).join('\n') + (removedLines.length > 15 ? `\n    ${YELLOW}... (${removedLines.length - 15} mais linhas)${RESET}` : '')
+            : `    ${YELLOW}(Nenhuma linha removida)${RESET}`);
+      }
+    }
+  } catch (e) {
+    diffContent = `\n  • ${RED}Não foi possível obter o diff detalhado.${RESET}`;
+  }
+
   // Render Enriched Report
   console.log(`
 ${BOLD}${MAGENTA}========================================================================${RESET}
@@ -90,6 +116,7 @@ ${BOLD}[OUTPUT / TELEMETRY]:${RESET}
   • ${BOLD}Métricas de Linhas:${RESET} ${GREEN}+${insertions} inserções${RESET}, ${RED}-${deletions} remoções${RESET}
   • ${BOLD}Arquivos Afetados:${RESET}
 ${changedFiles.map(f => `    - ${f}`).join('\n')}
+${diffContent}
 
   • ${BOLD}Security & Standard Audit:${RESET}
     - Zod Integration:  ${hasZodCheck ? `${GREEN}✔ ACTIVE${RESET}` : `${YELLOW}⚠️ NOT DETECTED (Consider using Zod for payload schemas)${RESET}`}
