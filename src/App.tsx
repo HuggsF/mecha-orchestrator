@@ -573,12 +573,42 @@ X O R I G I N   Z E R O`}
               {/* Prompt Cards Grid */}
               <div className="grid grid-cols-3 gap-3 w-full max-w-2xl mx-auto px-4">
                 {[
-                  { id: 'vanessa', icon: '🐺', title: 'Vanessa (Anúbis)', prompt: '/knot vanessa:\n\nFocus: Systemic Analysis & Lore\nContext: \nQuery: ' },
-                  { id: 'hugo', icon: '📡', title: 'Hugo (Thoth)', prompt: '/knot hugo:\n\nFocus: Architecture & Telemetry\nFeature: \nQuery: ' },
-                  { id: 'amanda', icon: '📦', title: 'Amanda (Maat)', prompt: '/knot amanda:\n\nFocus: Product & UX Flow\nFeature: \nQuery: ' },
-                  { id: 'rodolfo', icon: '⚒️', title: 'Rodolfo (Hefesto)', prompt: '/knot rodolfo:\n\nFocus: .NET Engineering & Code Review\nService: \nQuery: ' },
-                  { id: 'henrique', icon: '⚡', title: 'Henrique (Hermes)', prompt: '/knot henrique:\n\nFocus: DevOps & DBA\nInfrastructure: \nQuery: ' },
-                  { id: 'felipe', icon: '🛡️', title: 'Felipe (Prometeu)', prompt: '/knot felipe:\n\nFocus: CyberSec & AlphaTM\nComponent: \nQuery: ' },
+                  { 
+                    id: 'vanessa', 
+                    icon: '🐺', 
+                    title: 'Vanessa (Anúbis)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Vanessa (Anúbis - Lore / Control)\n---\n/knot vanessa:\n\nFocus: Systemic Analysis & Lore\nContext: \nQuery: ' 
+                  },
+                  { 
+                    id: 'hugo', 
+                    icon: '📡', 
+                    title: 'Hugo (Thoth)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Hugo (Thoth - Telemetry / SMS)\n---\n/knot hugo:\n\nFocus: Architecture & Telemetry\nFeature: \nQuery: ' 
+                  },
+                  { 
+                    id: 'amanda', 
+                    icon: '📦', 
+                    title: 'Amanda (Maat)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Amanda (Maat - Product / UX Flow)\n---\n/knot amanda:\n\nFocus: Product & UX Flow\nFeature: \nQuery: ' 
+                  },
+                  { 
+                    id: 'rodolfo', 
+                    icon: '⚒️', 
+                    title: 'Rodolfo (Hefesto)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Rodolfo (Hefesto - .NET Engineering / Code Review)\n---\n/knot rodolfo:\n\nFocus: .NET Engineering & Code Review\nService: \nQuery: ' 
+                  },
+                  { 
+                    id: 'henrique', 
+                    icon: '⚡', 
+                    title: 'Henrique (Hermes)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Henrique (Hermes - DevOps / DBA)\n---\n/knot henrique:\n\nFocus: DevOps & DBA\nInfrastructure: \nQuery: ' 
+                  },
+                  { 
+                    id: 'felipe', 
+                    icon: '🛡️', 
+                    title: 'Felipe (Prometeu)', 
+                    prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Felipe (Prometeu - CyberSec / AlphaTM)\n---\n/knot felipe:\n\nFocus: CyberSec & AlphaTM\nComponent: \nQuery: ' 
+                  },
                 ].map(card => (
                   <button
                     key={card.id}
