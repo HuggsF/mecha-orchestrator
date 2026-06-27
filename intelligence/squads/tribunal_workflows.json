@@ -1,0 +1,29 @@
+{
+  "tribunal_pipeline": {
+    "name": "Hermes Tribunal Debate Pipeline",
+    "description": "Workflow do Tribunal Hermes para debater e julgar conformidade de ideias e configurações.",
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "Warlock",
+        "description": "Analisa riscos, furos lógicos e vulnerabilidades de segurança (Acusação)",
+        "input_source": "user_prompt",
+        "output_var": "accusation"
+      },
+      {
+        "step_id": 2,
+        "agent": "Amanda",
+        "description": "Analisa viabilidade técnica, conformidade e defende o design (Defesa)",
+        "input_source": "user_prompt",
+        "output_var": "defense"
+      },
+      {
+        "step_id": 3,
+        "agent": "Shura 255",
+        "description": "Analisa a acusação e defesa para emitir o veredito final",
+        "input_sources": ["user_prompt", "accusation", "defense"],
+        "output_var": "verdict"
+      }
+    ]
+  }
+}

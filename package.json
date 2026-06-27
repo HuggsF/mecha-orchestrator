@@ -1,0 +1,12 @@
+{
+  "name": "mecha",
+  "version": "1.0.0",
+  "description": "MECHA Orchestrator",
+  "private": true,
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.0"
+  }
+}

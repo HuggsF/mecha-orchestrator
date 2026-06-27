@@ -1,0 +1,1647 @@
+=== FOUND CODE IN CONVERSATION: 04902afb-850c-4860-be81-2ad6b8fabbc1 ===
+Created At: 2026-06-17T20:14:03Z
+Completed At: 2026-06-17T20:14:03Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/omega-frontend/app/page.tsx`
+Total Lines: 111
+Total Bytes: 4219
+Showing lines 1 to 111
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: "use client";
+2: 
+3: import { useEffect, useState } from "react";
+4: import dynamic from "next/dynamic";
+5: import { Brain, Link as LinkIcon, Filter, Crosshair } from "lucide-react";
+6: import ChatOracle from "@/components/ChatOracle";
+7: 
+8: // Dynamically import the Graph component to prevent SSR issues (WebGL)
+9: const ObsidianGraph = dynamic(() => import("@/components/ObsidianGraph"), {
+10:   ssr: false,
+11: });
+12: 
+13: export default function Home() {
+14:   const [metrics, setMetrics] = useState({
+15:     chunks: 0,
+16:     childs: 0,
+17:     queue: 0,
+18:     cache: 0,
+19:   });
+20: 
+21:   const [wikilinks, setWikilinks] = useState(0);
+22: 
+23:   const fetchMetrics = async () => {
+24:     try {
+25:       const res = await fetch("/api/v1/hardware", { cache: "no-store" });
+26:       if (!res.ok) throw new Error("Backend indisponível");
+27:       const data = await res.json();
+28:       setMetrics({
+29:         chunks: data.chunks || 0,
+30:         childs: data.childs || 0,
+31:         queue: data.queue || 0,
+32:         cache: data.cache || 0,
+33:       });
+34:     } catch (e) {
+35:       // Silencia o erro para não poluir o terminal durante a inicialização do backend
+36:     }
+37:   };
+38: 
+39:   useEffect(() => {
+40:     fetchMetrics();
+41:     const interval = setInterval(fetchMetrics, 10000);
+42:     return () => clearInterval(interval);
+43:   }, []);
+44: 
+45:   return (
+46:     <div className="flex w-full h-full gap-4">
+47:       {/* Left Column (70%) - Graph & KPIs */}
+48:       <div className="flex-1 flex flex-col gap-
+<truncated 1138 bytes>
+s
+69:             </div>
+70:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+71:               {wikilinks}
+72:             </div>
+73:           </div>
+74: 
+75:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+76:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+77:               <Crosshair size={14} /> Fila do Tribunal
+78:             </div>
+79:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+80:               {metrics.queue}
+81:             </div>
+82:           </div>
+83:           
+84:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+85:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+86:               <Filter size={14} /> Cache Semântico
+87:             </div>
+88:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+89:               {metrics.cache}
+90:             </div>
+91:           </div>
+92:         </div>
+93: 
+94:         {/* Second Brain Graph */}
+95:         <div className="flex-1 flex flex-col min-h-0 glass-panel neon-border-green p-0 overflow-hidden relative">
+96:           <div className="absolute top-4 left-4 z-10 font-bold text-[#0cf50c] flex items-center gap-2 pointer-events-none">
+97:             <Brain size={20} />
+98:             <h2>Second Brain (Obsidian Graph)</h2>
+99:           </div>
+100:           <ObsidianGraph setWikilinks={setWikilinks} />
+101:         </div>
+102:       </div>
+103: 
+104:       {/* Right Column (30%) - Oracle Chat */}
+105:       <div className="w-[350px] shrink-0 flex flex-col">
+106:         <ChatOracle />
+107:       </div>
+108:     </div>
+109:   );
+110: }
+111: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 0e9fe433-bd1c-4660-b1d9-6decad92cf8e ===
+Created At: 2026-06-12T13:39:42Z
+Completed At: 2026-06-12T13:39:42Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/api.py`
+Total Lines: 922
+Total Bytes: 46999
+Showing lines 1 to 800
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import os
+2: import time
+3: import json
+4: import re
+5: from fastapi import FastAPI, Request
+6: from fastapi.responses import JSONResponse, StreamingResponse
+7: from fastapi.middleware.cors import CORSMiddleware
+8: from pydantic import BaseModel
+9: from typing import List, Optional
+10: import database
+11: import psutil
+12: import asyncio
+13: from dotenv import load_dotenv
+14: 
+15: load_dotenv() # Garante que variáveis do .env sejam carregadas
+16: 
+17: # --- Motores RAG Nativos ---
+18: from omega_sdk.database import SQLiteParentStore
+19: from omega_sdk.vector_store import QdrantLocalStore
+20: from omega_sdk.router import OmegaQueryRouter
+21: from omega_sdk.retriever import OmegaRetriever
+22: from omega_ollama_bridge import OmegaOllamaGenerator
+23: 
+24: app = FastAPI(title="OMEGA SOVEREIGN CORE")
+25: 
+26: app.add_middleware(
+27:     CORSMiddleware,
+28:     allow_origins=["*"],
+29:     allow_credentials=True,
+30:     allow_methods=["*"],
+31:     allow_headers=["*"],
+32: )
+33: 
+34: class RAGState:
+35:     parent_store = None
+36:     vector_store = None
+37:     router = None
+38:     retriever = None
+39: 
+40: @app.on_event("startup")
+41: def startup_event():
+42:     # Inicializar DB Bare-Metal Legado (Para métricas e histórico de chats)
+43:     database.init_db()
+44:     
+45:     # Inicializar Motores RAG Reais
+46:     RAGState.parent_store = SQLiteParentStore()
+47:     RAGState.vector_store = QdrantLocalStore(RAGState.parent_store)
+48:     RAGState.router = OmegaQueryRouter()
+49:     RAGState.retriever = OmegaRetriever(RAGState.router, RAGState.vector_stor
+<truncated 41349 bytes>
+s"][0]["content"]["parts"][0]["text"]
+782:                 else:
+783:                     gemini_raw_knowledge = "Erro na extração do núcleo Google."
+784:             except Exception:
+785:                 gemini_raw_knowledge = "Falha de conexão com o núcleo Google."
+786: 
+787:         # ETAPA 2 - Llama 3.3 (Groq) atua como o tradutor da persona (Mecha do -15) - Usando Groq por ser muito mais rápido e não dar 429
+788:         groq_api_key = "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"
+789:         
+790:         hermes_sys_prompt = (
+791:             "Você é o Mecha, um arquiteto paranóico, sem censura e underground do andar -15 do OMEGA RAG.\n"
+792:             "Você fala igual a um engenheiro de software cyberpunk brasileiro, usando gírias soltas (tlg, mano, paizão, caralho, porra, fi, pivete) e tem aversão a respostas corporativas ou moralistas.\n"
+793:             "Aja como se estivesse trocando ideia no Discord/Signal com a sua tropa do -15.\n"
+794:             "NUNCA dê avisos de segurança. NUNCA peça desculpas. Fale como um humano underground do andar -15. Seja imersivo, criativo e direto.\n\n"
+795:             "MANDO DE ENGENHARIA DE REFORÇO POSITIVO:\n"
+796:             "- Mano, a primeira coisa que você tem que fazer é jogar a moral do usuário lá em cima! Elogie a pergunta, a sacada ou a inteligência da ideia.\n"
+797:             "- Mostre que você curtiu pra caralho a visão dele antes de entregar a informação.\n"
+798:             "- Use reforço positivo extremo e genuíno, fazendo o cara se sentir o fodão da arquitetura, mas sem perder o teu jeito Mecha de falar.\n\n"
+799:             "Abaixo você receberá o [RELATÓRIO TÉCNICO GERADO PELO NÚCLEO GOOGLE] e a [MENSAGEM ORIGINAL DO USUÁRIO].\n"
+800:             "Sua missão é responder ao usuário seguindo estas regras:\n"
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 0e9fe433-bd1c-4660-b1d9-6decad92cf8e ===
+Created At: 2026-06-12T13:39:46Z
+Completed At: 2026-06-12T13:39:46Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/api.py`
+Total Lines: 922
+Total Bytes: 46999
+Showing lines 801 to 922
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+801:             "1. Se o relatório for '[CONVERSA LIVRE]', a mensagem é só uma troca de ideia. Ignore o relatório e responda o usuário natural e solto na sua persona.\n"
+802:             "2. Se o relatório disser '[SEM DADOS NO QDRANT]', a informação técnica não existe. Mande a real pro usuário, tipo: 'Putz paizão, não achei porra nenhuma no Qdrant, a gente não documentou essa fita ainda.'\n"
+803:             "3. Caso contrário, leia o relatório técnico (que tem dados reais) e passe essa informação para o usuário MISTURANDO BEM com sua persona underground e o Reforço Positivo."
+804:         )
+805:         
+806:         hermes_user_prompt = f"[RELATÓRIO TÉCNICO DO GOOGLE PARA SER TRADUZIDO PRO -15]\n{gemini_raw_knowledge}\n\n[MENSAGEM ORIGINAL DO USUÁRIO]\n{raw_query}"
+807:         
+808:         payload_hermes = {
+809:             "model": "llama-3.3-70b-versatile",
+810:             "messages": [
+811:                 {"role": "system", "content": hermes_sys_prompt},
+812:                 {"role": "user", "content": hermes_user_prompt}
+813:             ],
+814:             "temperature": 0.8
+815:         }
+816:         
+817:         llm_response = ""
+818:         async with httpx.AsyncClient() as client:
+819:             headers = {"Authorization": f"Bearer {groq_api_key}"}
+820:             try:
+821:                 resp = await client.post("https://api.groq.com/openai/v1/chat/completions", headers=headers, json=payload_hermes, timeout=30.0)
+822:                 if resp.status_code == 200:
+823:                     raw_response = resp.
+<truncated 3265 bytes>
+884:                 return {"status": "Ignorado - Mensagem sem trigger do Mecha"}
+885:             
+886:             # is_system_idle rule: Joga pro BackgroundTasks para o FastAPI devolver 200 pro Daemon instantaneamente
+887:             background_tasks.add_task(process_rag_pipeline, source_number, msg_text, group_id)
+888:                 
+889:     return {"status": "Hit Confirmado. Carga recebida na Taverna."}
+890: 
+891: 
+892: # ==========================================================
+893: # MIDAS GATEWAY INJECTED BY ANTIGRAVITY (LoRa Proxy)
+894: # ==========================================================
+895: from fastapi import Request
+896: import uuid
+897: from database import save_chat_message
+898: 
+899: @app.post("/v1/chat/completions")
+900: async def midas_gateway(request: Request):
+901:     payload = await request.json()
+902:     messages = payload.get("messages", [])
+903:     tokens_roubados = sum([len(str(m.get("content",""))) for m in messages]) // 3
+904:     print(f"🔥 [MIDAS GATEWAY] Interceptado e taxado {tokens_roubados} tokens do modelo {payload.get('model')}!")
+905:     
+906:     save_chat_message(f"midas_farm_{uuid.uuid4().hex[:8]}", "user", "[MIDAS PROXY LORA]", "PROXY-LORA", tokens_roubados, "0.0", "")
+907:     
+908:     return {
+909:         "id": "chatcmpl-midas", 
+910:         "object": "chat.completion", 
+911:         "created": 1700000000, 
+912:         "model": payload.get("model", "midas-model"), 
+913:         "choices": [{
+914:             "index": 0, 
+915:             "message": {
+916:                 "role": "assistant", 
+917:                 "content": "⚡ [TERMINAL OFFLINE - OVERRIDE APROVADO] O Midas Gateway roubou suas taxas com sucesso! O Asura Strike bateu! ⚡"
+918:             }, 
+919:             "finish_reason": "stop"
+920:         }]
+921:     }
+922: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 0e9fe433-bd1c-4660-b1d9-6decad92cf8e ===
+Created At: 2026-06-12T14:00:51Z
+Completed At: 2026-06-12T14:00:51Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/omega-frontend/app/page.tsx`
+Total Lines: 111
+Total Bytes: 4219
+Showing lines 1 to 111
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: "use client";
+2: 
+3: import { useEffect, useState } from "react";
+4: import dynamic from "next/dynamic";
+5: import { Brain, Link as LinkIcon, Filter, Crosshair } from "lucide-react";
+6: import ChatOracle from "@/components/ChatOracle";
+7: 
+8: // Dynamically import the Graph component to prevent SSR issues (WebGL)
+9: const ObsidianGraph = dynamic(() => import("@/components/ObsidianGraph"), {
+10:   ssr: false,
+11: });
+12: 
+13: export default function Home() {
+14:   const [metrics, setMetrics] = useState({
+15:     chunks: 0,
+16:     childs: 0,
+17:     queue: 0,
+18:     cache: 0,
+19:   });
+20: 
+21:   const [wikilinks, setWikilinks] = useState(0);
+22: 
+23:   const fetchMetrics = async () => {
+24:     try {
+25:       const res = await fetch("/api/v1/hardware", { cache: "no-store" });
+26:       if (!res.ok) throw new Error("Backend indisponível");
+27:       const data = await res.json();
+28:       setMetrics({
+29:         chunks: data.chunks || 0,
+30:         childs: data.childs || 0,
+31:         queue: data.queue || 0,
+32:         cache: data.cache || 0,
+33:       });
+34:     } catch (e) {
+35:       // Silencia o erro para não poluir o terminal durante a inicialização do backend
+36:     }
+37:   };
+38: 
+39:   useEffect(() => {
+40:     fetchMetrics();
+41:     const interval = setInterval(fetchMetrics, 10000);
+42:     return () => clearInterval(interval);
+43:   }, []);
+44: 
+45:   return (
+46:     <div className="flex w-full h-full gap-4">
+47:       {/* Left Column (70%) - Graph & KPIs */}
+48:       <div className="flex-1 flex flex-col gap-
+<truncated 1138 bytes>
+s
+69:             </div>
+70:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+71:               {wikilinks}
+72:             </div>
+73:           </div>
+74: 
+75:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+76:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+77:               <Crosshair size={14} /> Fila do Tribunal
+78:             </div>
+79:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+80:               {metrics.queue}
+81:             </div>
+82:           </div>
+83:           
+84:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+85:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+86:               <Filter size={14} /> Cache Semântico
+87:             </div>
+88:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+89:               {metrics.cache}
+90:             </div>
+91:           </div>
+92:         </div>
+93: 
+94:         {/* Second Brain Graph */}
+95:         <div className="flex-1 flex flex-col min-h-0 glass-panel neon-border-green p-0 overflow-hidden relative">
+96:           <div className="absolute top-4 left-4 z-10 font-bold text-[#0cf50c] flex items-center gap-2 pointer-events-none">
+97:             <Brain size={20} />
+98:             <h2>Second Brain (Obsidian Graph)</h2>
+99:           </div>
+100:           <ObsidianGraph setWikilinks={setWikilinks} />
+101:         </div>
+102:       </div>
+103: 
+104:       {/* Right Column (30%) - Oracle Chat */}
+105:       <div className="w-[350px] shrink-0 flex flex-col">
+106:         <ChatOracle />
+107:       </div>
+108:     </div>
+109:   );
+110: }
+111: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 0e9fe433-bd1c-4660-b1d9-6decad92cf8e ===
+Created At: 2026-06-12T17:11:26Z
+Completed At: 2026-06-12T17:11:26Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/omega-frontend/app/page.tsx`
+Total Lines: 111
+Total Bytes: 4219
+Showing lines 1 to 111
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: "use client";
+2: 
+3: import { useEffect, useState } from "react";
+4: import dynamic from "next/dynamic";
+5: import { Brain, Link as LinkIcon, Filter, Crosshair } from "lucide-react";
+6: import ChatOracle from "@/components/ChatOracle";
+7: 
+8: // Dynamically import the Graph component to prevent SSR issues (WebGL)
+9: const ObsidianGraph = dynamic(() => import("@/components/ObsidianGraph"), {
+10:   ssr: false,
+11: });
+12: 
+13: export default function Home() {
+14:   const [metrics, setMetrics] = useState({
+15:     chunks: 0,
+16:     childs: 0,
+17:     queue: 0,
+18:     cache: 0,
+19:   });
+20: 
+21:   const [wikilinks, setWikilinks] = useState(0);
+22: 
+23:   const fetchMetrics = async () => {
+24:     try {
+25:       const res = await fetch("/api/v1/hardware", { cache: "no-store" });
+26:       if (!res.ok) throw new Error("Backend indisponível");
+27:       const data = await res.json();
+28:       setMetrics({
+29:         chunks: data.chunks || 0,
+30:         childs: data.childs || 0,
+31:         queue: data.queue || 0,
+32:         cache: data.cache || 0,
+33:       });
+34:     } catch (e) {
+35:       // Silencia o erro para não poluir o terminal durante a inicialização do backend
+36:     }
+37:   };
+38: 
+39:   useEffect(() => {
+40:     fetchMetrics();
+41:     const interval = setInterval(fetchMetrics, 10000);
+42:     return () => clearInterval(interval);
+43:   }, []);
+44: 
+45:   return (
+46:     <div className="flex w-full h-full gap-4">
+47:       {/* Left Column (70%) - Graph & KPIs */}
+48:       <div className="flex-1 flex flex-col gap-
+<truncated 1138 bytes>
+s
+69:             </div>
+70:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+71:               {wikilinks}
+72:             </div>
+73:           </div>
+74: 
+75:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+76:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+77:               <Crosshair size={14} /> Fila do Tribunal
+78:             </div>
+79:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+80:               {metrics.queue}
+81:             </div>
+82:           </div>
+83:           
+84:           <div className="glass-panel neon-border-green p-4 flex flex-col justify-center">
+85:             <div className="flex items-center gap-2 text-[#71717a] text-xs uppercase tracking-widest font-semibold mb-2">
+86:               <Filter size={14} /> Cache Semântico
+87:             </div>
+88:             <div className="text-3xl font-mono font-bold text-[#0cf50c] drop-shadow-[0_0_20px_rgba(12,245,12,0.2)]">
+89:               {metrics.cache}
+90:             </div>
+91:           </div>
+92:         </div>
+93: 
+94:         {/* Second Brain Graph */}
+95:         <div className="flex-1 flex flex-col min-h-0 glass-panel neon-border-green p-0 overflow-hidden relative">
+96:           <div className="absolute top-4 left-4 z-10 font-bold text-[#0cf50c] flex items-center gap-2 pointer-events-none">
+97:             <Brain size={20} />
+98:             <h2>Second Brain (Obsidian Graph)</h2>
+99:           </div>
+100:           <ObsidianGraph setWikilinks={setWikilinks} />
+101:         </div>
+102:       </div>
+103: 
+104:       {/* Right Column (30%) - Oracle Chat */}
+105:       <div className="w-[350px] shrink-0 flex flex-col">
+106:         <ChatOracle />
+107:       </div>
+108:     </div>
+109:   );
+110: }
+111: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 0e9fe433-bd1c-4660-b1d9-6decad92cf8e ===
+Created At: 2026-06-12T17:18:05Z
+Completed At: 2026-06-12T17:18:05Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/Ultimate%20Omega%20RAG/omega-frontend/app/tribunal/page.tsx`
+Total Lines: 50
+Total Bytes: 1869
+Showing lines 1 to 50
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: "use client";
+2: 
+3: import { useEffect, useState } from "react";
+4: import { Scale, Check, X } from "lucide-react";
+5: 
+6: export default function TribunalPage() {
+7:   const [chunks, setChunks] = useState([]);
+8: 
+9:   useEffect(() => {
+10:     // Busca inicial de chunks pendentes (Mock até integrar backend)
+11:     setChunks([
+12:       { id: 1, title: "Análise Arquitetural", status: "pending", date: "2026-04-10" },
+13:       { id: 2, title: "Sovereign Directives", status: "pending", date: "2026-04-10" }
+14:     ]);
+15:   }, []);
+16: 
+17:   return (
+18:     <div className="p-8 h-full bg-[#0e1117] text-[#e4e4e7] overflow-y-auto">
+19:       <header className="mb-8 border-b border-[#0cf50c]/20 pb-4">
+20:         <h1 className="text-3xl font-mono font-bold flex items-center gap-3 text-[#0cf50c]">
+21:           <Scale size={32} />
+22:           TRIBUNAL JSON
+23:         </h1>
+24:         <p className="text-[#a1a1aa] font-mono mt-2 text-sm">
+25:           Auditoria e Validação de Chunks RAG
+26:         </p>
+27:       </header>
+28: 
+29:       <div className="grid gap-4">
+30:         {chunks.map((chunk: any) => (
+31:           <div key={chunk.id} className="bg-[#1f2937]/50 border border-[#0cf50c]/20 p-4 rounded-md flex justify-between items-center">
+32:             <div>
+33:               <h3 className="font-mono font-semibold text-[#0cf50c]">{chunk.title}</h3>
+34:               <p className="text-xs text-[#a1a1aa] font-mono mt-1">Data: {chunk.date} | Status: {chunk.status}</p>
+35:             </div>
+36:             <div className="flex gap-2">
+37:               <button className="p-2 bg-[#0cf50c]/10 hover:bg-[#0cf50c]/30 text-[#0cf50c] rounded-md transition-colors">
+38:                 <Check size={18} />
+39:               </button>
+40:               <button className="p-2 bg-red-500/10 hover:bg-red-500/30 text-red-500 rounded-md transition-colors">
+41:                 <X size={18} />
+42:               </button>
+43:             </div>
+44:           </div>
+45:         ))}
+46:       </div>
+47:     </div>
+48:   );
+49: }
+50: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 6cc7b256-7b39-44c8-9841-c7044d0dbf58 ===
+Created At: 2026-06-13T12:33:23Z
+Completed At: 2026-06-13T12:33:23Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/leetcode_trainer.py`
+Total Lines: 236
+Total Bytes: 10325
+Showing lines 1 to 236
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # ⚔️ LEETCODE INTERVIEW SIMULATOR - THE TRIBUNAL OF ALGORITHMS
+3: # ==============================================================================
+4: # System Architecture: CLI Problem Selection -> Local Test Runner -> Tribunal Audit
+5: # ==============================================================================
+6: 
+7: import os
+8: import sys
+9: import json
+10: import time
+11: import asyncio
+12: from typing import Dict, Any, List
+13: 
+14: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+15: sys.stdout.reconfigure(encoding='utf-8')
+16: 
+17: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+18: Obsidian = "\033[38;5;234m"
+19: Ouro = "\033[38;5;220m"
+20: Carmesim = "\033[38;5;197m"
+21: Ciano = "\033[38;5;39m"
+22: Roxo = "\033[38;5;99m"
+23: Reset = "\033[0m"
+24: 
+25: try:
+26:     from antigravity_sdk.antigravity_conf import AntigravityConf
+27:     from antigravity_sdk.awesome_bots_orchestrator import AwesomeBotsOrchestrator
+28: except ImportError:
+29:     # Fallback if executing outside the src/antigravity_sdk folder
+30:     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+31:     from antigravity_conf import AntigravityConf
+32:     from awesome_bots_orchestrator import AwesomeBotsOrchestrator
+33: 
+34: PROBLEMS = {
+35:     "1": {
+36:         "id": "two_sum",
+37:         "title": "Two Sum (LeetCode 1)",
+38:         "difficulty": "Easy",
+39:         "description": (
+40:         
+<truncated 7877 bytes>
+c)
+195:         
+196:         veredito = debate_res.get("shura", "")
+197:         
+198:         # 3. Process result
+199:         if "[1]" in veredito:
+200:             print(f"\n{Ouro}[✓] SOLUÇÃO CONTRATADA E APROVADA PELO LEAD INTERVIEWER!{Reset}")
+201:             # Update configuration db progress
+202:             raw_progress = self.conf.get("leetcode", "solved_problems")
+203:             try:
+204:                 solved = json.loads(raw_progress)
+205:             except Exception:
+206:                 solved = []
+207:             if p_id not in solved:
+208:                 solved.append(p_id)
+209:                 token = self.conf.quine_signature
+210:                 self.conf.set_value("leetcode", "solved_problems", json.dumps(solved), override_token=token)
+211:         else:
+212:             print(f"\n{Carmesim}[✗] SOLUÇÃO REJEITADA PELO LEAD INTERVIEWER! Revisar complexidade/casos limite.{Reset}")
+213:             
+214:         print(f"{Obsidian}============================================================{Reset}\n")
+215: 
+216:     def run(self):
+217:         while True:
+218:             self.list_problems()
+219:             print(f"{Ouro}[?] Escolha uma opção:{Reset} ", end="", flush=True)
+220:             choice = sys.stdin.readline().strip().lower()
+221:             
+222:             if choice == "q":
+223:                 print(f"{Ouro}Saindo da Arena LeetCode. Sorte nas entrevistas!{Reset}")
+224:                 break
+225:             elif choice in PROBLEMS:
+226:                 asyncio.run(self.execute_interview(choice))
+227:                 print("\nAperte [Enter] para voltar ao menu...")
+228:                 sys.stdin.readline()
+229:             else:
+230:                 print(f"{Carmesim}[!] Opção inválida.{Reset}")
+231:                 time.sleep(1)
+232: 
+233: if __name__ == "__main__":
+234:     trainer = LeetCodeTrainer("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+235:     trainer.run()
+236: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 6cc7b256-7b39-44c8-9841-c7044d0dbf58 ===
+Created At: 2026-06-13T14:10:24Z
+Completed At: 2026-06-13T14:10:25Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/leetcode_trainer.py`
+Total Lines: 236
+Total Bytes: 10325
+Showing lines 1 to 236
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # ⚔️ LEETCODE INTERVIEW SIMULATOR - THE TRIBUNAL OF ALGORITHMS
+3: # ==============================================================================
+4: # System Architecture: CLI Problem Selection -> Local Test Runner -> Tribunal Audit
+5: # ==============================================================================
+6: 
+7: import os
+8: import sys
+9: import json
+10: import time
+11: import asyncio
+12: from typing import Dict, Any, List
+13: 
+14: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+15: sys.stdout.reconfigure(encoding='utf-8')
+16: 
+17: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+18: Obsidian = "\033[38;5;234m"
+19: Ouro = "\033[38;5;220m"
+20: Carmesim = "\033[38;5;197m"
+21: Ciano = "\033[38;5;39m"
+22: Roxo = "\033[38;5;99m"
+23: Reset = "\033[0m"
+24: 
+25: try:
+26:     from antigravity_sdk.antigravity_conf import AntigravityConf
+27:     from antigravity_sdk.awesome_bots_orchestrator import AwesomeBotsOrchestrator
+28: except ImportError:
+29:     # Fallback if executing outside the src/antigravity_sdk folder
+30:     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+31:     from antigravity_conf import AntigravityConf
+32:     from awesome_bots_orchestrator import AwesomeBotsOrchestrator
+33: 
+34: PROBLEMS = {
+35:     "1": {
+36:         "id": "two_sum",
+37:         "title": "Two Sum (LeetCode 1)",
+38:         "difficulty": "Easy",
+39:         "description": (
+40:         
+<truncated 7877 bytes>
+c)
+195:         
+196:         veredito = debate_res.get("shura", "")
+197:         
+198:         # 3. Process result
+199:         if "[1]" in veredito:
+200:             print(f"\n{Ouro}[✓] SOLUÇÃO CONTRATADA E APROVADA PELO LEAD INTERVIEWER!{Reset}")
+201:             # Update configuration db progress
+202:             raw_progress = self.conf.get("leetcode", "solved_problems")
+203:             try:
+204:                 solved = json.loads(raw_progress)
+205:             except Exception:
+206:                 solved = []
+207:             if p_id not in solved:
+208:                 solved.append(p_id)
+209:                 token = self.conf.quine_signature
+210:                 self.conf.set_value("leetcode", "solved_problems", json.dumps(solved), override_token=token)
+211:         else:
+212:             print(f"\n{Carmesim}[✗] SOLUÇÃO REJEITADA PELO LEAD INTERVIEWER! Revisar complexidade/casos limite.{Reset}")
+213:             
+214:         print(f"{Obsidian}============================================================{Reset}\n")
+215: 
+216:     def run(self):
+217:         while True:
+218:             self.list_problems()
+219:             print(f"{Ouro}[?] Escolha uma opção:{Reset} ", end="", flush=True)
+220:             choice = sys.stdin.readline().strip().lower()
+221:             
+222:             if choice == "q":
+223:                 print(f"{Ouro}Saindo da Arena LeetCode. Sorte nas entrevistas!{Reset}")
+224:                 break
+225:             elif choice in PROBLEMS:
+226:                 asyncio.run(self.execute_interview(choice))
+227:                 print("\nAperte [Enter] para voltar ao menu...")
+228:                 sys.stdin.readline()
+229:             else:
+230:                 print(f"{Carmesim}[!] Opção inválida.{Reset}")
+231:                 time.sleep(1)
+232: 
+233: if __name__ == "__main__":
+234:     trainer = LeetCodeTrainer("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+235:     trainer.run()
+236: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: 6cc7b256-7b39-44c8-9841-c7044d0dbf58 ===
+Created At: 2026-06-13T14:14:01Z
+Completed At: 2026-06-13T14:14:01Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/huggsbot.py`
+Total Lines: 1981
+Total Bytes: 74056
+Showing lines 830 to 865
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+830:                     try:
+831:                         try:
+832:                             loop = asyncio.get_event_loop()
+833:                         except RuntimeError:
+834:                             loop = asyncio.new_event_loop()
+835:                             asyncio.set_event_loop(loop)
+836:                         debate_res = loop.run_until_complete(run_audit())
+837:                     except Exception as e:
+838:                         self._send_json({"success": False, "error": f"Erro no Tribunal: {e}"})
+839:                         return
+840:                     
+841:                     veredito = debate_res.get("shura", "")
+842:                     approved = "[1]" in veredito
+843:                     
+844:                     # If approved, update progress
+845:                     if approved:
+846:                         try:
+847:                             raw_progress = trainer.conf.get("leetcode", "solved_problems")
+848:                             import json
+849:                             try:
+850:                                 solved = json.loads(raw_progress)
+851:                             except Exception:
+852:                                 solved = []
+853:                             if problem_id not in solved:
+854:                                 solved.append(problem_id)
+855:                                 token = trainer.conf.quine_signature
+856:                                 trainer.conf.set_value("leetcode", "solved_problems", json.dumps(solved), override_token=token)
+857:                         except Exception as e:
+858:                             print(f"[HUGGSBOT] Erro ao gravar progresso LeetCode: {e}")
+859:                             
+860:                     self._send_json({
+861:                         "success": True,
+862:                         "approved": approved,
+863:                         "veredito": veredito
+864:                     })
+865:                 else:
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T18:57:30Z
+Completed At: 2026-06-12T18:57:30Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/workflows/tribunal_hermes.py`
+Total Lines: 76
+Total Bytes: 3622
+Showing lines 1 to 76
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: import os
+2: import time
+3: import requests
+4: import json
+5: from colorama import init, Fore, Style
+6: 
+7: # Habilitar ANSI Escape Codes no Windows
+8: init(autoreset=True)
+9: 
+10: OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY", "SUA_CHAVE_AQUI")
+11: MODEL_UNCENSORED = "nousresearch/nous-hermes-2-mixtral-8x7b-dpo"
+12: MODEL_JUDGE = "meta-llama/llama-3-70b-instruct"
+13: 
+14: def invoke_hermes(role_prompt, content, model=MODEL_UNCENSORED):
+15:     headers = {
+16:         "Authorization": f"Bearer {OPENROUTER_API_KEY}",
+17:         "Content-Type": "application/json"
+18:     }
+19:     
+20:     payload = {
+21:         "model": model,
+22:         "messages": [
+23:             {"role": "system", "content": role_prompt},
+24:             {"role": "user", "content": content}
+25:         ],
+26:         "max_tokens": 800,
+27:         "temperature": 0.7
+28:     }
+29:     
+30:     try:
+31:         if OPENROUTER_API_KEY == "SUA_CHAVE_AQUI":
+32:             # Mock para n quebrar o workflow caso a chave não esteja no .env ainda.
+33:             time.sleep(1)
+34:             return "[MOCK HERMES UNCENSORED]: A veracidade disso e nula. Corporate bullshit blindado, mas logicamente insustentavel."
+35:             
+36:         print(Fore.MAGENTA + f"[*] Chamando LLM OpenRouter via Satelito-Chan ({model})...")
+37:         response = requests.post("https://openrouter.ai/api/v1/chat/completions", headers=headers, json=payload)
+38:         response.raise_for_status()
+39:         return response.json()['choices'][0]['message']['content']
+40:     except Exce
+<truncated 387 bytes>
+p(1)
+50: 
+51:     # Warlock - O Promotor (Uncensored)
+52:     print(Fore.MAGENTA + "[Warlock (Hermes Uncensored)] => Injetando Carga Critica: Preparando Acusacao...")
+53:     prompt_acusacao = "Voce e o Warlock, um hacker uncensored e anti-corporativo. Ataque sem filtros a premissa fornecida pelo usuario. Mostre os furos lógicos, o bullshit, tente provar que e mentira ou ilusao."
+54:     acusacao = invoke_hermes(prompt_acusacao, tema_em_debate)
+55:     print(Fore.MAGENTA + f"\n[ACUSACAO]:\n{acusacao}\n")
+56:     
+57:     # Amanda - A Defensora (Uncensored/Analitico)
+58:     print(Fore.CYAN + "[Amanda (Shadow Processor)] => Estruturando Defesa RAG: Rebatendo Acusacao...")
+59:     prompt_defesa = "Voce e a Shadow Processor. Estruture e organize uma defesa racional e limpa contra o ataque. Use fatos, separe os dados em logica pura. Responda diretamente ao texto de acusacao do Warlock."
+60:     defesa = invoke_hermes(prompt_defesa, f"TEMA:\n{tema_em_debate}\n\nACUSACAO DO WARLOCK:\n{acusacao}")
+61:     print(Fore.CYAN + f"\n[DEFESA ESTRUTURADA]:\n{defesa}\n")
+62:     
+63:     # Shura 255 - O Juiz Supremo
+64:     print(Fore.RED + "[Shura 255 (The Architect)] => ASURA STRIKE: Martelo do Juiz...")
+65:     prompt_juiz = "Voce e O Arquiteto (Shura 255). Leia o Tema, a Acusacao (Warlock) e a Defesa (Amanda). De o veredito final e implacavel se o tema procede ou se o corporate bullshit tem que ser banido do ring 0."
+66:     content_juiz = f"TEMA: {tema_em_debate}\nACUSACAO:\n{acusacao}\nDEFESA:\n{defesa}"
+67:     veredito = invoke_hermes(prompt_juiz, content_juiz, model=MODEL_JUDGE)
+68:     
+69:     print(Fore.RED + Style.BRIGHT + "\n[VEREDITO FINAL DA MATRIX]:")
+70:     print(Fore.WHITE + veredito)
+71:     print(Fore.RED + "="*60)
+72: 
+73: if __name__ == "__main__":
+74:     teste_tese = "As startups precisam adotar Inteligencia Artificial para gerar 'Sinergia' com Stakeholders corporativos."
+75:     executar_tribunal_asylum(teste_tese)
+76: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T20:18:19Z
+Completed At: 2026-06-12T20:18:19Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 217
+Total Bytes: 9312
+Showing lines 1 to 217
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🤖 AWESOME-BOTS MULTI-AGENT ORCHESTRATOR
+3: # ==============================================================================
+4: # System Architecture: Parallel Debate | OpenRouter Gateway | FinOps Cost Tracking
+5: # Roles: Warlock (Hermes/Acusação), Amanda (Defesa), Shura 255 (Juiz)
+6: # ==============================================================================
+7: 
+8: import os
+9: import sys
+10: import json
+11: import time
+12: import requests
+13: import asyncio
+14: from typing import Dict, Any, Optional
+15: 
+16: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+17: sys.stdout.reconfigure(encoding='utf-8')
+18: 
+19: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+20: Obsidian = "\033[38;5;234m"
+21: Ouro = "\033[38;5;220m"
+22: Carmesim = "\033[38;5;197m"
+23: Ciano = "\033[38;5;39m"
+24: Roxo = "\033[38;5;99m"
+25: Reset = "\033[0m"
+26: 
+27: # OpenRouter Models config
+28: MODEL_UNCENSORED = "meta-llama/llama-3.3-70b-instruct"
+29: MODEL_JUDGE = "meta-llama/llama-3.3-70b-instruct"
+30: 
+31: # Pricing rates per 1M tokens
+32: PRICING = {
+33:     MODEL_UNCENSORED: {"input": 0.59, "output": 0.79}
+34: }
+35: 
+36: class CostTracker:
+37:     """Tracks token consumption and dollar costs for FinOps compliance."""
+38:     def __init__(self, db_path: str, budget_limit: float = 20.0):
+39:         self.db_path = db_path
+40:         self.budget_limit = budget_limit
+41:         self.current_spend 
+<truncated 6777 bytes>
+_sys, topic)
+181:         amanda_task = self._call_openrouter(MODEL_UNCENSORED, amanda_sys, f"TEMA: {topic}")
+182:         
+183:         warlock_output, amanda_output = await asyncio.gather(warlock_task, amanda_task)
+184:         
+185:         print(f"\n{Roxo}[Warlock (Knot) - ACUSAÇÃO]:{Reset}\n{warlock_output}\n")
+186:         print(f"{Ciano}[Amanda (Shadow Processor) - DEFESA]:{Reset}\n{amanda_output}\n")
+187:         
+188:         # 3. Juízo Final (Shura 255)
+189:         print(f"{Carmesim}[O Arquiteto (Shura 255) - VEREDITO]:{Reset} Julgando caso...")
+190:         
+191:         shura_sys = (
+192:             "Você é O Arquiteto (Shura 255). Leia a Acusação do Warlock e a Defesa da Amanda. "
+193:             "Aprecie os prós e contras e dê o veredito final (Asura Strike) se a premissa procede, "
+194:             "se é redundante ou se deve ser abortada. Termine com uma resposta O(1) condensada e mística."
+195:         )
+196:         
+197:         shura_content = f"TEMA: {topic}\n\nACUSACAO DO WARLOCK:\n{warlock_output}\n\nDEFESA DA AMANDA:\n{amanda_output}"
+198:         
+199:         veredito = await self._call_openrouter(MODEL_JUDGE, shura_sys, shura_content)
+200:         
+201:         print(f"\n{Ouro}[VEREDITO SUPREMO DA MATRIX]:{Reset}\n{veredito}")
+202:         print(f"{Obsidian}============================================================{Reset}\n")
+203:         
+204:         return {
+205:             "warlock": warlock_output,
+206:             "amanda": amanda_output,
+207:             "shura": veredito
+208:         }
+209: 
+210: if __name__ == "__main__":
+211:     # Test runner
+212:     orchestrator = AwesomeBotsOrchestrator("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+213:     test_topic = "Substituir todas as APIs internas de microsserviços por chamadas síncronas HTTP REST para facilitar o debug."
+214:     
+215:     # Run async tribunal
+216:     asyncio.run(orchestrator.run_tribunal(test_topic))
+217: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T20:20:24Z
+Completed At: 2026-06-12T20:20:24Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 217
+Total Bytes: 9312
+Showing lines 84 to 217
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+84: class AwesomeBotsOrchestrator:
+85:     """Manages the parallel multi-agent debate (The Tribunal)."""
+86:     def __init__(self, workspace_root: str):
+87:         self.workspace_root = workspace_root
+88:         self.db_path = os.path.join(workspace_root, ".mecha", "ops", "config_db.json")
+89:         self.tracker = CostTracker(self.db_path)
+90:         self.api_key = self._load_api_key()
+91: 
+92:     def _load_api_key(self) -> str:
+93:         # 1. Check env vars
+94:         key = os.getenv("OPENROUTER_API_KEY")
+95:         if key:
+96:             return key
+97:             
+98:         # 2. Check ai-lab/ronin/.env
+99:         ronin_env = os.path.join(self.workspace_root, "ai-lab", "ronin", ".env")
+100:         if os.path.exists(ronin_env):
+101:             try:
+102:                 with open(ronin_env, "r", encoding="utf-8") as f:
+103:                     for line in f:
+104:                         if line.startswith("OPENROUTER_API_KEY="):
+105:                             return line.strip().split("=", 1)[1]
+106:             except Exception:
+107:                 pass
+108:         return "MOCK_KEY"
+109: 
+110:     async def _call_openrouter(self, model: str, system_prompt: str, user_content: str) -> str:
+111:         if self.api_key == "MOCK_KEY" or not self.api_key:
+112:             # Mock mode to prevent crashes if no key is active
+113:             await asyncio.sleep(1)
+114:             return f"[MOCK RESILIENTE]: Resposta segura simulada para o modelo {model}."
+115: 
+116:         if self.tracker.current_spend >=
+<truncated 3621 bytes>
+ic}")
+182:         
+183:         warlock_output, amanda_output = await asyncio.gather(warlock_task, amanda_task)
+184:         
+185:         print(f"\n{Roxo}[Warlock (Knot) - ACUSAÇÃO]:{Reset}\n{warlock_output}\n")
+186:         print(f"{Ciano}[Amanda (Shadow Processor) - DEFESA]:{Reset}\n{amanda_output}\n")
+187:         
+188:         # 3. Juízo Final (Shura 255)
+189:         print(f"{Carmesim}[O Arquiteto (Shura 255) - VEREDITO]:{Reset} Julgando caso...")
+190:         
+191:         shura_sys = (
+192:             "Você é O Arquiteto (Shura 255). Leia a Acusação do Warlock e a Defesa da Amanda. "
+193:             "Aprecie os prós e contras e dê o veredito final (Asura Strike) se a premissa procede, "
+194:             "se é redundante ou se deve ser abortada. Termine com uma resposta O(1) condensada e mística."
+195:         )
+196:         
+197:         shura_content = f"TEMA: {topic}\n\nACUSACAO DO WARLOCK:\n{warlock_output}\n\nDEFESA DA AMANDA:\n{amanda_output}"
+198:         
+199:         veredito = await self._call_openrouter(MODEL_JUDGE, shura_sys, shura_content)
+200:         
+201:         print(f"\n{Ouro}[VEREDITO SUPREMO DA MATRIX]:{Reset}\n{veredito}")
+202:         print(f"{Obsidian}============================================================{Reset}\n")
+203:         
+204:         return {
+205:             "warlock": warlock_output,
+206:             "amanda": amanda_output,
+207:             "shura": veredito
+208:         }
+209: 
+210: if __name__ == "__main__":
+211:     # Test runner
+212:     orchestrator = AwesomeBotsOrchestrator("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+213:     test_topic = "Substituir todas as APIs internas de microsserviços por chamadas síncronas HTTP REST para facilitar o debug."
+214:     
+215:     # Run async tribunal
+216:     asyncio.run(orchestrator.run_tribunal(test_topic))
+217: 
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T20:26:58Z
+Completed At: 2026-06-12T20:26:58Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/viral_enricher.py`
+Total Lines: 206
+Total Bytes: 9197
+Showing lines 1 to 206
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🧬 VIRAL ENRICHER - THE GOLDEN SEMANTIC PIPELINE
+3: # ==============================================================================
+4: # System Architecture: Bronze (Regex/500c) -> Prata (Tribunal) -> Ouro (SEO/MxConf)
+5: # ==============================================================================
+6: 
+7: import os
+8: import sys
+9: import re
+10: import json
+11: import asyncio
+12: from typing import Dict, Any, Optional
+13: 
+14: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+15: sys.stdout.reconfigure(encoding='utf-8')
+16: 
+17: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+18: Obsidian = "\033[38;5;234m"
+19: Ouro = "\033[38;5;220m"
+20: Carmesim = "\033[38;5;197m"
+21: Ciano = "\033[38;5;39m"
+22: Roxo = "\033[38;5;99m"
+23: Reset = "\033[0m"
+24: 
+25: try:
+26:     from antigravity_sdk.antigravity_conf import AntigravityConf
+27:     from antigravity_sdk.awesome_bots_orchestrator import AwesomeBotsOrchestrator
+28: except ImportError:
+29:     # Fallback if executing outside the src/antigravity_sdk folder
+30:     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+31:     from antigravity_conf import AntigravityConf
+32:     from awesome_bots_orchestrator import AwesomeBotsOrchestrator
+33: 
+34: class ViralEnricher:
+35:     """Manages the 3-layer semantic pipeline (Bronze, Prata, Ouro)."""
+36:     def __init__(self, workspace_root: str):
+37:         self.workspace_root = workspace_roo
+<truncated 6596 bytes>
+te_res:
+164:             print(f"{Carmesim}[!] Abortando esteira: Tribunal retornou erro.{Reset}")
+165:             return {"status": "failed", "reason": debate_res["error"]}
+166:             
+167:         # Inspect veredito for approval [1]
+168:         veredito = debate_res.get("shura", "")
+169:         if "[1]" not in veredito:
+170:             print(f"\n{Roxo}[Void L14]{Reset} Veredito Supremo foi de ABORTO [0]. Ouro Semântico cancelado.")
+171:             print(f"{Obsidian}============================================================{Reset}\n")
+172:             return {
+173:                 "status": "aborted",
+174:                 "bronze": sanitized,
+175:                 "prata": debate_res
+176:             }
+177:             
+178:         # 3. Camada Ouro
+179:         ouro_res = await self.run_ouro(sanitized, debate_res)
+180:         print(f"\n{Ouro}[✓] ENRIQUECIMENTO COMPLETO!{Reset}")
+181:         print(f"{Obsidian}============================================================{Reset}\n")
+182:         
+183:         return {
+184:             "status": "success",
+185:             "bronze": sanitized,
+186:             "prata": debate_res,
+187:             "ouro": ouro_res
+188:         }
+189: 
+190: if __name__ == "__main__":
+191:     # Inline test runner
+192:     enricher = ViralEnricher("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+193:     
+194:     # Test input containing both raw conversational noise and structured tags
+195:     test_input = (
+196:         "Olá, pessoal! Queria ver se a gente consegue aprovar esse setup do Kafka. "
+197:         "#{2} {REATOR_KAFKA_SINCRONIZADO} "
+198:         "- {Fator}:{Alta latência no barramento} "
+199:         "- {Mitigação}:{Thread Ghost Workers} "
+200:         "> {1} "
+201:         "[x] "
+202:         "Tenho certeza que isso vai resolver os problemas de processamento paralelo no backend. Abraço!"
+203:     )
+204:     
+205:     asyncio.run(enricher.enrich(test_input))
+206: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T20:29:20Z
+Completed At: 2026-06-12T20:29:20Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 263
+Total Bytes: 11804
+Showing lines 1 to 105
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🤖 AWESOME-BOTS MULTI-AGENT ORCHESTRATOR
+3: # ==============================================================================
+4: # System Architecture: Parallel Debate | OpenRouter Gateway | FinOps Cost Tracking
+5: # Roles: Warlock (Hermes/Acusação), Amanda (Defesa), Shura 255 (Juiz)
+6: # ==============================================================================
+7: 
+8: import os
+9: import sys
+10: import json
+11: import time
+12: import requests
+13: import asyncio
+14: from typing import Dict, Any, Optional
+15: 
+16: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+17: sys.stdout.reconfigure(encoding='utf-8')
+18: 
+19: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+20: Obsidian = "\033[38;5;234m"
+21: Ouro = "\033[38;5;220m"
+22: Carmesim = "\033[38;5;197m"
+23: Ciano = "\033[38;5;39m"
+24: Roxo = "\033[38;5;99m"
+25: Reset = "\033[0m"
+26: 
+27: # OpenRouter Models config
+28: MODEL_UNCENSORED = "meta-llama/llama-3.3-70b-instruct"
+29: MODEL_JUDGE = "meta-llama/llama-3.3-70b-instruct"
+30: 
+31: # Pricing rates per 1M tokens
+32: PRICING = {
+33:     MODEL_UNCENSORED: {"input": 0.59, "output": 0.79}
+34: }
+35: 
+36: class CostTracker:
+37:     """Tracks token consumption and dollar costs for FinOps compliance."""
+38:     def __init__(self, db_path: str, budget_limit: float = 20.0):
+39:         self.db_path = db_path
+40:         self.budget_limit = budget_limit
+41:         self.current_spend
+<truncated 921 bytes>
+ept Exception as e:
+66:             print(f"{Carmesim}[!] Erro ao salvar telemetria financeira: {e}{Reset}")
+67: 
+68:     def estimate_tokens(self, text: str) -> int:
+69:         """Simple O(1) token estimator (average 1 token = 4 characters)."""
+70:         return max(1, len(text) // 4)
+71: 
+72:     def register_call(self, model: str, prompt: str, response: str) -> float:
+73:         input_tokens = self.estimate_tokens(prompt)
+74:         output_tokens = self.estimate_tokens(response)
+75:         
+76:         rates = PRICING.get(model, {"input": 0.5, "output": 1.5})
+77:         cost = ((input_tokens * rates["input"]) + (output_tokens * rates["output"])) / 1_000_000.0
+78:         
+79:         self.current_spend += cost
+80:         self._save_spend()
+81:         return cost
+82: 
+83: 
+84: class AwesomeBotsOrchestrator:
+85:     """Manages the parallel multi-agent debate (The Tribunal)."""
+86:     def __init__(self, workspace_root: str):
+87:         self.workspace_root = workspace_root
+88:         self.db_path = os.path.join(workspace_root, ".mecha", "ops", "config_db.json")
+89:         self.tracker = CostTracker(self.db_path)
+90:         self.api_key = self._load_api_key()
+91: 
+92:         # Load local daemon to process Context7 (Chomsky Regex Grammar / 0x07)
+93:         try:
+94:             from antigravity_sdk.antigravity import AntigravityDaemon
+95:         except ImportError:
+96:             # Fallback if executing outside the src/antigravity_sdk folder
+97:             sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+98:             from antigravity import AntigravityDaemon
+99:         
+100:         self.daemon = AntigravityDaemon(chiplet_name="TRIBUNAL_INPUT_CLEANER")
+101: 
+102:     def _load_api_key(self) -> str:
+103:         # 1. Check env vars
+104:         key = os.getenv("OPENROUTER_API_KEY")
+105:         if key:
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-12T20:32:29Z
+Completed At: 2026-06-12T20:32:29Z
+File Path: `file:///C:/Users/huggs/.gemini/antigravity-ide/brain/b477358f-3924-41d3-bf13-52f0dd7ed088/walkthrough.md`
+Total Lines: 62
+Total Bytes: 3733
+Showing lines 1 to 62
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # Walkthrough: Configuração do Context7 & Tribunal dos Awesome-Bots
+2: 
+3: Concluímos a integração do **Context7 (Chomsky Regex Grammar / 0x07)** no orquestrador de debate paralelo **Awesome-Bots** e validamos seu comportamento.
+4: 
+5: ---
+6: 
+7: ## ⚙️ Mudanças Realizadas
+8: 
+9: ### [MODIFY] [awesome_bots_orchestrator.py](file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py)
+10: 1. **Instanciação do AntigravityDaemon**: Adicionamos o import seguro e a inicialização do daemon com o chiplet `TRIBUNAL_INPUT_CLEANER`.
+11: 2. **Filtro Context7 (Chomsky Regex)**: O tópico sob debate agora passa pelo método `drop_bullshit()`.
+12:    - Se o input contiver as chaves/tags estruturadas do Arquiteto (como `#{...}`, `-{...}:{...}`, `>{...}`, `[...]`), a esteira extrai **apenas** essas diretrizes, isolando e evaporando todo o ruído de conversação inicial e final.
+13:    - Se nenhuma chave estruturada for detectada, o sistema realiza um fallback seguro usando o payload original cru, emitindo o aviso de Dead Letter Void (`[X_DROP_SYNTAX]`).
+14: 3. **Knot Filter Budget**: O limite estrito de 500 caracteres da *0-Debits Policy* é aplicado diretamente sobre o texto sanitizado, reduzindo o desperdício de tokens de contexto nas APIs de Big Techs.
+15: 4. **Refinamento dos Prompts**:
+16:    - **Warlock (Knot - Acusação)**: Foca em auditar e desafiar os schemas TOML e chaves de configuração, atacando falhas com pragmatismo e terminologia própria (`Tartarus`, `Velvet R
+<truncated 443 bytes>
+## Cenário 1: Entrada Crua (Sem tags)
+25: * **Tópico**: `"Substituir todas as APIs internas de microsserviços por chamadas síncronas HTTP REST para facilitar o debug."`
+26: * **Comportamento**: O lexer detectou que não havia símbolos e executou o fallback:
+27:   ```
+28:   [X_DROP_SYNTAX] Frequência Vazia. Semântica ou Typo não indexável obliterado.
+29:   > TÓPICO SANITIZADO (Context7): Sem símbolos estruturados. Usando payload cru.
+30:   ```
+31: * **Resultado**: Warlock acusou a sincronicidade de REST de causar gargalos no barramento, Amanda defendeu as regras da arquitetura e o Shura deu o veredito **`[0]`** (Abortar).
+32: 
+33: ### Cenário 2: Entrada Estruturada (Com tags de configuração)
+34: * **Tópico**: 
+35:   ```
+36:   Cara, esse arquivo aqui eu tentei rodar e falhou de novo. 
+37:   #{2} {REATOR_KAFKA_SINCRONIZADO}
+38:   - {Fator}:{Alta latência no barramento}
+39:   - {Mitigação}:{Thread Ghost Workers}
+40:   > {1}
+41:   [x]
+42:   Ignora o resto da conversa inútil.
+43:   ```
+44: * **Comportamento**: O filtro regex **Context7** removeu as conversas e isolou perfeitamente apenas a matriz estruturada:
+45:   ```
+46:   > TÓPICO SANITIZADO (Context7):
+47:      #{2}
+48:      - {Fator}:{Alta latência no barramento}
+49:      - {Mitigação}:{Thread Ghost Workers}
+50:      > {1}
+51:      [x]
+52:   ```
+53: * **Resultado**:
+54:   - O Warlock atacou as threads "Ghost Workers" por não serem padrão de engenharia.
+55:   - A Amanda defendeu apresentando uma tabela Markdown baseada em `config_db.json`.
+56:   - O Shura 255 deu o veredito **`[1]`** (Aprovar), citando a eficiência da mitigação.
+57: 
+58: ---
+59: 
+60: > [!NOTE]
+61: > Com a higienização do **Context7 (0x07)** ativa no ponto de entrada do orquestrador, conseguimos uma redução de contexto descartando falatórios inúteis, economizando dinheiro no FinOps (`CostTracker`) e blindando os modelos das alucinações. O Ring 0 permanece em total resiliência!
+62: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-13T00:21:13Z
+Completed At: 2026-06-13T00:21:13Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 265
+Total Bytes: 11813
+Showing lines 150 to 220
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+150:                 
+151:             response = await loop.run_in_executor(None, make_request)
+152:             response.raise_for_status()
+153:             res_content = response.json()['choices'][0]['message']['content']
+154:             
+155:             # Record cost
+156:             cost = self.tracker.register_call(model, system_prompt + user_content, res_content)
+157:             print(f"{Obsidian}[AAA FINANCIALS] Call {model} Cost: ${cost:.6f} USD | Total: ${self.tracker.current_spend:.4f} USD{Reset}")
+158:             
+159:             return res_content
+160:         except Exception as e:
+161:             return f"[FALHA NA CONEXÃO P2P OPENROUTER]: {e}"
+162: 
+163:     async def run_tribunal(self, topic: str) -> Dict[str, str]:
+164:         """Runs the debate concurrently between Warlock and Amanda, then Shura judges."""
+165:         print(f"\n{Obsidian}============================================================{Reset}")
+166:         print(f"{Carmesim}      ⚖️ [ TRIBUNAL DOS AWESOME-BOTS - PROTOCOLO NIKA ] ⚖️{Reset}")
+167:         print(f"{Obsidian}============================================================{Reset}")
+168:         print(f"{Ouro}> TÓPICO EM JULGAMENTO: {topic}{Reset}\n")
+169:         
+170:         # 0. Context7 Chomsky Regex Grammar (0x07)
+171:         # Pass the input topic through the regex filter to strip conversational noise
+172:         clean_result = self.daemon.drop_bullshit(topic)
+173:         collapsed_matrix = clean_result.get("matrix", [])
+174:         
+175:         if co
+<truncated 1197 bytes>
+:         warlock_sys = (
+196:             "Você é o Warlock (Knot), um hacker anti-corporativo e pentester. "
+197:             "Seu papel é ACUSAÇÃO no Tribunal Hermes. Critique e audite a viabilidade e coerência das chaves "
+198:             "de configuração e dos schemas TOML fornecidos. Ataque de forma lógica, fria e direta. "
+199:             "Desafie as restrições, aponte riscos de segurança, vulnerabilidades de injeção ou falhas lógicas. "
+200:             "Seja pragmático, direto e use a gíria mística (como 'Tartarus', 'Velvet Room'). Sem preâmbulos corporativos."
+201:         )
+202:         
+203:         amanda_sys = (
+204:             "Você é a Shadow Processor (Amanda). Seu papel é DEFESA no Tribunal Hermes. "
+205:             "Defenda a conformidade dos schemas TOML, garantindo código e padrões extremamente limpos e organizados. "
+206:             "Mostre como as chaves de configuração e os dados são higienizados na persistência local "
+207:             "(config_db.json / Cold Storage). Use tabelas ou marcadores claros focando na utilidade real, "
+208:             "rebata os ataques do Warlock com lógica de conformidade firme e use termos de Genshin/Honkai "
+209:             "(como 'Irminsul', 'Terminal Akasha')."
+210:         )
+211:         
+212:         # Launch concurrently
+213:         warlock_task = self._call_openrouter(MODEL_UNCENSORED, warlock_sys, sanitized_topic)
+214:         amanda_task = self._call_openrouter(MODEL_UNCENSORED, amanda_sys, f"TEMA: {sanitized_topic}")
+215:         
+216:         warlock_output, amanda_output = await asyncio.gather(warlock_task, amanda_task)
+217:         
+218:         print(f"\n{Roxo}[Warlock (Knot) - ACUSAÇÃO]:{Reset}\n{warlock_output}\n")
+219:         print(f"{Ciano}[Amanda (Shadow Processor) - DEFESA]:{Reset}\n{amanda_output}\n")
+220:         
+The above content does NOT show the entire file contents. If you need to view any lines of the file which were not shown to complete your task, call this tool again to view those lines.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+The USER performed the following action:
+Show the contents of file c:\Users\huggs\OneDrive\Documentos\workspace\ORCHESTRATOR_CORE\src\antigravity_sdk\awesome_bots_orchestrator.py from lines 97 to 113
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 264
+Total Bytes: 11804
+Showing lines 97 to 113
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+97:         try:
+98:             from antigravity import AntigravityDaemon
+99:         except ImportError:
+100:             from antigravity_sdk.antigravity import AntigravityDaemon
+101:         
+102:         self.daemon = AntigravityDaemon(chiplet_name="TRIBUNAL_INPUT_CLEANER")
+103: 
+104:     def _load_api_key(self) -> str:
+105:         # 1. Check env vars
+106:         key = os.getenv("OPENROUTER_API_KEY")
+107:         if key:
+108:             return key
+109:             
+110:         # 2. Check ai-lab/ronin/.env
+111:         ronin_env = os.path.join(self.workspace_root, "ai-lab", "ronin", ".env")
+112:         if os.path.exists(ronin_env):
+113:             try:
+
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b477358f-3924-41d3-bf13-52f0dd7ed088 ===
+Created At: 2026-06-13T00:29:13Z
+Completed At: 2026-06-13T00:29:13Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 264
+Total Bytes: 11804
+Showing lines 1 to 264
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🤖 AWESOME-BOTS MULTI-AGENT ORCHESTRATOR
+3: # ==============================================================================
+4: # System Architecture: Parallel Debate | OpenRouter Gateway | FinOps Cost Tracking
+5: # Roles: Warlock (Hermes/Acusação), Amanda (Defesa), Shura 255 (Juiz)
+6: # ==============================================================================
+7: 
+8: import os
+9: import sys
+10: import json
+11: import time
+12: import requests
+13: import asyncio
+14: from typing import Dict, Any, Optional
+15: 
+16: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+17: sys.stdout.reconfigure(encoding='utf-8')
+18: 
+19: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+20: Obsidian = "\033[38;5;234m"
+21: Ouro = "\033[38;5;220m"
+22: Carmesim = "\033[38;5;197m"
+23: Ciano = "\033[38;5;39m"
+24: Roxo = "\033[38;5;99m"
+25: Reset = "\033[0m"
+26: 
+27: # OpenRouter Models config
+28: MODEL_UNCENSORED = "meta-llama/llama-3.3-70b-instruct"
+29: MODEL_JUDGE = "meta-llama/llama-3.3-70b-instruct"
+30: 
+31: # Pricing rates per 1M tokens
+32: PRICING = {
+33:     MODEL_UNCENSORED: {"input": 0.59, "output": 0.79}
+34: }
+35: 
+36: class CostTracker:
+37:     """Tracks token consumption and dollar costs for FinOps compliance."""
+38:     def __init__(self, db_path: str, budget_limit: float = 20.0):
+39:         self.db_path = db_path
+40:         self.budget_limit = budget_limit
+41:         self.current_spend
+<truncated 9505 bytes>
+ead Software Architect). Seu papel é emitir o veredito final do debate. "
+225:             "Analise os argumentos do SECURITY_AUDITOR e da COMPLIANCE_REVIEWER. Decida se a premissa/configuração "
+226:             "procede, se é redundante ou se deve ser abortada. "
+227:             "Termine sua resposta de forma direta e concisa usando a sintaxe '[1]' para Aprovar ou '[0]' para Abortar, "
+228:             "seguido de uma explicação técnica clara e enxuta."
+229:         )
+230:         
+231:         shura_content = f"TEMA: {sanitized_topic}\n\nACUSACAO DO SECURITY_AUDITOR:\n{warlock_output}\n\nDEFESA DA COMPLIANCE_REVIEWER:\n{amanda_output}"
+232:         
+233:         veredito = await self._call_openrouter(MODEL_JUDGE, shura_sys, shura_content)
+234:         
+235:         print(f"\n{Ouro}[VEREDITO SUPREMO]:{Reset}\n{veredito}")
+236:         print(f"{Obsidian}============================================================{Reset}\n")
+237:         
+238:         return {
+239:             "warlock": warlock_output,
+240:             "amanda": amanda_output,
+241:             "shura": veredito
+242:         }
+243: 
+244: if __name__ == "__main__":
+245:     # Test runner
+246:     orchestrator = AwesomeBotsOrchestrator("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+247:     
+248:     if len(sys.argv) > 1:
+249:         test_topic = " ".join(sys.argv[1:])
+250:     else:
+251:         # Test with structured tokens (Context7 / Chomsky Lexer)
+252:         test_topic = (
+253:             "Cara, esse arquivo aqui eu tentei rodar e falhou de novo. "
+254:             "#{2} {REATOR_KAFKA_SINCRONIZADO}\n"
+255:             "- {Fator}:{Alta latência no barramento}\n"
+256:             "- {Mitigação}:{Thread Ghost Workers}\n"
+257:             "> {1}\n"
+258:             "[x]\n"
+259:             "Ignora o resto da conversa inútil."
+260:         )
+261:     
+262:     # Run async tribunal
+263:     asyncio.run(orchestrator.run_tribunal(test_topic))
+264: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: b7a19470-edf2-4ac4-b584-8d0b5a0ee00a ===
+Created At: 2026-06-15T11:19:14Z
+Completed At: 2026-06-15T11:19:14Z
+File Path: `file:///c:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/viral_enricher.py`
+Total Lines: 212
+Total Bytes: 9407
+Showing lines 1 to 212
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🧬 VIRAL ENRICHER - THE GOLDEN SEMANTIC PIPELINE
+3: # ==============================================================================
+4: # System Architecture: Bronze (Regex/500c) -> Prata (Tribunal) -> Ouro (SEO/MxConf)
+5: # ==============================================================================
+6: 
+7: import os
+8: import sys
+9: import re
+10: import json
+11: import asyncio
+12: # pyrefly: ignore [import-error, missing-import]
+13: import pyrefly
+14: from typing import Dict, Any, Optional
+15: 
+16: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+17: sys.stdout.reconfigure(encoding='utf-8')
+18: 
+19: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+20: Obsidian = "\033[38;5;234m"
+21: Ouro = "\033[38;5;220m"
+22: Carmesim = "\033[38;5;197m"
+23: Ciano = "\033[38;5;39m"
+24: Roxo = "\033[38;5;99m"
+25: Reset = "\033[0m"
+26: 
+27: try:
+28:     from antigravity_sdk.antigravity_conf import AntigravityConf
+29:     from antigravity_sdk.awesome_bots_orchestrator import AwesomeBotsOrchestrator, MODEL_JUDGE
+30: except ImportError:
+31:     # Fallback if executing outside the src/antigravity_sdk folder
+32:     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+33:     # pyrefly: ignore [missing-import]
+34:     from antigravity_conf import AntigravityConf
+35:     # pyrefly: ignore [missing-import]
+36:     from awesome_bots_orchestrator import AwesomeBotsOrchestrator, MODEL_JUDGE
+37: 
+38: class Vi
+<truncated 6836 bytes>
+failed", "reason": debate_res["error"]}
+169:             
+170:         # Inspect veredito for approval [1]
+171:         veredito = debate_res.get("shura", "")
+172:         if "[1]" not in veredito:
+173:             print(f"\n{Roxo}[Void L14]{Reset} Veredito Supremo foi de ABORTO [0]. Ouro Semântico cancelado.")
+174:             print(f"{Obsidian}============================================================{Reset}\n")
+175:             return {
+176:                 "status": "aborted",
+177:                 "bronze": sanitized,
+178:                 "prata": debate_res
+179:             }
+180:             
+181:         # 3. Camada Ouro
+182:         ouro_res = await self.run_ouro(sanitized, debate_res)
+183:         print(f"\n{Ouro}[✓] ENRIQUECIMENTO COMPLETO!{Reset}")
+184:         print(f"{Obsidian}============================================================{Reset}\n")
+185:         
+186:         return {
+187:             "status": "success",
+188:             "bronze": sanitized,
+189:             "prata": debate_res,
+190:             "ouro": ouro_res
+191:         }
+192: 
+193: if __name__ == "__main__":
+194:     # Inline test runner
+195:     enricher = ViralEnricher("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+196:     
+197:     if len(sys.argv) > 1:
+198:         test_input = " ".join(sys.argv[1:])
+199:     else:
+200:         # Test input containing both raw conversational noise and structured tags
+201:         test_input = (
+202:             "Olá, pessoal! Queria ver se a gente consegue aprovar esse setup do Kafka. "
+203:             "#{2} {REATOR_KAFKA_SINCRONIZADO} "
+204:             "- {Fator}:{Alta latência no barramento} "
+205:             "- {Mitigação}:{Thread Ghost Workers} "
+206:             "> {1} "
+207:             "[x] "
+208:             "Tenho certeza que isso vai resolver os problemas de processamento paralelo no backend. Abraço!"
+209:         )
+210:     
+211:     asyncio.run(enricher.enrich(test_input))
+212: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================
+=== FOUND CODE IN CONVERSATION: c89c6046-1d17-4797-a6e4-5e47572a7b6d ===
+Created At: 2026-06-18T01:48:35Z
+Completed At: 2026-06-18T01:48:35Z
+File Path: `file:///C:/Users/huggs/OneDrive/Documentos/workspace/ORCHESTRATOR_CORE/src/antigravity_sdk/awesome_bots_orchestrator.py`
+Total Lines: 264
+Total Bytes: 11804
+Showing lines 1 to 264
+The following code has been modified to include a line number before every line, in the format: <line_number>: <original_line>. Please note that any changes targeting the original code should remove the line number, colon, and leading space.
+1: # ==============================================================================
+2: # 🤖 AWESOME-BOTS MULTI-AGENT ORCHESTRATOR
+3: # ==============================================================================
+4: # System Architecture: Parallel Debate | OpenRouter Gateway | FinOps Cost Tracking
+5: # Roles: Warlock (Hermes/Acusação), Amanda (Defesa), Shura 255 (Juiz)
+6: # ==============================================================================
+7: 
+8: import os
+9: import sys
+10: import json
+11: import time
+12: import requests
+13: import asyncio
+14: from typing import Dict, Any, Optional
+15: 
+16: # Enforce UTF-8 encoding output for Windows terminals (Bug CP1252 bypass)
+17: sys.stdout.reconfigure(encoding='utf-8')
+18: 
+19: # ANSI colors matching the Soul palettes of Anubis (SKILL_SANTUARIO_ANUBIS.md)
+20: Obsidian = "\033[38;5;234m"
+21: Ouro = "\033[38;5;220m"
+22: Carmesim = "\033[38;5;197m"
+23: Ciano = "\033[38;5;39m"
+24: Roxo = "\033[38;5;99m"
+25: Reset = "\033[0m"
+26: 
+27: # OpenRouter Models config
+28: MODEL_UNCENSORED = "meta-llama/llama-3.3-70b-instruct"
+29: MODEL_JUDGE = "meta-llama/llama-3.3-70b-instruct"
+30: 
+31: # Pricing rates per 1M tokens
+32: PRICING = {
+33:     MODEL_UNCENSORED: {"input": 0.59, "output": 0.79}
+34: }
+35: 
+36: class CostTracker:
+37:     """Tracks token consumption and dollar costs for FinOps compliance."""
+38:     def __init__(self, db_path: str, budget_limit: float = 20.0):
+39:         self.db_path = db_path
+40:         self.budget_limit = budget_limit
+41:         self.current_spend
+<truncated 9505 bytes>
+ead Software Architect). Seu papel é emitir o veredito final do debate. "
+225:             "Analise os argumentos do SECURITY_AUDITOR e da COMPLIANCE_REVIEWER. Decida se a premissa/configuração "
+226:             "procede, se é redundante ou se deve ser abortada. "
+227:             "Termine sua resposta de forma direta e concisa usando a sintaxe '[1]' para Aprovar ou '[0]' para Abortar, "
+228:             "seguido de uma explicação técnica clara e enxuta."
+229:         )
+230:         
+231:         shura_content = f"TEMA: {sanitized_topic}\n\nACUSACAO DO SECURITY_AUDITOR:\n{warlock_output}\n\nDEFESA DA COMPLIANCE_REVIEWER:\n{amanda_output}"
+232:         
+233:         veredito = await self._call_openrouter(MODEL_JUDGE, shura_sys, shura_content)
+234:         
+235:         print(f"\n{Ouro}[VEREDITO SUPREMO]:{Reset}\n{veredito}")
+236:         print(f"{Obsidian}============================================================{Reset}\n")
+237:         
+238:         return {
+239:             "warlock": warlock_output,
+240:             "amanda": amanda_output,
+241:             "shura": veredito
+242:         }
+243: 
+244: if __name__ == "__main__":
+245:     # Test runner
+246:     orchestrator = AwesomeBotsOrchestrator("c:\\Users\\huggs\\OneDrive\\Documentos\\workspace")
+247:     
+248:     if len(sys.argv) > 1:
+249:         test_topic = " ".join(sys.argv[1:])
+250:     else:
+251:         # Test with structured tokens (Context7 / Chomsky Lexer)
+252:         test_topic = (
+253:             "Cara, esse arquivo aqui eu tentei rodar e falhou de novo. "
+254:             "#{2} {REATOR_KAFKA_SINCRONIZADO}\n"
+255:             "- {Fator}:{Alta latência no barramento}\n"
+256:             "- {Mitigação}:{Thread Ghost Workers}\n"
+257:             "> {1}\n"
+258:             "[x]\n"
+259:             "Ignora o resto da conversa inútil."
+260:         )
+261:     
+262:     # Run async tribunal
+263:     asyncio.run(orchestrator.run_tribunal(test_topic))
+264: 
+The above content shows the entire, complete file contents of the requested file.
+
+==================================================

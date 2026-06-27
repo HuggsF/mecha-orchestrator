@@ -1,0 +1,99 @@
+{
+  "version": "1.0",
+  "adr": "ADR-001",
+  "owner": "Shura 255",
+  "enforcement": "code",
+  "description": "Regras RIGIDAS de orquestracao e governanca de handoff. Fonte legivel: docs/decisions/ADR-001-shura-orquestrador-mestre.md. Aplicadas em cross_squad_router.py e shura_daemon.py.",
+  "rules": [
+    {
+      "id": "ORCH-01",
+      "title": "Shura e o unico orquestrador",
+      "statement": "Todo handoff entre times passa por Shura.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-02",
+      "title": "Handoff exige debate aprovado",
+      "statement": "Task nao passa entre times sem gate de validacao com veredito 1.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-03",
+      "title": "Veredito 0 bloqueia",
+      "statement": "Veredito 0 retorna a task ao time de origem.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-04",
+      "title": "Dominio correto",
+      "statement": "Nenhum time recebe task fora do seu dominio.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": ["cross-domain via shura explicito"]
+    },
+    {
+      "id": "ORCH-05",
+      "title": "Monitoramento ativo",
+      "statement": "Shura assina o AgentBus durante toda a execucao.",
+      "enforced_at": "shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "halt",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-06",
+      "title": "Gate de build e testes",
+      "statement": "Build e testes devem passar antes da entrega final.",
+      "enforced_at": "shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": ["hotfix com flag --force registrada no relatorio"]
+    },
+    {
+      "id": "ORCH-07",
+      "title": "Resposta agregada",
+      "statement": "A resposta final e sempre a consolidacao do Shura.",
+      "enforced_at": "shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-08",
+      "title": "Relatorio de consolidacao",
+      "statement": "Toda execucao gera relatorio nos 5 dominios: codigo, arquitetura, engenharia, testes, produto.",
+      "enforced_at": "shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "warn",
+      "exceptions": []
+    },
+    {
+      "id": "ORCH-09",
+      "title": "Event-driven",
+      "statement": "Orquestracao roda como daemon event-driven, nao one-shot.",
+      "enforced_at": "shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "warn",
+      "exceptions": ["modo CI/teste pode rodar one-shot"]
+    },
+    {
+      "id": "ORCH-10",
+      "title": "Aplicacao em codigo",
+      "statement": "Regras sao aplicadas em codigo, nao apenas no prompt.",
+      "enforced_at": "cross_squad_router.py + shura_daemon.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": []
+    }
+  ]
+}

@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MECHA SDK — Navigation, Telemetry & Resilience (Fase 7)</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #07090c;
+            --container-bg: rgba(16, 20, 27, 0.75);
+            --primary-color: #ffb000;
+            --accent-color: #4fc3f7;
+            --accent-green: #00e676;
+            --accent-red: #ff1744;
+            --accent-violet: #b388ff;
+            --border-color: rgba(26, 34, 48, 0.8);
+            --text-color: #e2e8f0;
+            --text-muted: #94a3b8;
+            --mono: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        /* subtle scanline overlay */
+        body::after {
+            content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9999;
+            background: repeating-linear-gradient(0deg, rgba(255,255,255,.012) 0 1px, transparent 1px 3px);
+            mix-blend-mode: overlay;
+        }
+
+        header {
+            padding: 14px 28px;
+            background: linear-gradient(180deg, rgba(16, 20, 27, 0.95) 0%, rgba(7, 9, 12, 0.8) 100%);
+            border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center; gap: 18px; z-index: 10;
+        }
+        header h1 {
+            font-family: 'Outfit', sans-serif; font-size: 20px; font-weight: 800;
+            color: var(--primary-color); text-shadow: 0 0 15px rgba(255, 176, 0, 0.2);
+            display: flex; align-items: center; gap: 10px; white-space: nowrap;
+        }
+        header h1 span { color: var(--text-color); font-weight: 300; }
+
+        /* Phase-7 indicator chips */
+        .phase7 { display: flex; gap: 10px; margin-left: auto; }
+        .chip {
+            display: flex; align-items: center; gap: 9px; padding: 7px 13px; border-radius: 10px;
+            border: 1px solid var(--border-color); background: rgba(7,9,12,.6);
+            font-size: 11px; transition: all .25s ease;
+        }
+        .chip .chip-ico { font-size: 14px; line-height: 1; }
+        .chip .chip-txt { display: flex; flex-direction: column; line-height: 1.25; }
+        .chip .chip-name { font-weight: 700; letter-spacing: .04em; }
+        .chip .chip-state { font-family: var(--mono); font-size: 9.5px; color: var(--text-muted); }
+        .chip.on-cyan   { border-color: rgba(79,195,247,.5);  box-shadow: 0 0 14px rgba(79,195,247,.12); }
+        .chip.on-cyan   .chip-name { color: var(--accent-color); }
+        .chip.on-green  { border-color: rgba(0,230,118,.5);   box-shadow: 0 0 14px rgba(0,230,118,.12); }
+        .chip.on-green  .chip-name { color: var(--accent-green); }
+        .chip.on-amber  { border-color: rgba(255,176,0,.5);   box-shadow: 0 0 14px rgba(255,176,0,.12); }
+        .chip.on-amber  .chip-name { color: var(--primary-color); }
+        .chip.on-red    { border-color: rgba(255,23,68,.7);   box-shadow: 0 0 18px rgba(255,23,68,.25); animation: chipAlert .9s infinite; }
+        .chip.on-red    .chip-name { color: var(--accent-red); }
+        @keyframes chipAlert { 0%,100%{ box-shadow:0 0 6px rgba(255,23,68,.2);} 50%{ box-shadow:0 0 22px rgba(255,23,68,.45);} }
+
+        .status-badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; white-space: nowrap; }
+        .status-badge.running { background-color: rgba(0, 230, 118, 0.15); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.3); }
+        .status-badge.paused { background-color: rgba(255, 176, 0, 0.15); color: var(--primary-color); border: 1px solid rgba(255, 176, 0, 0.3); }
+        .status-badge.stopped, .status-badge.error, .status-badge.finished, .status-badge.done, .status-badge.offline { background-color: rgba(255, 23, 68, 0.15); color: var(--accent-red); border: 1px solid rgba(255, 23, 68, 0.3); }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; animation: pulse 1.8s infinite; }
+        .status-badge.running .status-dot { background-color: var(--accent-green); box-shadow: 0 0 10px var(--accent-green); }
+        .status-badge.paused .status-dot { background-color: var(--primary-color); box-shadow: 0 0 10px var(--primary-color); }
+        .status-badge.stopped .status-dot, .status-badge.error .status-dot, .status-badge.finished .status-dot, .status-badge.done .status-dot, .status-badge.offline .status-dot { background-color: var(--accent-red); box-shadow: 0 0 10px var(--accent-red); }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.6; } 50% { transform: scale(1.15); opacity: 1; } 100% { transform: scale(0.9); opacity: 0.6; } }
+
+        main { flex: 1; display: grid; grid-template-columns: 372px 1fr 360px; padding: 20px; gap: 20px; height: calc(100vh - 60px); overflow: hidden; }
+
+        .panel { background: var(--container-bg); border: 1px solid var(--border-color); border-radius: 16px; backdrop-filter: blur(12px); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
+        .sidebar { padding: 18px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; max-height: 100%; }
+        .sidebar::-webkit-scrollbar, .logfeed::-webkit-scrollbar { width: 6px; }
+        .sidebar::-webkit-scrollbar-thumb, .logfeed::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 3px; }
+        .sidebar::-webkit-scrollbar-thumb:hover, .logfeed::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+
+        h2 { font-family: 'Outfit', sans-serif; font-size: 15px; color: var(--accent-color); border-bottom: 1px solid var(--border-color); padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .sidebar-section { display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.2px; color: var(--text-muted); font-weight: 600; }
+        .sidebar-value { font-size: 13px; font-family: var(--mono); background-color: rgba(7, 9, 12, 0.6); padding: 8px 12px; border-radius: 8px; border: 1px solid rgba(26, 34, 48, 0.6); word-break: break-all; }
+
+        .live-view-container { width: 100%; height: 176px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); position: relative; background-color: #000; display: flex; justify-content: center; align-items: center; }
+        .live-view-img { max-width: 100%; max-height: 100%; object-fit: contain; transition: transform 0.3s ease; }
+        .live-view-img:hover { transform: scale(1.08); }
+        .live-indicator { position: absolute; top: 10px; left: 10px; background: rgba(0, 0, 0, 0.7); border: 1px solid var(--accent-red); color: var(--accent-red); font-size: 9px; font-weight: bold; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; display: flex; align-items: center; gap: 4px; }
+        .live-indicator-dot { width: 6px; height: 6px; background-color: var(--accent-red); border-radius: 50%; animation: pulse 1s infinite; }
+        .vision-tag { position: absolute; top: 10px; right: 10px; background: rgba(0,0,0,.7); border: 1px solid var(--accent-color); color: var(--accent-color); font-size: 9px; font-weight: 700; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; display: none; align-items: center; gap: 5px; }
+        .vision-tag.show { display: flex; }
+        .vision-tag .vt-dot { width: 6px; height: 6px; background: var(--accent-color); border-radius: 50%; animation: pulse 1s infinite; }
+
+        .control-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn { padding: 10px 14px; border-radius: 8px; font-weight: 700; font-size: 12px; cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; border: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-family: inherit; }
+        .btn-primary { background: linear-gradient(135deg, var(--primary-color) 0%, #e69e00 100%); color: #07090c; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(255, 176, 0, 0.4); }
+        .btn-success { background: rgba(0, 230, 118, 0.2); color: var(--accent-green); border: 1px solid rgba(0, 230, 118, 0.4); }
+        .btn-success:hover { background: var(--accent-green); color: #07090c; transform: translateY(-2px); }
+        .btn-warning { background: rgba(255, 176, 0, 0.2); color: var(--primary-color); border: 1px solid rgba(255, 176, 0, 0.4); }
+        .btn-warning:hover { background: var(--primary-color); color: #07090c; transform: translateY(-2px); }
+        .btn-danger { background: rgba(255, 23, 68, 0.2); color: var(--accent-red); border: 1px solid rgba(255, 23, 68, 0.4); }
+        .btn-danger:hover { background: var(--accent-red); color: #fff; transform: translateY(-2px); animation: shake 0.3s; }
+        @keyframes shake { 0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+        .btn-full { grid-column: span 2; }
+
+        .input-group { display: flex; gap: 8px; }
+        .input-group input { flex: 1; background-color: rgba(7, 9, 12, 0.8); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px 12px; color: #fff; font-size: 12px; font-family: var(--mono); transition: border-color 0.2s; }
+        .input-group input:focus { outline: none; border-color: var(--accent-color); }
+        .input-coords { display: flex; gap: 8px; }
+        .input-coords input { width: 80px; }
+
+        .map-canvas-container { position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; height: 100%; }
+        #connections-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .nodes-layer { position: relative; width: 100%; height: 100%; z-index: 2; }
+        .map-node { position: absolute; background: rgba(26, 34, 48, 0.95); border: 1px solid var(--accent-color); box-shadow: 0 0 15px rgba(79, 195, 247, 0.15); border-radius: 12px; padding: 14px; width: 200px; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .map-node:hover { transform: translateY(-4px); border-color: var(--primary-color); box-shadow: 0 0 20px rgba(255, 176, 0, 0.3); }
+        .map-node.active-window { border-color: var(--accent-green); box-shadow: 0 0 20px rgba(0, 230, 118, 0.4); animation: borderGlow 2s infinite alternate; }
+        @keyframes borderGlow { 0% { border-color: rgba(0, 230, 118, 0.5); } 100% { border-color: rgba(0, 230, 118, 1); } }
+        .map-node h3 { font-family: 'Outfit', sans-serif; font-size: 12px; color: #fff; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .map-node-meta { font-size: 10px; color: var(--text-muted); display: flex; flex-direction: column; gap: 4px; }
+        .map-node-badge { background-color: rgba(255, 176, 0, 0.1); color: var(--primary-color); border: 1px solid rgba(255, 176, 0, 0.2); padding: 2px 6px; border-radius: 4px; font-size: 9px; font-weight: 600; width: fit-content; }
+        .map-watermark { position: absolute; bottom: 14px; right: 18px; font-family: var(--mono); font-size: 10px; color: var(--text-muted); opacity: .5; z-index: 3; letter-spacing: .1em; }
+
+        .response-message { font-size: 11px; padding: 6px; border-radius: 6px; margin-top: 4px; display: none; animation: fadeIn 0.3s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Right rail: firewall alert + event log */
+        .rail { padding: 18px; display: flex; flex-direction: column; gap: 14px; max-height: 100%; overflow: hidden; }
+        .fw-alert { display: none; border: 1px solid rgba(255,23,68,.6); background: rgba(255,23,68,.12); border-radius: 12px; padding: 14px; animation: chipAlert 1.1s infinite; }
+        .fw-alert.show { display: block; }
+        .fw-alert .fw-title { color: var(--accent-red); font-weight: 800; font-family: 'Outfit',sans-serif; font-size: 13px; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+        .fw-alert .fw-body { font-size: 12px; color: var(--text-color); line-height: 1.45; margin-bottom: 10px; }
+        .fw-alert .fw-body b { color: var(--primary-color); font-family: var(--mono); }
+        .fw-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+        .logfeed { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 6px; padding-right: 4px; }
+        .log-row { font-family: var(--mono); font-size: 11px; line-height: 1.45; padding: 7px 10px; background: rgba(7,9,12,.55); border-left: 2px solid var(--text-muted); border-radius: 0 6px 6px 0; animation: fadeIn .25s; }
+        .log-row .lt { color: var(--text-muted); }
+        .log-row .lv { font-weight: 700; }
+        .log-row.info   { border-left-color: var(--accent-color); }
+        .log-row.info   .lv { color: var(--accent-color); }
+        .log-row.ok     { border-left-color: var(--accent-green); }
+        .log-row.ok     .lv { color: var(--accent-green); }
+        .log-row.warn   { border-left-color: var(--primary-color); }
+        .log-row.warn   .lv { color: var(--primary-color); }
+        .log-row.danger { border-left-color: var(--accent-red); }
+        .log-row.danger .lv { color: var(--accent-red); }
+        .log-row.vision { border-left-color: var(--accent-violet); }
+        .log-row.vision .lv { color: var(--accent-violet); }
+        .log-msg { color: var(--text-color); }
+        .rail-head { display: flex; align-items: center; justify-content: space-between; }
+        .rail-head .clear { font-size: 10px; color: var(--text-muted); cursor: pointer; border: 1px solid var(--border-color); border-radius: 6px; padding: 3px 8px; }
+        .rail-head .clear:hover { color: var(--accent-red); border-color: var(--accent-red); }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🤖 MECHA <span>// Telemetry &amp; Resilience · Fase 7</span></h1>
+
+        <div class="phase7">
+            <div class="chip" id="chip-vision"><span class="chip-ico">👁️</span><span class="chip-txt"><span class="chip-name">VISÃO</span><span class="chip-state" id="chip-vision-state">offline</span></span></div>
+            <div class="chip" id="chip-firewall"><span class="chip-ico">🛡️</span><span class="chip-txt"><span class="chip-name">FIREWALL</span><span class="chip-state" id="chip-firewall-state">offline</span></span></div>
+            <div class="chip" id="chip-recovery"><span class="chip-ico">➰</span><span class="chip-txt"><span class="chip-name">RECUPERAÇÃO</span><span class="chip-state" id="chip-recovery-state">offline</span></span></div>
+        </div>
+
+        <div class="status-badge offline" id="global-status-badge">
+            <div class="status-dot"></div>
+            <span id="global-status-text">CLAW OFFLINE</span>
+        </div>
+    </header>
+
+    <main>
+        <!-- ░░ LEFT SIDEBAR ░░ -->
+        <div class="panel sidebar">
+            <h2>Métricas &amp; Telemetria</h2>
+            <div class="sidebar-section"><span class="sidebar-label">Estado de Exploração</span><span class="sidebar-value" id="stat-nodes">Aguardando dados...</span></div>
+            <div class="sidebar-section"><span class="sidebar-label">Total de Conexões</span><span class="sidebar-value" id="stat-edges">Aguardando dados...</span></div>
+            <div class="sidebar-section"><span class="sidebar-label">Meta Ativa (IA)</span><span class="sidebar-value" id="stat-goal" style="color: var(--primary-color);">Nenhuma meta ativa</span></div>
+            <div class="sidebar-section"><span class="sidebar-label">Janela em Foco</span><span class="sidebar-value" id="stat-seen-title">Nenhuma janela focada</span></div>
+
+            <h2>Live Frame Capture</h2>
+            <div class="live-view-container">
+                <div class="live-indicator"><div class="live-indicator-dot"></div>Live Frame</div>
+                <div class="vision-tag" id="vision-tag"><div class="vt-dot"></div>GEMINI</div>
+                <img class="live-view-img" id="live-thumbnail" src="" alt="Live frame capture" onerror="this.style.display='none'; document.getElementById('no-img-text').style.display='block';">
+                <div id="no-img-text" style="color: var(--text-muted); font-size: 11px; text-align: center;">Nenhuma captura de tela disponível.</div>
+            </div>
+
+            <h2>Controles de Preempção</h2>
+            <div class="control-grid">
+                <button class="btn btn-success" onclick="sendPreempt('resume')">▶️ Retomar</button>
+                <button class="btn btn-warning" onclick="sendPreempt('pause')">⏸️ Pausar</button>
+                <button class="btn btn-danger btn-full" onclick="sendPreempt('stop')">🛑 PARADA DE EMERGÊNCIA</button>
+            </div>
+
+            <h2>Comandos Remotos</h2>
+            <div class="sidebar-section"><span class="sidebar-label">Definir Nova Meta (IA)</span>
+                <div class="input-group"><input type="text" id="input-goal" placeholder="Ex: Clicar em Dashboard"><button class="btn btn-primary" onclick="submitGoal()">Enviar</button></div>
+            </div>
+            <div class="sidebar-section"><span class="sidebar-label">Digitação Remota</span>
+                <div class="input-group"><input type="text" id="input-type" placeholder="Texto para digitação..."><button class="btn btn-primary" onclick="submitType()">Digitar</button></div>
+            </div>
+            <div class="sidebar-section"><span class="sidebar-label">Clique Coordenado</span>
+                <div class="input-group"><div class="input-coords"><input type="number" id="input-click-x" placeholder="X"><input type="number" id="input-click-y" placeholder="Y"></div><button class="btn btn-primary" onclick="submitClick()">Clicar</button></div>
+            </div>
+            <div class="response-message" id="response-msg"></div>
+
+            <div class="sidebar-section"><span class="sidebar-label">Feed OCR (Último Texto)</span>
+                <span class="sidebar-value" id="stat-ocr" style="font-size: 11px; max-height: 110px; overflow-y: auto; white-space: pre-wrap;">Aguardando ação...</span>
+            </div>
+            <div class="control-grid" style="margin-top: 6px;"><button class="btn btn-primary btn-full" onclick="loadRealGraph()">Forçar Recarga do Grafo</button></div>
+        </div>
+
+        <!-- ░░ CENTER MAP ░░ -->
+        <div class="panel map-canvas-container">
+            <svg id="connections-svg">
+                <defs><marker id="arrow" viewBox="0 0 10 10" refX="28" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ffb000"/></marker></defs>
+            </svg>
+            <div class="nodes-layer" id="nodes-container"></div>
+            <div class="map-watermark">NAVIGATION GRAPH</div>
+        </div>
+
+        <!-- ░░ RIGHT RAIL: FIREWALL + EVENT LOG ░░ -->
+        <div class="panel rail">
+            <div class="fw-alert" id="fw-alert">
+                <div class="fw-title">🛡️ FIREWALL COGNITIVO — AÇÃO BLOQUEADA</div>
+                <div class="fw-body" id="fw-body">Ação classificada como perigosa.</div>
+                <div class="fw-actions">
+                    <button class="btn btn-success" onclick="firewallDecision('allow')">✓ Liberar</button>
+                    <button class="btn btn-danger" onclick="firewallDecision('block')">✗ Manter bloqueio</button>
+                </div>
+            </div>
+
+            <div id="incident-line" style="display:none;font-size:11px;color:var(--accent-green);border:1px solid rgba(0,230,118,.3);background:rgba(0,230,118,.08);border-radius:8px;padding:9px 12px"></div>
+
+            <div class="rail-head">
+                <h2 style="border:0; padding:0;">Log de Eventos <span style="font-family:var(--mono); font-size:9px; color:var(--text-muted); font-weight:400;">live · 1.5s</span></h2>
+                <span class="clear" onclick="clearLog()">limpar</span>
+            </div>
+            <div class="logfeed" id="logfeed"></div>
+        </div>
+    </main>
+
+    <script>
+        // ───────────────────────────────────────────────────────────
+        // Demo fallback (visualização inicial sem servidor)
+        // ───────────────────────────────────────────────────────────
+        const demoGraph = {
+            nodes: {
+                "home":      { state_id: "home",      window_title: "Opera - Smartico Home",  x: 90,  y: 180, controls: 3 },
+                "login":     { state_id: "login",     window_title: "Opera - Smartico Login", x: 380, y: 90,  controls: 2 },
+                "dashboard": { state_id: "dashboard", window_title: "Opera - Dashboard Admin",x: 380, y: 300, controls: 8 }
+            },
+            edges: { "home": { "login": { description: "Clicar no link de Login" }, "dashboard": { description: "Carregar cache de login" } } }
+        };
+
+        // ───────────────────────────────────────────────────────────
+        // Event log (cliente) — capado em 120 entradas, mais novo no topo
+        // ───────────────────────────────────────────────────────────
+        const LOG = [];
+        const SEEN_SERVER_EVENTS = new Set();
+        let prev = { online: null, loop_state: null, current_goal: null, last_seen_title: null,
+                     last_recovery: null, last_vision_action: null, firewall_block_id: null, window_miss_count: 0 };
+
+        function nowClock() {
+            const d = new Date();
+            return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0');
+        }
+        function pushLog(level, msg, time) {
+            LOG.unshift({ time: time || nowClock(), level, msg });
+            if (LOG.length > 120) LOG.pop();
+            renderLog();
+        }
+        function renderLog() {
+            const feed = document.getElementById('logfeed');
+            if (!LOG.length) { feed.innerHTML = '<div style="color:var(--text-muted); font-size:11px; padding:10px 4px;">Sem eventos ainda. O painel registra transições, decisões de visão, bloqueios de firewall e auto-recuperações em tempo real.</div>'; return; }
+            feed.innerHTML = LOG.map(e =>
+                `<div class="log-row ${e.level}"><span class="lt">${e.time}</span> <span class="lv">${({info:'INFO',ok:'OK',warn:'WARN',danger:'ALERT',vision:'VISÃO'})[e.level]||'·'}</span> <span class="log-msg">${escapeHtml(e.msg)}</span></div>`
+            ).join('');
+        }
+        function escapeHtml(s){ return String(s).replace(/[&<>]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+        function clearLog(){ LOG.length = 0; renderLog(); }
+
+        // ───────────────────────────────────────────────────────────
+        // Preempção / comandos remotos (contrato inalterado)
+        // ───────────────────────────────────────────────────────────
+        function showMessage(text, isError = false) {
+            const el = document.getElementById("response-msg");
+            el.innerText = text; el.style.display = "block";
+            el.style.backgroundColor = isError ? "rgba(255,23,68,.15)" : "rgba(0,230,118,.15)";
+            el.style.color = isError ? "var(--accent-red)" : "var(--accent-green)";
+            el.style.border = `1px solid ${isError ? 'rgba(255,23,68,.3)' : 'rgba(0,230,118,.3)'}`;
+            setTimeout(() => { el.style.display = "none"; }, 3000);
+        }
+        async function sendPreempt(action, params = {}) {
+            try {
+                const r = await fetch('/api/preempt', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action, params }) });
+                const d = await r.json();
+                if (d.ok) { showMessage(`Comando '${action}' enviado!`); pushLog('warn', `Preempção enviada: ${action}${Object.keys(params).length? ' '+JSON.stringify(params):''}`); }
+                else { showMessage(`Erro: ${d.error}`, true); }
+            } catch (err) { showMessage(`Erro na requisição: ${err.message}`, true); }
+        }
+        function firewallDecision(kind) {
+            // kind: 'allow' libera a ação bloqueada; 'block' mantém bloqueio
+            sendPreempt(kind === 'allow' ? 'firewall_allow' : 'firewall_block_confirm');
+            pushLog(kind === 'allow' ? 'ok' : 'danger', kind === 'allow' ? 'Operador LIBEROU a ação bloqueada.' : 'Operador MANTEVE o bloqueio do firewall.');
+            document.getElementById('fw-alert').classList.remove('show');
+        }
+        function submitGoal() {
+            const v = document.getElementById("input-goal").value.trim();
+            if (!v) return showMessage("A meta não pode estar em branco.", true);
+            sendPreempt("set_goal", { goal: v }); document.getElementById("input-goal").value = "";
+        }
+        function submitType() {
+            const v = document.getElementById("input-type").value;
+            if (!v) return showMessage("O texto não pode estar em branco.", true);
+            sendPreempt("type", { text: v }); document.getElementById("input-type").value = "";
+        }
+        function submitClick() {
+            const x = parseInt(document.getElementById("input-click-x").value), y = parseInt(document.getElementById("input-click-y").value);
+            if (isNaN(x) || isNaN(y)) return showMessage("X e Y precisam ser números.", true);
+            sendPreempt("click", { x, y }); document.getElementById("input-click-x").value = ""; document.getElementById("input-click-y").value = "";
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // Grafo de navegação
+        // ───────────────────────────────────────────────────────────
+        function drawConnections(nodes, edges) {
+            const svg = document.getElementById("connections-svg");
+            const markers = svg.querySelector("defs"); svg.innerHTML = ""; svg.appendChild(markers);
+            for (const fromId in edges) {
+                const fromNode = nodes[fromId]; if (!fromNode) continue;
+                for (const toId in edges[fromId]) {
+                    const toNode = nodes[toId]; if (!toNode) continue;
+                    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+                    line.setAttribute("x1", fromNode.x + 100); line.setAttribute("y1", fromNode.y + 40);
+                    line.setAttribute("x2", toNode.x + 100);   line.setAttribute("y2", toNode.y + 40);
+                    line.setAttribute("stroke", "#ffb000"); line.setAttribute("stroke-width", "2"); line.setAttribute("marker-end", "url(#arrow)");
+                    svg.appendChild(line);
+                }
+            }
+        }
+        function renderNodes(nodes, activeTitle = "") {
+            const c = document.getElementById("nodes-container"); c.innerHTML = "";
+            for (const id in nodes) {
+                const node = nodes[id]; const div = document.createElement("div"); div.className = "map-node";
+                if (activeTitle && node.window_title.toLowerCase().includes(activeTitle.toLowerCase())) div.classList.add("active-window");
+                div.style.left = node.x + "px"; div.style.top = node.y + "px";
+                div.innerHTML = `<h3>${escapeHtml(node.window_title)}</h3><div class="map-node-meta"><span class="map-node-badge">ID: ${escapeHtml(String(node.state_id).substring(0,6))}</span><span>Controles: ${node.controls}</span></div>`;
+                c.appendChild(div);
+            }
+        }
+        function loadDemoGraph() {
+            renderNodes(demoGraph.nodes); drawConnections(demoGraph.nodes, demoGraph.edges);
+            document.getElementById("stat-nodes").innerText = "3 Janelas (Demo)";
+            document.getElementById("stat-edges").innerText = "2 Transições (Demo)";
+        }
+        async function loadRealGraph(activeTitle = "") {
+            try {
+                const r = await fetch('/maps/navigation_graph.json'); if (!r.ok) throw new Error("Sem arquivo real");
+                const data = await r.json(); const nodes = {}; const keys = Object.keys(data.nodes || {});
+                keys.forEach((key, idx) => {
+                    const node = data.nodes[key];
+                    nodes[key] = { state_id: node.state_id, window_title: node.window_title, controls: (node.controls_found || []).length, x: 50 + (idx % 3) * 280, y: 70 + Math.floor(idx / 3) * 180 };
+                });
+                renderNodes(nodes, activeTitle); drawConnections(nodes, data.edges || {});
+                document.getElementById("stat-nodes").innerText = `${keys.length} Janelas Mapeadas`;
+                let edgeCount = 0; for (const k in data.edges || {}) edgeCount += Object.keys(data.edges[k]).length;
+                document.getElementById("stat-edges").innerText = `${edgeCount} Transições Mapeadas`;
+                if (data.last_ocr_text) document.getElementById("stat-ocr").innerText = data.last_ocr_text;
+            } catch (e) { loadDemoGraph(); }
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // Fase 7 — chips de telemetria
+        // ───────────────────────────────────────────────────────────
+        function setChip(id, stateId, cls, txt) {
+            const chip = document.getElementById(id);
+            chip.className = 'chip' + (cls ? ' ' + cls : '');
+            document.getElementById(stateId).innerText = txt;
+        }
+        function updatePhase7(data, online) {
+            // Visão IA (Gemini) — campos opcionais: vision {active, using_image} ou gemini_active / vision_active
+            const v = data.vision || {};
+            const visionActive = online && (v.active ?? data.vision_active ?? data.gemini_active ?? false);
+            const visionImg = !!(v.using_image ?? data.vision_using_image ?? false);
+            document.getElementById('vision-tag').classList.toggle('show', online && visionImg);
+            if (!online) setChip('chip-vision','chip-vision-state','','offline');
+            else if (visionImg) setChip('chip-vision','chip-vision-state','on-cyan','analisando frame');
+            else if (visionActive) setChip('chip-vision','chip-vision-state','on-cyan','Gemini pronto');
+            else setChip('chip-vision','chip-vision-state','','sem chave / idle');
+
+            // Firewall Cognitivo — fw {armed, block:{action, reason, id}} ou firewall_block
+            const fw = data.firewall || {};
+            const armed = online && (fw.armed ?? data.firewall_armed ?? true);
+            const block = fw.block || data.firewall_block || null;
+            if (!online) setChip('chip-firewall','chip-firewall-state','','offline');
+            else if (block) setChip('chip-firewall','chip-firewall-state','on-red','BLOQUEIO ATIVO');
+            else if (armed) setChip('chip-firewall','chip-firewall-state','on-green','armado · Ollama');
+            else setChip('chip-firewall','chip-firewall-state','','desarmado');
+            // alerta de bloqueio
+            const alertEl = document.getElementById('fw-alert');
+            if (online && block) {
+                const bid = block.id || (block.action + '|' + (block.reason||''));
+                const ctx = block.context ? `<br><span style="color:var(--text-muted);font-size:10.5px">texto sob o clique: "${escapeHtml(String(block.context).slice(0,90))}"</span>` : '';
+                const tkt = block.ticket ? `<br><span style="color:var(--accent-green);font-size:11px;font-weight:700">📋 Chamado FreeScout #${escapeHtml(String(block.ticket))} aberto</span>` : '';
+                document.getElementById('fw-body').innerHTML = `Ação <b>${escapeHtml(block.action || 'desconhecida')}</b> classificada como <b>${escapeHtml(block.risk || 'perigosa')}</b>.<br>${escapeHtml(block.reason || 'Aguardando validação manual do operador.')}${ctx}${tkt}`;
+                alertEl.classList.add('show');
+                if (prev.firewall_block_id !== bid) { pushLog('danger', `FIREWALL bloqueou "${block.action||'ação'}": ${block.reason||'risco detectado'}`); prev.firewall_block_id = bid; }
+            } else { alertEl.classList.remove('show'); prev.firewall_block_id = null; }
+
+            // Auto-Recuperação — recovery {misses, last} ou window_miss_count / last_recovery
+            const rec = data.recovery || {};
+            const misses = online ? (rec.misses ?? data.window_miss_count ?? 0) : 0;
+            const lastRec = rec.last ?? data.last_recovery ?? null;
+            if (!online) setChip('chip-recovery','chip-recovery-state','','offline');
+            else if (misses >= 3) setChip('chip-recovery','chip-recovery-state','on-amber',`restaurando (${misses}×)`);
+            else if (misses > 0) setChip('chip-recovery','chip-recovery-state','on-amber',`janela ausente ${misses}/3`);
+            else setChip('chip-recovery','chip-recovery-state','on-green','estável');
+            if (online && lastRec && lastRec !== prev.last_recovery) { pushLog('warn', `Auto-recuperação: ${lastRec}`); prev.last_recovery = lastRec; }
+            if (online && misses >= 3 && prev.window_miss_count < 3) pushLog('warn', `Janela alvo ausente por ${misses} ciclos — tentando reiniciar a aplicação.`);
+            prev.window_miss_count = misses;
+
+            // decisão de visão registrada pelo servidor
+            const lva = online ? (v.last_action ?? data.last_vision_action ?? null) : null;
+            if (lva && lva !== prev.last_vision_action) { pushLog('vision', `Visão IA decidiu: ${lva}`); prev.last_vision_action = lva; }
+
+            // Fase C: incidente vinculado no FreeScout (firewall/auto-recuperação)
+            const incEl = document.getElementById('incident-line');
+            const inc = online ? (data.incident || null) : null;
+            if (inc && inc.number) {
+                incEl.style.display = 'block';
+                const href = inc.url ? ` · <a href="${escapeHtml(inc.url)}" target="_blank" style="color:var(--accent-green)">abrir</a>` : '';
+                incEl.innerHTML = `📋 Incidente vinculado → <b>FreeScout #${escapeHtml(String(inc.number))}</b> <span style="color:var(--text-muted)">(${escapeHtml(inc.kind||'')})</span>${href}`;
+            } else { incEl.style.display = 'none'; }
+        }
+
+        // ───────────────────────────────────────────────────────────
+        // Polling principal
+        // ───────────────────────────────────────────────────────────
+        async function updateStatus() {
+            let online = false, data = {};
+            try {
+                const r = await fetch('/api/status'); if (!r.ok) throw new Error("Offline");
+                data = await r.json(); if (data.error) throw new Error(data.error); online = true;
+            } catch (err) { online = false; }
+
+            const badge = document.getElementById("global-status-badge"), text = document.getElementById("global-status-text");
+            if (online) {
+                const state = data.loop_state || "offline";
+                badge.className = `status-badge ${state}`; text.innerText = `CLAW ${state.toUpperCase()}`;
+                document.getElementById("stat-goal").innerText = data.current_goal || "Nenhuma meta ativa";
+                document.getElementById("stat-seen-title").innerText = data.last_seen_title || "Nenhuma janela focada";
+
+                // miniatura (mesma lógica de path + anti-cache)
+                const img = document.getElementById("live-thumbnail"), noImg = document.getElementById("no-img-text");
+                if (data.last_thumbnail) {
+                    let clean = data.last_thumbnail.replace(/\\/g, '/'); let parts = clean.split('/ops/'); let rel = '';
+                    if (parts.length > 1) rel = parts[1]; else rel = clean.substring(clean.lastIndexOf('/assets/'));
+                    img.src = `/${rel}?t=${Date.now()}`; img.style.display = 'block'; noImg.style.display = 'none';
+                } else { img.src = ''; img.style.display = 'none'; noImg.style.display = 'block'; noImg.innerText = 'Nenhuma captura de tela disponível.'; }
+
+                // eventos vindos do servidor (opcional): data.events = [{time,level,msg,id} | "texto"]
+                if (Array.isArray(data.events)) {
+                    data.events.forEach((ev, i) => {
+                        const obj = (typeof ev === 'string') ? { msg: ev, level: 'info' } : ev;
+                        const key = obj.id || (obj.time||'') + '|' + (obj.msg||'') + '|' + i;
+                        if (!SEEN_SERVER_EVENTS.has(key)) { SEEN_SERVER_EVENTS.add(key); pushLog(obj.level || 'info', obj.msg || JSON.stringify(obj), obj.time); }
+                    });
+                    if (SEEN_SERVER_EVENTS.size > 600) SEEN_SERVER_EVENTS.clear();
+                }
+
+                // transições detectadas no cliente
+                if (prev.online === false) pushLog('ok', 'Conexão com o Claw restabelecida.');
+                if (prev.loop_state !== null && prev.loop_state !== state) pushLog('info', `Estado do loop: ${prev.loop_state} → ${state}`);
+                if (prev.current_goal !== null && (data.current_goal||'') !== prev.current_goal) pushLog('info', `Nova meta: ${data.current_goal || '—'}`);
+                if (prev.last_seen_title !== null && (data.last_seen_title||'') !== prev.last_seen_title && data.last_seen_title) pushLog('info', `Janela em foco: ${data.last_seen_title}`);
+                prev.loop_state = state; prev.current_goal = data.current_goal || ''; prev.last_seen_title = data.last_seen_title || '';
+
+                loadRealGraph(data.last_seen_title);
+            } else {
+                badge.className = "status-badge offline"; text.innerText = "CLAW OFFLINE";
+                document.getElementById("stat-goal").innerText = "Nenhuma meta ativa";
+                document.getElementById("stat-seen-title").innerText = "Nenhum robô Claw respondendo";
+                const img = document.getElementById("live-thumbnail"), noImg = document.getElementById("no-img-text");
+                img.src = ''; img.style.display = 'none'; noImg.style.display = 'block'; noImg.innerText = "Servidor offline ou sem status.";
+                if (prev.online === true) pushLog('danger', 'Claw OFFLINE — servidor não respondeu.');
+            }
+
+            updatePhase7(data, online);
+            prev.online = online;
+        }
+
+        // boot
+        renderLog();
+        loadRealGraph();
+        updateStatus();
+        setInterval(updateStatus, 1500);
+    </script>
+</body>
+</html>

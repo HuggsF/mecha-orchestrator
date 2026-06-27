@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#eceef3; --surface:#ffffff; --surface-2:#f6f7f9; --surface-3:#eef0f5;
+    --border:#e2e4ea; --border-2:#cfd3dd;
+    --ink:#23252b; --ink-dim:#5e6470; --ink-faint:#9aa0ad;
+    --violet:#5b5fc7; --violet-d:#494ea3; --violet-l:#ecebf9;
+    --emerald:#1f8a5b; --emerald-l:#e6f3ec;
+    --ok:#237b4b; --ok-l:#e6f2ea; --warn:#c8791a; --warn-l:#fbf0e1; --breach:#c4314b; --breach-l:#fbe9ed;
+    --note:#b85c00; --note-bg:#fff6e9; --note-bd:#f0c48a;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --sans:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+  ::selection{background:var(--violet-l)}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-thumb{background:#cfd3dd;border-radius:6px}
+  input,button,textarea,select{font-family:inherit;font-size:inherit}
+  input:focus,textarea:focus,select:focus{outline:none}
+  @keyframes hk{0%{transform:scale(1);opacity:1}50%{transform:scale(1.6);opacity:.5}100%{transform:scale(1);opacity:1}}
+  @keyframes fin{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg);font-family:var(--sans);color:var(--ink)">
+
+  <!-- ===== TEAMS-LIKE APP HEADER ===== -->
+  <header style="background:var(--violet);color:#fff;padding:0 18px;display:flex;align-items:center;gap:16px;height:48px;position:sticky;top:0;z-index:50">
+    <div style="display:flex;align-items:center;gap:10px">
+      <div style="width:26px;height:26px;border-radius:6px;background:#fff;color:var(--violet);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;font-family:var(--mono)">M</div>
+      <div style="line-height:1.1"><div style="font-weight:600;font-size:14px;letter-spacing:.01em">Mendas Studio</div><div style="font-size:10px;opacity:.8">Central de Chamados · Comunicação</div></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.13);padding:3px;border-radius:8px;margin-left:8px">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+        <button onClick="{{ t.sel }}" style="background:{{ t.bg }};color:{{ t.color }};border:0;padding:6px 14px;border-radius:6px;cursor:pointer;font-weight:600;font-size:12.5px;display:flex;align-items:center;gap:7px">{{ t.icon }} {{ t.label }}<sc-if value="{{ t.count }}" hint-placeholder-val="{{ false }}"><span style="background:{{ t.badgeBg }};color:{{ t.badgeColor }};border-radius:10px;padding:0 6px;font-size:10px;font-weight:700">{{ t.count }}</span></sc-if></button>
+      </sc-for>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:12px;font-size:11.5px">
+      <button onClick="{{ stepDay }}" style="background:rgba(255,255,255,.15);color:#fff;border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:600">⏩ +1 dia útil <span style="opacity:.75">· D+{{ day }}</span></button>
+      <button onClick="{{ toggleNotes }}" style="background:{{ notesBtnBg }};color:{{ notesBtnColor }};border:0;padding:6px 12px;border-radius:6px;cursor:pointer;font-weight:600">◈ Anotações UX</button>
+    </div>
+  </header>
+
+  <!-- ===== BODY GRID ===== -->
+  <div style="display:grid;grid-template-columns:1fr 348px;gap:0;align-items:start">
+
+    <!-- ====== MAIN ====== -->
+    <main style="padding:22px 24px 70px;min-height:calc(100vh - 48px)">
+
+      <!-- ===== TAB: BOT / NOVO CHAMADO ===== -->
+      <sc-if value="{{ isBot }}" hint-placeholder-val="{{ true }}">
+        <div style="max-width:720px;margin:0 auto;display:flex;flex-direction:column;gap:14px">
+
+          <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--note-bg);border:1px dashed var(--note-bd);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--note);display:flex;gap:9px;align-items:flex-start">
+              <span style="font-weight:700">◈ UX</span><span><strong>SSOT no Teams.</strong> O bot é o único canal oficial de abertura — e-mail, WhatsApp ou conversa solta não iniciam SLA. Tudo entra por um card estruturado, garantindo briefing mínimo desde a origem.</span>
+            </div>
+          </sc-if>
+
+          <!-- bot greeting -->
+          <div style="display:flex;gap:11px;align-items:flex-start">
+            <div style="width:34px;height:34px;border-radius:8px;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;font-family:var(--mono)">M</div>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:4px 12px 12px 12px;padding:13px 15px;max-width:560px">
+              <div style="font-weight:600;font-size:12px;color:var(--violet);margin-bottom:3px">Mendas Bot <span style="color:var(--ink-faint);font-weight:400">· automação de chamados</span></div>
+              <div style="font-size:13.5px;color:var(--ink)">Olá! Abra um chamado de comunicação preenchendo o card abaixo. Eu valido o briefing, registro na esteira e inicio o SLA conforme a categoria de esforço.</div>
+            </div>
+          </div>
+
+          <!-- adaptive card: novo chamado -->
+          <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;box-shadow:0 1px 3px rgba(20,22,40,.05)">
+            <div style="background:var(--surface-2);border-bottom:1px solid var(--border);padding:11px 16px;display:flex;align-items:center;gap:9px">
+              <span style="width:8px;height:8px;border-radius:2px;background:var(--violet)"></span>
+              <span style="font-weight:600;font-size:13px">Novo chamado · Adaptive Card</span>
+              <span style="margin-left:auto;font-size:11px;color:var(--ink-faint);font-family:var(--mono)">hook:intake</span>
+            </div>
+            <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+              <label style="display:block"><span style="font-size:12px;font-weight:600;color:var(--ink-dim)">Título da demanda</span>
+                <input value="{{ fTitulo }}" onInput="{{ onTitulo }}" placeholder="ex: Campanha Maio Amarelo — pacote de artes" style="display:block;width:100%;margin-top:6px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:9px 11px" style-focus="border-color:var(--violet)"></label>
+
+              <div>
+                <span style="font-size:12px;font-weight:600;color:var(--ink-dim)">Categoria de esforço <span style="font-weight:400;color:var(--ink-faint)">· define o SLA</span></span>
+                <div style="display:flex;flex-direction:column;gap:6px;margin-top:7px">
+                  <sc-for list="{{ catOptions }}" as="c" hint-placeholder-count="5">
+                    <button onClick="{{ c.sel }}" style="text-align:left;background:{{ c.bg }};border:1px solid {{ c.border }};border-radius:8px;padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:11px" style-hover="border-color:var(--violet)">
+                      <span style="font-family:var(--mono);font-weight:700;font-size:15px;color:{{ c.numColor }};min-width:48px">{{ c.dias }}d</span>
+                      <span style="flex:1"><span style="font-weight:600;font-size:13px;color:var(--ink)">{{ c.nome }}</span><span style="display:block;font-size:11px;color:var(--ink-dim);margin-top:1px">{{ c.desc }}</span></span>
+                      <sc-if value="{{ c.active }}" hint-placeholder-val="{{ false }}"><span style="color:var(--violet);font-weight:700">✓</span></sc-if>
+                    </button>
+                  </sc-for>
+                </div>
+              </div>
+
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <label style="display:block"><span style="font-size:12px;font-weight:600;color:var(--ink-dim)">Concessão / unidade</span>
+                  <select onChange="{{ onConcessao }}" style="display:block;width:100%;margin-top:6px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:9px 11px;cursor:pointer">
+                    <sc-for list="{{ concessoes }}" as="o" hint-placeholder-count="5"><option value="{{ o }}">{{ o }}</option></sc-for>
+                  </select></label>
+                <label style="display:block"><span style="font-size:12px;font-weight:600;color:var(--ink-dim)">Canal de veiculação</span>
+                  <select onChange="{{ onCanal }}" style="display:block;width:100%;margin-top:6px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:9px 11px;cursor:pointer">
+                    <sc-for list="{{ canais }}" as="o" hint-placeholder-count="6"><option value="{{ o }}">{{ o }}</option></sc-for>
+                  </select></label>
+              </div>
+
+              <label style="display:block"><span style="font-size:12px;font-weight:600;color:var(--ink-dim)">Briefing <span style="font-weight:400;color:var(--ink-faint)">· texto, objetivo, formato e referências</span></span>
+                <textarea value="{{ fBriefing }}" onInput="{{ onBriefing }}" rows="3" placeholder="Descreva o objetivo, a mensagem-chave, formato desejado e referências." style="display:block;width:100%;margin-top:6px;background:var(--surface-2);border:1px solid var(--border-2);border-radius:7px;padding:9px 11px;resize:vertical;font-family:inherit"></textarea>
+                <div style="font-size:11px;color:{{ briefHintColor }};margin-top:4px">{{ briefHint }}</div></label>
+
+              <label style="display:flex;align-items:center;gap:10px;cursor:pointer;background:{{ urgBg }};border:1px solid {{ urgBorder }};border-radius:8px;padding:10px 12px">
+                <input type="checkbox" checked="{{ fUrgente }}" onChange="{{ onUrgente }}" style="width:16px;height:16px;accent-color:var(--breach);cursor:pointer">
+                <span style="flex:1"><span style="font-weight:600;font-size:13px;color:{{ urgInk }}">Demanda urgente (fluxo de exceção)</span><span style="display:block;font-size:11px;color:var(--ink-dim)">Validação obrigatória via Teams. Reprioriza a fila da sua área.</span></span>
+              </label>
+
+              <div style="display:flex;align-items:center;gap:12px;border-top:1px solid var(--border);padding-top:13px">
+                <div style="font-size:12px;color:var(--ink-dim)">SLA estimado: <strong style="color:var(--violet);font-family:var(--mono)">{{ slaPreview }}</strong></div>
+                <button onClick="{{ openTicket }}" style="margin-left:auto;background:var(--violet);color:#fff;border:0;border-radius:8px;padding:11px 22px;cursor:pointer;font-weight:600;font-size:13.5px" style-hover="background:var(--violet-d)">Abrir chamado →</button>
+              </div>
+            </div>
+          </div>
+
+          <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--note-bg);border:1px dashed var(--note-bd);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--note);display:flex;gap:9px;align-items:flex-start">
+              <span style="font-weight:700">◈ UX</span><span><strong>Corte 16h.</strong> Chamados abertos após as 16h têm o SLA iniciado no próximo dia útil — o bot avisa isso na confirmação para alinhar expectativa de prazo já na abertura.</span>
+            </div>
+          </sc-if>
+
+          <!-- bot thread (confirmations) -->
+          <sc-for list="{{ thread }}" as="m" hint-placeholder-count="0">
+            <div style="display:flex;gap:11px;align-items:flex-start">
+              <div style="width:34px;height:34px;border-radius:8px;background:var(--emerald);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;flex:none;font-family:var(--mono)">✓</div>
+              <div style="background:var(--emerald-l);border:1px solid #bfe3cd;border-radius:4px 12px 12px 12px;padding:13px 15px;flex:1">
+                <div style="font-weight:600;font-size:12px;color:var(--emerald);margin-bottom:5px">Chamado registrado · <span style="font-family:var(--mono)">{{ m.protocolo }}</span></div>
+                <div style="font-size:13.5px;color:var(--ink);margin-bottom:8px">{{ m.titulo }}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:7px;font-size:11.5px">
+                  <span style="background:#fff;border:1px solid #bfe3cd;border-radius:6px;padding:3px 9px;font-family:var(--mono)">{{ m.cat }}d · {{ m.catNome }}</span>
+                  <span style="background:#fff;border:1px solid #bfe3cd;border-radius:6px;padding:3px 9px">{{ m.concessao }}</span>
+                  <span style="background:#fff;border:1px solid #bfe3cd;border-radius:6px;padding:3px 9px">Prazo: <strong>{{ m.deadline }}</strong></span>
+                  <sc-if value="{{ m.urgente }}" hint-placeholder-val="{{ false }}"><span style="background:var(--breach-l);border:1px solid #eab8c2;color:var(--breach);border-radius:6px;padding:3px 9px;font-weight:600">⚡ URGENTE</span></sc-if>
+                </div>
+                <div style="font-size:11.5px;color:var(--ink-dim);margin-top:9px">{{ m.note }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <!-- ===== TAB: ESTEIRA (BOARD) ===== -->
+      <sc-if value="{{ isBoard }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
+            <h2 style="font-size:17px;font-weight:700">Esteira de produção</h2>
+            <span style="font-size:12px;color:var(--ink-dim)">fluxo Planner · {{ ticketCount }} chamados ativos</span>
+          </div>
+          <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--note-bg);border:1px dashed var(--note-bd);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--note);margin-bottom:14px;display:flex;gap:9px"><span style="font-weight:700">◈ UX</span><span><strong>Estados visíveis.</strong> A esteira espelha o ciclo de vida do chamado. <strong>Triagem</strong> não conta SLA até o briefing estar completo; <strong>On Hold</strong> congela o relógio quando o solicitante não responde em 2 dias úteis e a tarefa perde prioridade.</span></div>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:repeat(6,minmax(186px,1fr));gap:11px;overflow-x:auto;padding-bottom:8px">
+            <sc-for list="{{ columns }}" as="col" hint-placeholder-count="6">
+              <div style="background:var(--surface-3);border:1px solid var(--border);border-radius:10px;display:flex;flex-direction:column;min-height:140px">
+                <div style="padding:10px 12px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)">
+                  <span style="width:9px;height:9px;border-radius:50%;background:{{ col.dot }}"></span>
+                  <span style="font-weight:600;font-size:12.5px">{{ col.name }}</span>
+                  <span style="margin-left:auto;background:#fff;border:1px solid var(--border-2);border-radius:9px;font-size:10.5px;padding:0 7px;color:var(--ink-dim);font-family:var(--mono)">{{ col.n }}</span>
+                </div>
+                <div style="padding:9px;display:flex;flex-direction:column;gap:9px">
+                  <sc-for list="{{ col.tickets }}" as="tk" hint-placeholder-count="0">
+                    <div style="background:#fff;border:1px solid var(--border-2);border-left:3px solid {{ tk.slaColor }};border-radius:8px;padding:10px 11px">
+                      <div style="display:flex;align-items:center;gap:6px;margin-bottom:5px">
+                        <span style="font-family:var(--mono);font-size:10.5px;color:var(--ink-faint)">{{ tk.protocolo }}</span>
+                        <sc-if value="{{ tk.urgente }}" hint-placeholder-val="{{ false }}"><span style="color:var(--breach);font-size:11px">⚡</span></sc-if>
+                        <span style="margin-left:auto;font-family:var(--mono);font-size:10.5px;font-weight:700;color:{{ tk.slaColor }}">{{ tk.slaTag }}</span>
+                      </div>
+                      <div style="font-size:12.5px;font-weight:600;line-height:1.3;margin-bottom:6px">{{ tk.titulo }}</div>
+                      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:9px">
+                        <span style="background:var(--violet-l);color:var(--violet-d);border-radius:5px;font-size:10px;padding:2px 6px;font-weight:600;font-family:var(--mono)">{{ tk.cat }}d</span>
+                        <span style="background:var(--surface-2);border:1px solid var(--border);border-radius:5px;font-size:10px;padding:2px 6px;color:var(--ink-dim)">{{ tk.concessao }}</span>
+                      </div>
+                      <div style="display:flex;flex-wrap:wrap;gap:6px">
+                        <sc-for list="{{ tk.actions }}" as="a" hint-placeholder-count="0">
+                          <button onClick="{{ a.fn }}" style="background:{{ a.bg }};color:{{ a.color }};border:1px solid {{ a.border }};border-radius:6px;padding:5px 9px;cursor:pointer;font-size:11px;font-weight:600" style-hover="filter:brightness(.97)">{{ a.label }}</button>
+                        </sc-for>
+                      </div>
+                    </div>
+                  </sc-for>
+                  <sc-if value="{{ col.empty }}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;color:var(--ink-faint);text-align:center;padding:14px 4px">—</div></sc-if>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <!-- ===== TAB: CALENDÁRIO EDITORIAL ===== -->
+      <sc-if value="{{ isCal }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
+            <h2 style="font-size:17px;font-weight:700">Calendário Editorial</h2>
+            <span style="font-size:12px;color:var(--ink-dim)">vitrine Microsoft Lists · gerado na conclusão</span>
+          </div>
+          <sc-if value="{{ showNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--note-bg);border:1px dashed var(--note-bd);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--note);margin-bottom:14px;display:flex;gap:9px"><span style="font-weight:700">◈ UX</span><span><strong>Transparência sem esforço.</strong> Cada chamado concluído vira um card aqui automaticamente (<span style="font-family:var(--mono)">hook:done</span>) — gestores enxergam o que foi publicado, quando, em qual canal e a categoria, sem pedir relatório a ninguém.</span></div>
+          </sc-if>
+          <sc-if value="{{ hasCal }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden">
+              <div style="display:grid;grid-template-columns:120px 1fr 150px 150px;background:var(--surface-2);border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em">
+                <div style="padding:10px 14px">Data</div><div style="padding:10px 14px">Conteúdo</div><div style="padding:10px 14px">Canal</div><div style="padding:10px 14px">Categoria</div>
+              </div>
+              <sc-for list="{{ calendar }}" as="c" hint-placeholder-count="0">
+                <div style="display:grid;grid-template-columns:120px 1fr 150px 150px;border-bottom:1px solid var(--border);font-size:13px;align-items:center">
+                  <div style="padding:11px 14px;font-family:var(--mono);font-size:12px;color:var(--ink-dim)">{{ c.data }}</div>
+                  <div style="padding:11px 14px"><span style="font-weight:600">{{ c.titulo }}</span><span style="display:block;font-size:11px;color:var(--ink-faint);font-family:var(--mono)">{{ c.protocolo }} · {{ c.concessao }}</span></div>
+                  <div style="padding:11px 14px"><span style="background:var(--violet-l);color:var(--violet-d);border-radius:6px;padding:3px 9px;font-size:11.5px;font-weight:600">{{ c.canal }}</span></div>
+                  <div style="padding:11px 14px;font-size:12px;color:var(--ink-dim)"><span style="font-family:var(--mono);font-weight:700;color:var(--emerald)">{{ c.cat }}d</span> · {{ c.catNome }}</div>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noCal }}" hint-placeholder-val="{{ true }}">
+            <div style="background:var(--surface);border:1px dashed var(--border-2);border-radius:10px;padding:50px;text-align:center;color:var(--ink-faint)">
+              <div style="font-size:32px;margin-bottom:8px">🗓</div>Nenhuma publicação ainda. Conclua um chamado na <strong style="color:var(--violet)">Esteira</strong> para gerar o primeiro card.
+            </div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </main>
+
+    <!-- ====== RIGHT RAIL · HOOKS ====== -->
+    <aside style="background:var(--surface);border-left:1px solid var(--border);min-height:calc(100vh - 48px);padding:18px 16px;position:sticky;top:48px;display:flex;flex-direction:column;gap:16px">
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="width:8px;height:8px;border-radius:50%;background:var(--emerald);animation:hk 2s infinite"></span>
+          <span style="font-weight:700;font-size:13px">Automações · Bot de Hooks</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ hooks }}" as="h" hint-placeholder-count="8">
+            <div style="display:flex;gap:9px;align-items:flex-start;padding:7px 9px;border:1px solid {{ h.border }};background:{{ h.bg }};border-radius:7px">
+              <span style="width:7px;height:7px;border-radius:50%;background:{{ h.dot }};margin-top:5px;flex:none"></span>
+              <div style="flex:1"><div style="font-family:var(--mono);font-size:11px;color:var(--violet-d);font-weight:500">{{ h.id }}</div><div style="font-size:11px;color:var(--ink-dim);line-height:1.4;margin-top:1px">{{ h.desc }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:14px;flex:1;display:flex;flex-direction:column;min-height:0">
+        <div style="font-weight:700;font-size:12.5px;margin-bottom:8px;display:flex;align-items:center;gap:7px">Log de eventos <span style="font-family:var(--mono);font-size:10px;color:var(--ink-faint);font-weight:400">live</span></div>
+        <div style="display:flex;flex-direction:column;gap:5px;overflow:auto;max-height:300px">
+          <sc-for list="{{ log }}" as="e" hint-placeholder-count="0">
+            <div style="font-family:var(--mono);font-size:10.5px;line-height:1.4;padding:6px 8px;background:var(--surface-2);border-left:2px solid {{ e.color }};border-radius:0 5px 5px 0">
+              <span style="color:var(--ink-faint)">{{ e.time }}</span> <span style="color:{{ e.color }};font-weight:700">{{ e.hook }}</span><br><span style="color:var(--ink-dim)">{{ e.msg }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ noLog }}" hint-placeholder-val="{{ true }}"><div style="font-size:11px;color:var(--ink-faint);padding:10px 4px">Os disparos do bot aparecem aqui conforme os chamados andam na esteira.</div></sc-if>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showNotesDefault&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    tab:'bot', day:0, showNotes:true,
+    fTitulo:'', fCat:'5', fConcessao:'Bahia Norte', fCanal:'Redes Sociais', fBriefing:'', fUrgente:false,
+    tickets:[], thread:[], calendar:[], log:[], seq:7
+  };
+
+  CATS = [
+    { id:'2', dias:2, nome:'Operacional / Distribuição', desc:'Envio de info ou ajustes rápidos em material existente.' },
+    { id:'3', dias:3, nome:'Comunicação simples / Informativa', desc:'Execução rápida, sem criação visual complexa.' },
+    { id:'5', dias:5, nome:'Criação e Design', desc:'Layout, redação publicitária e Manual de Marca.' },
+    { id:'10', dias:10, nome:'Produção AV e Identidade estruturada', desc:'Roteiro + aprovação de texto + pós-produção.' },
+    { id:'15', dias:15, nome:'Projetos e campanhas integradas', desc:'Alto impacto, múltiplos canais, conceito unificado.' }
+  ];
+  CONCESSOES = ['Monte Rodovias','Bahia Norte','Litoral Norte','Rota do Atlântico','Rota dos Coqueiros'];
+  CANAIS = ['Redes Sociais','E-mail','TV Corporativa','Somos Monte','LinkedIn','Imprensa'];
+  STAGES = [
+    { name:'Triagem', dot:'#8a8f9c' }, { name:'Produção', dot:'#5b5fc7' },
+    { name:'Aprovação', dot:'#c8791a' }, { name:'Ajustes', dot:'#9061d6' },
+    { name:'On Hold', dot:'#c4314b' }, { name:'Concluído', dot:'#237b4b' }
+  ];
+  HOOKS = [
+    { id:'hook:intake', desc:'Recebe o chamado no Teams e valida o briefing mínimo.' },
+    { id:'hook:register', desc:'Cria o card, categoriza e inicia o SLA (corte 16h).' },
+    { id:'hook:triagem', desc:'Briefing incompleto → devolve e congela o SLA.' },
+    { id:'hook:sla', desc:'Conta o prazo; alerta em D-2, D-1 e estouro.' },
+    { id:'hook:approval', desc:'1ª versão; 24h p/ retorno; +2d sem resposta → On Hold.' },
+    { id:'hook:adjust', desc:'Ciclo de ajustes em até 2 dias úteis.' },
+    { id:'hook:done', desc:'DoD ok → conclui e gera card no Calendário Editorial.' },
+    { id:'hook:urgent', desc:'Exceção validada via Teams; reprioriza a fila.' }
+  ];
+
+  cat(id){ return this.CATS.find(c=>c.id===id) || this.CATS[2]; }
+  now(){ return new Date(Date.now()+this.state.day*864e5); }
+  fmt(d){ return String(d.getDate()).padStart(2,'0')+'/'+String(d.getMonth()+1).padStart(2,'0'); }
+  clock(){ const d=new Date(); return String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0')+':'+String(d.getSeconds()).padStart(2,'0'); }
+
+  fire(hook, msg, color){
+    const e = { time:this.clock(), hook, msg, color:color||'var(--violet)' };
+    this.setState(s=>({ log:[e, ...s.log].slice(0,40) }));
+  }
+
+  componentDidMount(){
+    // seed board
+    const mk = (n,t,cat,conc,canal,stage,left,urg)=>({ id:n, protocolo:'MEND-26-'+String(n).padStart(3,'0'), titulo:t, cat, concessao:conc, canal, stage, left, urgente:!!urg });
+    this.setState({ tickets:[
+      mk(1,'Comunicado de manutenção — Sistema CCO','2','Litoral Norte','E-mail','Triagem',2,false),
+      mk(2,'Release pós-evento Maio Amarelo','3','Bahia Norte','Imprensa','Produção',2,false),
+      mk(3,'Banner cabines — nova tarifa','5','Rota do Atlântico','TV Corporativa','Aprovação',1,false),
+      mk(4,'Vídeo institucional 20 anos','10','Monte Rodovias','LinkedIn','Ajustes',3,false),
+      mk(5,'Campanha SIPAT 2026 (pacote)','15','Rota dos Coqueiros','Redes Sociais','Produção',0,true),
+      mk(6,'Atualização de arte — vagas','2','Bahia Norte','LinkedIn','On Hold',1,false)
+    ]});
+  }
+
+  setTab(t){ this.setState({ tab:t }); }
+  toggleNotes(){ this.setState(s=>({ showNotes:!s.showNotes })); }
+  stepDay(){
+    this.setState(s=>{
+      const tickets = s.tickets.map(t=> (t.stage==='Concluído'||t.stage==='On Hold'||t.stage==='Triagem') ? t : ({...t, left:t.left-1}));
+      return { day:s.day+1, tickets };
+    });
+    this.fire('hook:sla', 'Tick D+'+(this.state.day+1)+' — relógios de SLA recalculados.', 'var(--ok)');
+  }
+
+  openTicket(){
+    const st=this.state;
+    if(!st.fTitulo.trim()){ this.fire('hook:intake','Bloqueado: título ausente.', 'var(--breach)'); return; }
+    if(st.fBriefing.trim().length<12){ this.fire('hook:triagem','Briefing insuficiente — chamado devolvido (SLA não inicia).', 'var(--breach)'); return; }
+    const c=this.cat(st.fCat); const n=st.seq+1;
+    const protocolo='MEND-26-'+String(n).padStart(3,'0');
+    const after16 = new Date().getHours()>=16;
+    const tk={ id:n, protocolo, titulo:st.fTitulo.trim(), cat:c.id, concessao:st.fConcessao, canal:st.fCanal, stage:'Triagem', left:c.dias, urgente:st.fUrgente };
+    const deadlineDate=new Date(Date.now()+(c.dias+(after16?1:0))*864e5);
+    const msg={ protocolo, titulo:tk.titulo, cat:c.id, catNome:c.nome, concessao:st.fConcessao, deadline:this.fmt(deadlineDate), urgente:st.fUrgente,
+      note: (after16?'Aberto após as 16h — SLA inicia no próximo dia útil. ':'')+'Está em Triagem; o SLA começa a contar quando o briefing for validado.'+(st.fUrgente?' Urgência sinalizada: valide via Teams com a equipe.':'') };
+    this.setState(s=>({ tickets:[tk, ...s.tickets], thread:[msg, ...s.thread], seq:n, fTitulo:'', fBriefing:'', fUrgente:false }));
+    this.fire('hook:intake', protocolo+' recebido no Teams.', 'var(--violet)');
+    this.fire('hook:register', protocolo+' registrado · '+c.dias+'d · '+st.fConcessao, 'var(--violet)');
+    if(st.fUrgente) this.fire('hook:urgent', protocolo+' marcado como URGENTE — repriorização da fila.', 'var(--breach)');
+  }
+
+  move(id, to, hook, msg, color){
+    this.setState(s=>({ tickets:s.tickets.map(t=>{
+      if(t.id!==id) return t;
+      const nt={...t, stage:to};
+      if(to==='Produção' && t.stage==='Triagem') nt.left=this.cat(t.cat).dias;
+      if(to==='Ajustes') nt.left=2;
+      return nt;
+    })}));
+    const tk=this.state.tickets.find(t=>t.id===id);
+    this.fire(hook, (tk?tk.protocolo:'')+' '+msg, color);
+    if(to==='Concluído' && tk){
+      const c=this.cat(tk.cat);
+      const item={ protocolo:tk.protocolo, titulo:tk.titulo, concessao:tk.concessao, canal:tk.canal, cat:c.id, catNome:c.nome, data:this.fmt(this.now()) };
+      this.setState(s=>({ calendar:[item, ...s.calendar] }));
+      this.fire('hook:done', tk.protocolo+' → card gerado no Calendário Editorial.', 'var(--ok)');
+    }
+  }
+
+  slaInfo(t){
+    if(t.stage==='Concluído') return { color:'var(--ok)', tag:'✓ entregue' };
+    if(t.stage==='On Hold') return { color:'#c4314b', tag:'⏸ congelado' };
+    if(t.stage==='Triagem') return { color:'#8a8f9c', tag:'SLA n/ iniciado' };
+    if(t.left<0) return { color:'var(--breach)', tag:'estourou '+Math.abs(t.left)+'d' };
+    if(t.left===0) return { color:'var(--breach)', tag:'vence hoje' };
+    if(t.left===1) return { color:'var(--warn)', tag:'D-1' };
+    return { color:'var(--ok)', tag:t.left+'d restantes' };
+  }
+
+  actionsFor(t){
+    const A=(label,to,hook,msg,color,style)=>({ label, to, hook, msg, color, style, fn:()=>this.move(t.id,to,hook,msg,color) });
+    const prim={bg:'var(--violet)',color:'#fff',border:'var(--violet)'};
+    const ghost={bg:'var(--surface-2)',color:'var(--ink-dim)',border:'var(--border-2)'};
+    const warn={bg:'var(--warn-l)',color:'var(--warn)',border:'#eccfa0'};
+    const ok={bg:'var(--ok-l)',color:'var(--ok)',border:'#b6ddc4'};
+    let list=[];
+    if(t.stage==='Triagem') list=[A('✓ Briefing ok →','Produção','hook:triagem','briefing validado, SLA iniciado.','var(--violet)',prim), A('Devolver','On Hold','hook:triagem','devolvido — briefing incompleto.','var(--breach)',ghost)];
+    else if(t.stage==='Produção') list=[A('Enviar p/ aprovação →','Aprovação','hook:approval','1ª versão enviada — 24h p/ retorno.','var(--warn)',prim)];
+    else if(t.stage==='Aprovação') list=[A('Aprovar →','Concluído','hook:approval','aprovado pelo solicitante.','var(--ok)',ok), A('Pedir ajustes','Ajustes','hook:adjust','ajustes solicitados (2d).','#9061d6',warn), A('On Hold','On Hold','hook:approval','sem retorno 2d — SLA congelado.','var(--breach)',ghost)];
+    else if(t.stage==='Ajustes') list=[A('Reenviar →','Aprovação','hook:adjust','ajuste concluído, reenviado.','var(--warn)',prim)];
+    else if(t.stage==='On Hold') list=[A('Retomar','Aprovação','hook:approval','retomado pelo solicitante.','var(--ok)',prim)];
+    return list.map(a=>({ label:a.label, fn:a.fn, bg:a.style.bg, color:a.style.color, border:a.style.border }));
+  }
+
+  renderVals(){
+    const st=this.state;
+    const tabBg=on=>on?'#fff':'transparent';
+    const tabCol=on=>on?'var(--violet)':'#fff';
+    const active=st.tickets.filter(t=>t.stage!=='Concluído').length;
+    const tabs=[['bot','Novo Chamado','💬',0],['board','Esteira','▦',active],['cal','Calendário','🗓',st.calendar.length]].map(([id,label,icon,count])=>({
+      label, icon, count: count||'', sel:()=>this.setTab(id), bg:tabBg(st.tab===id), color:tabCol(st.tab===id),
+      badgeBg: st.tab===id?'var(--violet-l)':'rgba(255,255,255,.25)', badgeColor: st.tab===id?'var(--violet-d)':'#fff'
+    }));
+
+    const c=this.cat(st.fCat);
+    const briefOk=st.fBriefing.trim().length>=12;
+    const catOptions=this.CATS.map(x=>({ ...x, active:x.id===st.fCat, sel:()=>this.setState({fCat:x.id}),
+      bg:x.id===st.fCat?'var(--violet-l)':'var(--surface-2)', border:x.id===st.fCat?'var(--violet)':'var(--border-2)',
+      numColor:x.id===st.fCat?'var(--violet-d)':'var(--ink-dim)' }));
+
+    const columns=this.STAGES.map(s=>{
+      const tk=st.tickets.filter(t=>t.stage===s.name).map(t=>{ const si=this.slaInfo(t); return {
+        protocolo:t.protocolo, titulo:t.titulo, cat:t.cat, concessao:t.concessao, urgente:t.urgente,
+        slaColor:si.color, slaTag:si.tag, actions:this.actionsFor(t) }; });
+      return { name:s.name, dot:s.dot, n:tk.length, tickets:tk, empty:tk.length===0 };
+    });
+
+    const calendar=st.calendar;
+    const hooksActive=new Set(st.log.map(l=>l.hook));
+    const hooks=this.HOOKS.map(h=>({ ...h, dot:hooksActive.has(h.id)?'var(--emerald)':'var(--border-2)',
+      bg:hooksActive.has(h.id)?'var(--emerald-l)':'var(--surface-2)', border:hooksActive.has(h.id)?'#bfe3cd':'var(--border)' }));
+
+    return {
+      tabs, day:st.day, isBot:st.tab==='bot', isBoard:st.tab==='board', isCal:st.tab==='cal',
+      showNotes:st.showNotes, toggleNotes:()=>this.toggleNotes(), stepDay:()=>this.stepDay(),
+      notesBtnBg: st.showNotes?'#fff':'rgba(255,255,255,.15)', notesBtnColor: st.showNotes?'var(--violet)':'#fff',
+      fTitulo:st.fTitulo, fBriefing:st.fBriefing, fUrgente:st.fUrgente,
+      onTitulo:e=>this.setState({fTitulo:e.target.value}), onBriefing:e=>this.setState({fBriefing:e.target.value}),
+      onConcessao:e=>this.setState({fConcessao:e.target.value}), onCanal:e=>this.setState({fCanal:e.target.value}),
+      onUrgente:e=>this.setState({fUrgente:e.target.checked}),
+      catOptions, concessoes:this.CONCESSOES, canais:this.CANAIS,
+      slaPreview:c.dias+' dias úteis', briefHint: briefOk?'Briefing suficiente para abrir.':'Mínimo de 12 caracteres — o bot bloqueia briefings vazios na entrada.',
+      briefHintColor: briefOk?'var(--ok)':'var(--ink-faint)',
+      urgBg: st.fUrgente?'var(--breach-l)':'var(--surface-2)', urgBorder: st.fUrgente?'#eab8c2':'var(--border-2)', urgInk: st.fUrgente?'var(--breach)':'var(--ink)',
+      openTicket:()=>this.openTicket(),
+      thread:st.thread,
+      columns, ticketCount:active,
+      calendar, hasCal:calendar.length>0, noCal:calendar.length===0,
+      hooks, log:st.log, noLog:st.log.length===0
+    };
+  }
+}
+</script>
+</body>
+</html>

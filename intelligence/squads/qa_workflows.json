@@ -1,0 +1,36 @@
+{
+  "qa_audit_pipeline": {
+    "name": "QA Code Quality & Test Audit Pipeline",
+    "description": "Workflow do QASquad para auditar legibilidade, formatação, performance e cobertura de testes.",
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "SonarBot",
+        "description": "Audita formatação, lints e estilo PEP8",
+        "input_source": "source_code",
+        "output_var": "lint_report"
+      },
+      {
+        "step_id": 2,
+        "agent": "Martin Fowler",
+        "description": "Audita arquitetura, design e code smells",
+        "input_source": "source_code",
+        "output_var": "design_report"
+      },
+      {
+        "step_id": 3,
+        "agent": "LocustBot",
+        "description": "Audita performance, loops e recursos",
+        "input_source": "source_code",
+        "output_var": "perf_report"
+      },
+      {
+        "step_id": 4,
+        "agent": "Kent Beck",
+        "description": "Avalia testes e cobertura contra o código",
+        "input_sources": ["source_code", "test_code", "lint_report", "design_report", "perf_report"],
+        "output_var": "qa_final_report"
+      }
+    ]
+  }
+}

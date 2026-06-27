@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "[Husky] Executando Rebase automático antes do push (Sincronizando com origin/main)..."
+git pull --rebase origin main

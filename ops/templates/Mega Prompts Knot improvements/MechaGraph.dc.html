@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<div ref="{{ setRoot }}" onClick="{{ bg }}" style="position:absolute;inset:0;background:radial-gradient(circle at 50% 42%, #242424 0%, #191919 68%, #141414 100%);overflow:hidden;cursor:{{ cursor }}">
+  <svg style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none">
+    <sc-for list="{{ edges }}" as="e" hint-placeholder-count="14"><line x1="{{ e.x1 }}" y1="{{ e.y1 }}" x2="{{ e.x2 }}" y2="{{ e.y2 }}" stroke="{{ e.color }}" stroke-width="{{ e.w }}" stroke-opacity="{{ e.op }}"></line></sc-for>
+  </svg>
+  <sc-for list="{{ nodeEls }}" as="n" hint-placeholder-count="11">
+    <div onMouseDown="{{ n.down }}" onMouseEnter="{{ n.enter }}" onMouseLeave="{{ n.leave }}" onClick="{{ n.click }}" onDblClick="{{ n.dbl }}" title="duplo-clique abre o arquivo" style="position:absolute;left:{{ n.left }};top:{{ n.top }};width:{{ n.size }};height:{{ n.size }};border-radius:50%;background:{{ n.fill }};border:2px solid {{ n.color }};box-shadow:0 0 {{ n.glow }}px {{ n.ring }};opacity:{{ n.op }};cursor:grab;display:flex;align-items:center;justify-content:center;z-index:{{ n.z }};transition:box-shadow .15s,opacity .15s;animation:{{ n.anim }}"><span style="font-size:{{ n.ico }}px;line-height:1">{{ n.icon }}</span></div>
+  </sc-for>
+  <sc-for list="{{ labels }}" as="l" hint-placeholder-count="11"><div style="position:absolute;left:{{ l.left }};top:{{ l.top }};transform:translateX(-50%);font-size:11px;color:{{ l.color }};opacity:{{ l.op }};font-weight:{{ l.weight }};font-family:var(--mono);white-space:nowrap;pointer-events:none;text-shadow:0 1px 5px #000,0 0 3px #000;z-index:6">{{ l.name }}</div></sc-for>
+  <div style="position:absolute;left:16px;bottom:14px;font-family:var(--mono);font-size:11px;color:var(--ink-faint);letter-spacing:.1em;pointer-events:none">KNOWLEDGE GRAPH · {{ count }} nós · {{ edgeCount }} conexões</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:540},&quot;vm&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;any&quot;}}">
+class Component extends DCLogic {
+  state = { W:0, H:0, pos:{}, drag:null, hoverId:null };
+  componentDidMount(){
+    this._mm=(e)=>this.onMove(e); this._mu=()=>this.endDrag();
+    window.addEventListener('mousemove', this._mm); window.addEventListener('mouseup', this._mu);
+    this._lastHidden = JSON.stringify((this.props.vm&&this.props.vm.hidden)||{});
+    this._tick = setTimeout(()=>this.measure(true), 60);
+    this.subscribeBus();
+  }
+  subscribeBus(){
+    const vm=this.props.vm||{}; if(!vm.bus||this._busBound) return; this._busBound=true; this._offs=[];
+    const fileNode=vm.fileNode||{};
+    this._offs.push(vm.bus.on('node.select',(p)=>this.pulse(p&&p.id)));
+    this._offs.push(vm.bus.on('nav.open',(p)=>this.pulse(p&&(p.node||fileNode[p.fileId]))));
+    this._offs.push(vm.bus.on('claw.firewall',()=>this.pulse('firewall')));
+  }
+  componentWillUnmount(){ if(this._ro)this._ro.disconnect(); clearTimeout(this._tick); clearTimeout(this._pulseT); (this._offs||[]).forEach(off=>{ try{off();}catch(e){} }); window.removeEventListener('mousemove', this._mm); window.removeEventListener('mouseup', this._mu); }
+  componentDidUpdate(){
+    if(!this._busBound) this.subscribeBus();
+    const cur = JSON.stringify((this.props.vm&&this.props.vm.hidden)||{});
+    if(cur !== this._lastHidden){ this._lastHidden = cur; this.relayout(); }
+    const sid=(this.props.vm&&this.props.vm.selId)||null;
+    if(sid && sid!==this._lastSel){ this._lastSel=sid; this.pulse(sid); }
+  }
+  pulse(id){ if(!id)return; this.setState({pulseId:id}); clearTimeout(this._pulseT); this._pulseT=setTimeout(()=>this.setState({pulseId:null}),1400); }
+  setRoot(el){
+    this.root = el;
+    if(el && !this._ro && typeof ResizeObserver!=='undefined'){
+      this._ro = new ResizeObserver(()=>this.measure(false));
+      this._ro.observe(el);
+    }
+    if(el) setTimeout(()=>this.measure(true), 30);
+  }
+  measure(force){
+    if(!this.root) return;
+    const r = this.root.getBoundingClientRect();
+    if(!r.width || !r.height) return;
+    if(force || Math.abs(r.width-this.state.W)>6 || Math.abs(r.height-this.state.H)>6){
+      this.setState({W:r.width, H:r.height}, ()=>this.relayout());
+    }
+  }
+  vmNodes(){ const vm=this.props.vm||{}; const hidden=vm.hidden||{}; return (vm.nodes||[]).filter(n=>!hidden[n.group]); }
+  deg(id){ const vm=this.props.vm||{}; return (vm.edges||[]).filter(([a,b])=>a===id||b===id).length; }
+  radius(id){ return 14 + Math.min(this.deg(id),6)*3.4; }
+  relayout(){
+    const W=this.state.W, H=this.state.H;
+    if(!W||!H) return;
+    const nodes=this.vmNodes(); const n=nodes.length;
+    if(!n){ this.setState({pos:{}}); return; }
+    const vm=this.props.vm||{};
+    const ids=new Set(nodes.map(x=>x.id));
+    const edges=(vm.edges||[]).filter(([a,b])=>ids.has(a)&&ids.has(b));
+    const pos={};
+    const R=Math.min(W,H)*0.32;
+    nodes.forEach((nd,i)=>{ const a=2*Math.PI*i/n - Math.PI/2; pos[nd.id]={ x:W/2+Math.cos(a)*R, y:H/2+Math.sin(a)*R }; });
+    const k=Math.sqrt((W*H)/n)*0.52;
+    let temp=Math.min(W,H)*0.20;
+    for(let it=0; it<340; it++){
+      const disp={}; nodes.forEach(nd=>disp[nd.id]={x:0,y:0});
+      for(let i=0;i<n;i++){ for(let j=i+1;j<n;j++){ const a=nodes[i].id,b=nodes[j].id; let dx=pos[a].x-pos[b].x, dy=pos[a].y-pos[b].y; let d=Math.hypot(dx,dy)||0.01; const f=k*k/d; const ux=dx/d,uy=dy/d; disp[a].x+=ux*f; disp[a].y+=uy*f; disp[b].x-=ux*f; disp[b].y-=uy*f; } }
+      edges.forEach(([a,b])=>{ let dx=pos[a].x-pos[b].x, dy=pos[a].y-pos[b].y; let d=Math.hypot(dx,dy)||0.01; const f=d*d/k; const ux=dx/d,uy=dy/d; disp[a].x-=ux*f; disp[a].y-=uy*f; disp[b].x+=ux*f; disp[b].y+=uy*f; });
+      nodes.forEach(nd=>{ disp[nd.id].x+=(W/2-pos[nd.id].x)*0.022; disp[nd.id].y+=(H/2-pos[nd.id].y)*0.022; });
+      nodes.forEach(nd=>{ const dd=disp[nd.id]; const len=Math.hypot(dd.x,dd.y)||0.01; const m=Math.min(len,temp); pos[nd.id].x+=dd.x/len*m; pos[nd.id].y+=dd.y/len*m; });
+      temp*=0.965;
+    }
+    const pad=52; let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+    nodes.forEach(nd=>{ const p=pos[nd.id], r=this.radius(nd.id); minX=Math.min(minX,p.x-r); minY=Math.min(minY,p.y-r); maxX=Math.max(maxX,p.x+r); maxY=Math.max(maxY,p.y+r); });
+    const spanX=(maxX-minX)||1, spanY=(maxY-minY)||1;
+    const s=Math.min((W-2*pad)/spanX, (H-2*pad)/spanY, 1.5);
+    const offX=(W-spanX*s)/2, offY=(H-spanY*s)/2;
+    nodes.forEach(nd=>{ const p=pos[nd.id]; p.x=offX+(p.x-minX)*s; p.y=offY+(p.y-minY)*s; });
+    this.setState({pos});
+  }
+  startDrag(id,e){ if(e&&e.preventDefault)e.preventDefault(); if(e&&e.stopPropagation)e.stopPropagation(); const vm=this.props.vm||{}; vm.onSelect&&vm.onSelect(id); this.setState({drag:{id,x:e.clientX,y:e.clientY}}); }
+  onMove(e){ const d=this.state.drag; if(!d)return; const dx=e.clientX-d.x, dy=e.clientY-d.y; this.setState(s=>{ const pos={...s.pos}; const p=pos[d.id]; if(p)pos[d.id]={x:p.x+dx,y:p.y+dy}; return {pos, drag:{id:d.id,x:e.clientX,y:e.clientY}}; }); }
+  endDrag(){ if(this.state.drag) this.setState({drag:null}); }
+  renderVals(){
+    const vm=this.props.vm||{}; const nodes=this.vmNodes(); const pos=this.state.pos;
+    const sel=vm.selId, hoverId=this.state.hoverId; const focus=hoverId||sel;
+    const nb=new Set(); if(focus){ nb.add(focus); (vm.edges||[]).forEach(([a,b])=>{ if(a===focus)nb.add(b); if(b===focus)nb.add(a); }); }
+    const dim=!!focus; const gc=vm.groupColor||{};
+    const ids=new Set(nodes.map(nd=>nd.id));
+    const edges=(vm.edges||[]).filter(([a,b])=>ids.has(a)&&ids.has(b)).map(([a,b])=>{ const pa=pos[a]||{x:-99,y:-99}, pb=pos[b]||{x:-99,y:-99}; const hot=focus&&(a===focus||b===focus); const col=gc[(nodes.find(nd=>nd.id===a)||{}).group]||'#3a3a3a'; return { x1:pa.x,y1:pa.y,x2:pb.x,y2:pb.y, color:hot?col:'#4d4d4d', w:hot?2.2:1.2, op:hot?0.9:(dim?0.1:0.5) }; });
+    const pulseId=this.state.pulseId;
+    const nodeEls=nodes.map(nd=>{ const p=pos[nd.id]||{x:-99,y:-99}; const r=this.radius(nd.id); const col=gc[nd.group]||'#9a9a9a'; const on=focus===nd.id; const inb=nb.has(nd.id); const pul=pulseId===nd.id; return { id:nd.id, icon:nd.icon, ico:Math.round(r*0.82), left:(p.x-r)+'px', top:(p.y-r)+'px', size:(2*r)+'px', color:col, ring:pul?'#fff':(on?col:(inb?col:'#000')), fill:on?'#2d2d2d':'#212121', glow:pul?34:(on?24:(inb?14:6)), z:pul?30:(on?20:10), op:dim&&!inb&&!pul?0.22:1, anim:pul?'pulse .6s ease-in-out 3':'none', down:(e)=>this.startDrag(nd.id,e), click:(e)=>{ if(e&&e.stopPropagation)e.stopPropagation(); vm.onSelect&&vm.onSelect(nd.id); }, dbl:()=>vm.onOpen&&vm.onOpen(nd.id), enter:()=>this.setState({hoverId:nd.id}), leave:()=>{ if(!this.state.drag)this.setState({hoverId:null}); } }; });
+    const labels=nodes.map(nd=>{ const p=pos[nd.id]||{x:-99,y:-99}; const r=this.radius(nd.id); return { left:p.x+'px', top:(p.y+r+5)+'px', name:nd.label, color:focus===nd.id?'#fff':'var(--ink-dim)', op:dim&&!nb.has(nd.id)?0.22:1, weight:focus===nd.id?'700':'400' }; });
+    return { setRoot:(el)=>this.setRoot(el), bg:()=>{ vm.onBackground&&vm.onBackground(); }, edges, nodeEls, labels, count:nodes.length, edgeCount:edges.length, cursor:this.state.drag?'grabbing':'default' };
+  }
+}
+</script>
+</body>
+</html>

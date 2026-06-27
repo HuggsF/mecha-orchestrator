@@ -1,0 +1,24 @@
+{
+  "master_orchestration_pipeline": {
+    "name": "Master Orchestration (Shura 255)",
+    "description": "Pipeline mestre governado por ADR-001 (ORCH-01..10). Shura monitora o AgentBus, valida cada handoff via gate (shura_gate.py), agrega resultados, garante build+testes e consolida os 5 dominios. Os steps de gate sao aplicados em codigo no cross_squad_router.",
+    "governance": {
+      "adr": "ADR-001",
+      "rules": ".mecha/intelligence/rules/orchestration_rules.json",
+      "gate_module": ".mecha/ops/patterns/shura_gate.py",
+      "daemon": ".mecha/ops/patterns/shura_daemon.py",
+      "orchestrator": "Shura 255"
+    },
+    "steps": [
+      { "step_id": "monitor", "agent": "Shura 255", "description": "Inscreve no AgentBus e inicia monitoramento (ORCH-05)", "input_source": "user_prompt", "output_var": "monitor_ctx" },
+      { "step_id": "dev", "agent": "dev_squad", "description": "Squad de desenvolvimento executa a task", "input_source": "monitor_ctx", "output_var": "dev_output" },
+      { "step_id": "gate_dev_qa", "agent": "Shura 255", "description": "Gate de handoff Dev->QA (ORCH-02/03/04); [1] avanca, [0] devolve a origem", "input_sources": ["dev_output"], "output_var": "gate_dev_qa" },
+      { "step_id": "qa", "agent": "qa_squad", "description": "Squad de QA valida e testa", "input_source": "gate_dev_qa", "output_var": "qa_output" },
+      { "step_id": "gate_qa_devops", "agent": "Shura 255", "description": "Gate de handoff QA->DevOps (ORCH-02/03/04)", "input_sources": ["qa_output"], "output_var": "gate_qa_devops" },
+      { "step_id": "devops", "agent": "devops_squad", "description": "Squad de DevOps prepara build/deploy", "input_source": "gate_qa_devops", "output_var": "devops_output" },
+      { "step_id": "aggregate", "agent": "Shura 255", "description": "Agrega outputs de todos os squads (ORCH-07)", "input_sources": ["dev_output", "qa_output", "devops_output"], "output_var": "aggregated" },
+      { "step_id": "build_test", "agent": "Shura 255", "description": "Garante build + testes verdes antes da entrega (ORCH-06)", "input_source": "aggregated", "output_var": "build_test_result" },
+      { "step_id": "consolidate", "agent": "Shura 255", "description": "Consolida relatorio dos 5 dominios (ORCH-08)", "input_sources": ["aggregated", "build_test_result"], "output_var": "final_report" }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "product_pipeline": {
+    "name": "Spec → Design → Tasks → MCP Hooks",
+    "description": "Full product workflow: from user idea to runnable integration",
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "Planner",
+        "description": "Writing specification from your request…",
+        "input_source": "user_prompt",
+        "output_var": "specification"
+      },
+      {
+        "step_id": 2,
+        "agent": "Architect",
+        "description": "Designing system architecture…",
+        "input_source": "specification",
+        "output_var": "design"
+      },
+      {
+        "step_id": 3,
+        "agent": "Executor",
+        "description": "Breaking down into actionable task list…",
+        "input_source": "design",
+        "output_var": "task_list"
+      },
+      {
+        "step_id": 4,
+        "agent": "Integrator",
+        "description": "Generating MCP hooks and integrations…",
+        "input_source": "task_list",
+        "output_var": "hooks_and_mcps"
+      }
+    ]
+  }
+}

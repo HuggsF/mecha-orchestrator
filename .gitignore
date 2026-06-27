@@ -1,0 +1,23 @@
+# === Segredos / ambiente (NUNCA commitar) ===
+.env
+*.env
+ops/.env
+**/.env
+
+# === IPC / telemetria / temporários ===
+*.tmp
+ops/logs/*.tmp
+ops/logs/claw_preempt.json
+
+# === Python ===
+__pycache__/
+*.pyc
+*.pyo
+
+# === Build PyInstaller ===
+ops/build/
+ops/dist/
+ops/venv_build/
+
+# === Node / Husky ===
+node_modules/

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1620; --surface:#16202c; --surface-2:#1c2836; --surface-3:#22303f;
+    --border:#2a3947; --border-2:#36495b;
+    --ink:#e7eef5; --ink-dim:#8fa3b5; --ink-faint:#5e7088;
+    --tg:#2AABEE; --tg-d:#1c87b8; --tg-l:#0e3a52;
+    --ok:#3ddc84; --warn:#ffb454; --breach:#ff5c6c; --emerald:#3ddc84;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --sans:'Segoe UI',system-ui,-apple-system,'Helvetica Neue',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:#2a3947;border-radius:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+  input,button{font-family:inherit;font-size:inherit}
+  input:focus{outline:none}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--bg);font-family:var(--sans);color:var(--ink)">
+
+  <!-- HEADER -->
+  <header style="background:linear-gradient(180deg,#1c87b8,#2AABEE);color:#fff;padding:14px 22px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:30">
+    <div style="width:42px;height:42px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;flex:none">✈️</div>
+    <div style="line-height:1.2">
+      <div style="font-weight:700;font-size:17px">HuggiesBot</div>
+      <div style="font-size:12px;opacity:.9;font-family:var(--mono)">@Huggies_bbot · console de chamados</div>
+    </div>
+    <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+      <div style="display:flex;align-items:center;gap:9px;background:rgba(0,0,0,.18);padding:7px 14px;border-radius:8px">
+        <span style="width:9px;height:9px;border-radius:50%;background:{{ statusDot }};box-shadow:0 0 8px {{ statusDot }};animation:{{ statusAnim }}"></span>
+        <span style="font-size:12.5px;font-weight:600;font-family:var(--mono)">{{ statusText }}</span>
+      </div>
+      <button onClick="{{ toggle }}" style="background:{{ btnBg }};color:{{ btnColor }};border:0;padding:9px 18px;border-radius:8px;cursor:pointer;font-weight:700;font-size:13px">{{ btnLabel }}</button>
+    </div>
+  </header>
+
+  <!-- SECURITY NOTE -->
+  <div style="background:#3a2410;border-bottom:1px solid #5c3a16;color:#ffce93;padding:9px 22px;font-size:12px;display:flex;gap:10px;align-items:center">
+    <span style="font-weight:700">⚠ TOKEN EXPOSTO</span>
+    <span>O token está embutido nesta página (lado-cliente). Depois do teste, gere um novo no <span style="font-family:var(--mono)">@BotFather</span> → <span style="font-family:var(--mono)">/revoke</span>. O bot só responde <strong>enquanto esta aba estiver aberta</strong> (polling no navegador, sem servidor).</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start">
+
+    <!-- LEFT · LIVE CONSOLE -->
+    <section style="padding:18px 20px;border-right:1px solid var(--border);min-height:calc(100vh - 110px)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+        <span style="font-weight:700;font-size:13px;letter-spacing:.04em">CONSOLE AO VIVO</span>
+        <span style="font-size:11px;color:var(--ink-dim);font-family:var(--mono)">▼ {{ statsIn }} recebidas · ▲ {{ statsOut }} enviadas</span>
+        <button onClick="{{ clearLog }}" style="margin-left:auto;background:transparent;border:1px solid var(--border-2);color:var(--ink-dim);padding:4px 11px;border-radius:6px;cursor:pointer;font-size:11px">limpar</button>
+      </div>
+
+      <!-- token row -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 13px;margin-bottom:12px;display:flex;gap:9px;align-items:center">
+        <span style="font-size:11px;color:var(--ink-dim);font-family:var(--mono);flex:none">TOKEN</span>
+        <input value="{{ token }}" onInput="{{ onToken }}" style="flex:1;background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:8px 10px;color:var(--ink);font-family:var(--mono);font-size:11.5px" style-focus="border-color:var(--tg)">
+        <button onClick="{{ reconnect }}" style="background:var(--tg-l);border:1px solid var(--tg-d);color:var(--tg);padding:8px 13px;border-radius:7px;cursor:pointer;font-size:11.5px;font-weight:600;flex:none">reconectar</button>
+      </div>
+
+      <div style="background:#0a0f16;border:1px solid var(--border);border-radius:10px;padding:12px;height:calc(100vh - 280px);overflow:auto;display:flex;flex-direction:column;gap:5px">
+        <sc-for list="{{ log }}" as="e" hint-placeholder-count="0">
+          <div style="font-family:var(--mono);font-size:11.5px;line-height:1.5;display:flex;gap:8px">
+            <span style="color:var(--ink-faint);flex:none">{{ e.time }}</span>
+            <span style="color:{{ e.color }};flex:none;font-weight:700">{{ e.tag }}</span>
+            <span style="color:var(--ink-dim);word-break:break-word">{{ e.text }}</span>
+          </div>
+        </sc-for>
+        <sc-if value="{{ noLog }}" hint-placeholder-val="{{ true }}">
+          <div style="color:var(--ink-faint);font-size:12px;padding:18px 6px;text-align:center;line-height:1.7">Conectando ao Telegram…<br>Abra o app, procure <span style="color:var(--tg);font-family:var(--mono)">@Huggies_bbot</span> e envie <span style="color:var(--tg);font-family:var(--mono)">/start</span>.</div>
+        </sc-if>
+      </div>
+    </section>
+
+    <!-- RIGHT · TICKETS + SLA -->
+    <aside style="padding:18px 20px;min-height:calc(100vh - 110px);display:flex;flex-direction:column;gap:16px">
+
+      <!-- how to test -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:10px">Como testar</div>
+        <div style="display:flex;flex-direction:column;gap:8px;font-size:12.5px;color:var(--ink-dim)">
+          <div style="display:flex;gap:10px"><span style="color:var(--tg);font-family:var(--mono);font-weight:700">1</span>Abra o Telegram e procure <span style="color:var(--ink);font-family:var(--mono)">@Huggies_bbot</span></div>
+          <div style="display:flex;gap:10px"><span style="color:var(--tg);font-family:var(--mono);font-weight:700">2</span>Envie <span style="color:var(--ink);font-family:var(--mono)">/start</span> — o bot responde com o menu</div>
+          <div style="display:flex;gap:10px"><span style="color:var(--tg);font-family:var(--mono);font-weight:700">3</span><span style="color:var(--ink);font-family:var(--mono)">/novo</span> abre um chamado guiado · <span style="color:var(--ink);font-family:var(--mono)">/sla</span> lista as categorias</div>
+          <div style="display:flex;gap:10px"><span style="color:var(--tg);font-family:var(--mono);font-weight:700">4</span>Cada chamado registrado aparece aqui ao lado, em tempo real</div>
+        </div>
+      </div>
+
+      <!-- tickets -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 16px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:12px">
+          <span style="font-weight:700;font-size:13px">Chamados registrados</span>
+          <span style="background:var(--tg-l);color:var(--tg);border-radius:9px;font-size:11px;padding:1px 8px;font-family:var(--mono);font-weight:700">{{ ticketCount }}</span>
+        </div>
+        <sc-if value="{{ hasTickets }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;flex-direction:column;gap:9px">
+            <sc-for list="{{ tickets }}" as="t" hint-placeholder-count="0">
+              <div style="background:var(--surface-2);border:1px solid var(--border);border-left:3px solid {{ t.color }};border-radius:9px;padding:11px 13px">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                  <span style="font-family:var(--mono);font-size:11px;color:var(--tg)">{{ t.protocolo }}</span>
+                  <sc-if value="{{ t.urgente }}" hint-placeholder-val="{{ false }}"><span style="color:var(--breach);font-size:11px">⚡</span></sc-if>
+                  <span style="margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-dim)">prazo {{ t.deadline }}</span>
+                </div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:6px">{{ t.titulo }}</div>
+                <div style="display:flex;flex-wrap:wrap;gap:5px">
+                  <span style="background:var(--surface-3);border-radius:5px;font-size:10.5px;padding:2px 7px;color:var(--ink-dim);font-family:var(--mono)">{{ t.cat }}d</span>
+                  <span style="background:var(--surface-3);border-radius:5px;font-size:10.5px;padding:2px 7px;color:var(--ink-dim)">{{ t.concessao }}</span>
+                  <span style="background:var(--surface-3);border-radius:5px;font-size:10.5px;padding:2px 7px;color:var(--ink-dim)">{{ t.canal }}</span>
+                  <span style="background:var(--surface-3);border-radius:5px;font-size:10.5px;padding:2px 7px;color:var(--ink-dim)">@{{ t.user }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noTickets }}" hint-placeholder-val="{{ true }}">
+          <div style="color:var(--ink-faint);font-size:12px;text-align:center;padding:24px 8px">Nenhum chamado ainda. Abra um pelo bot no Telegram.</div>
+        </sc-if>
+      </div>
+
+      <!-- sla reference -->
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:15px 16px">
+        <div style="font-weight:700;font-size:13px;margin-bottom:12px">Categorias de esforço (SLA)</div>
+        <div style="display:flex;flex-direction:column;gap:7px">
+          <sc-for list="{{ slaCats }}" as="c" hint-placeholder-count="5">
+            <div style="display:flex;align-items:center;gap:11px;padding:6px 0;border-bottom:1px solid var(--border)">
+              <span style="font-family:var(--mono);font-weight:700;font-size:14px;color:{{ c.color }};min-width:34px">{{ c.dias }}d</span>
+              <span style="font-size:12.5px;color:var(--ink)">{{ c.nome }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  state = { status:'idle', updates:[], tickets:[], token:'8789303719:AAHR3kVP_jHmGicwgv2d-9d6sMy8-th5LB', running:false, sin:0, sout:0 };
+
+  CATS = [
+    { id:'2', dias:2, nome:'Operacional / Distribuição', color:'#8fa3b5' },
+    { id:'3', dias:3, nome:'Comunicação simples / Informativa', color:'#2AABEE' },
+    { id:'5', dias:5, nome:'Criação e Design', color:'#9061d6' },
+    { id:'10', dias:10, nome:'Produção AV e Identidade estruturada', color:'#ffb454' },
+    { id:'15', dias:15, nome:'Projetos e campanhas integradas', color:'#ff5c6c' }
+  ];
+  CONCESSOES = ['Monte Rodovias','Bahia Norte','Litoral Norte','Rota do Atlântico','Rota dos Coqueiros'];
+  CANAIS = ['Redes Sociais','E-mail','TV Corporativa','Somos Monte','LinkedIn','Imprensa'];
+
+  cat(id){ return this.CATS.find(c=>c.id===id) || this.CATS[2]; }
+  esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  base(){ return 'https://api.telegram.org/bot'+this.state.token.trim()+'/'; }
+  clock(){ const d=new Date(); return [d.getHours(),d.getMinutes(),d.getSeconds()].map(n=>String(n).padStart(2,'0')).join(':'); }
+
+  log(tag, text, color){
+    this.setState(s=>({ updates:[{ time:this.clock(), tag, text, color:color||'var(--ink-dim)' }, ...s.updates].slice(0,80) }));
+  }
+
+  componentDidMount(){
+    try{
+      const tk=JSON.parse(localStorage.getItem('huggiesbot_tickets')||'[]');
+      this.seq=parseInt(localStorage.getItem('huggiesbot_seq')||'0',10)||0;
+      this.offset=parseInt(localStorage.getItem('huggiesbot_offset')||'0',10)||0;
+      this.setState({ tickets:tk });
+    }catch(e){ this.seq=0; this.offset=0; }
+    this.sessions = {};
+    setTimeout(()=>this.start(), 900);
+  }
+  componentWillUnmount(){ this._running=false; }
+
+  async tg(method, params){
+    const ctl=new AbortController();
+    const to=setTimeout(()=>ctl.abort(), method==='getUpdates'?32000:15000);
+    try{
+      const r=await fetch(this.base()+method,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(params||{}), signal:ctl.signal });
+      clearTimeout(to);
+      return await r.json();
+    }catch(e){ clearTimeout(to); throw e; }
+  }
+
+  async start(){
+    if(this._running) return;
+    this._running=true; this.setState({ running:true, status:'connecting' });
+    this.log('•','Conectando ao Telegram…','var(--warn)');
+    try{
+      await this.tg('deleteWebhook',{ drop_pending_updates:false });
+      const me=await this.tg('getMe',{});
+      if(me && me.ok){ this.setState({ status:'online' }); this.log('✓','Online como @'+me.result.username,'var(--ok)'); }
+      else { this.setState({ status:'error' }); this.log('✕','Token inválido: '+(me&&me.description||'?'),'var(--breach)'); this._running=false; this.setState({running:false}); return; }
+    }catch(e){ this.setState({ status:'error' }); this.log('✕','Falha de rede no getMe ('+e.name+'). Verifique conexão/token e reconecte.','var(--breach)'); this._running=false; this.setState({running:false}); return; }
+    this.poll();
+  }
+  stop(){ this._running=false; this.setState({ running:false, status:'idle' }); this.log('•','Polling parado.','var(--ink-faint)'); }
+  toggle(){ this._running ? this.stop() : this.start(); }
+  reconnect(){ this.stop(); setTimeout(()=>this.start(), 300); }
+
+  async poll(){
+    while(this._running){
+      try{
+        const r=await this.tg('getUpdates',{ offset:this.offset, timeout:25, allowed_updates:['message','callback_query'] });
+        if(r && r.ok){
+          if(this.state.status!=='online') this.setState({ status:'online' });
+          for(const u of r.result){ this.offset=u.update_id+1; localStorage.setItem('huggiesbot_offset',String(this.offset)); try{ this.handle(u); }catch(e){ this.log('✕','Erro ao tratar update: '+e.message,'var(--breach)'); } }
+        } else if(r && r.error_code===409){ this.log('!','Conflito (409): outra aba/servidor consumindo updates.','var(--warn)'); await this.sleep(3000); }
+        else { this.log('!','getUpdates: '+(r&&r.description||'sem resposta'),'var(--warn)'); await this.sleep(2000); }
+      }catch(e){ if(this._running){ this.setState({ status:'error' }); this.log('!','Rede instável ('+e.name+'), retomando…','var(--warn)'); await this.sleep(3000); } }
+    }
+  }
+  sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+  async send(chatId, text, keyboard){
+    this.setState(s=>({ sout:s.sout+1 }));
+    const params={ chat_id:chatId, text, parse_mode:'HTML', disable_web_page_preview:true };
+    if(keyboard) params.reply_markup=JSON.stringify({ inline_keyboard:keyboard });
+    try{ await this.tg('sendMessage', params); this.log('▲', this.strip(text), 'var(--tg)'); }
+    catch(e){ this.log('✕','Falha ao enviar: '+e.name,'var(--breach)'); }
+  }
+  strip(t){ return String(t).replace(/<[^>]+>/g,'').replace(/\n+/g,' ⏎ ').slice(0,90); }
+  async answerCb(id, text){ try{ await this.tg('answerCallbackQuery',{ callback_query_id:id, text:text||'' }); }catch(e){} }
+
+  handle(u){
+    this.setState(s=>({ sin:s.sin+1 }));
+    if(u.message) return this.onMessage(u.message);
+    if(u.callback_query) return this.onCallback(u.callback_query);
+  }
+
+  onMessage(m){
+    const chatId=m.chat.id; const text=(m.text||'').trim(); const name=m.from.first_name||'amigo';
+    const uname=m.from.username||name;
+    this.log('▼', name+': '+(text||'(sem texto)'), 'var(--ok)');
+    if(/^\/(start|menu|ajuda|help)/i.test(text)){ delete this.sessions[chatId]; return this.sendMenu(chatId,name); }
+    if(/^\/sla/i.test(text)) return this.sendSla(chatId);
+    if(/^\/novo/i.test(text)) return this.startFlow(chatId);
+    if(/^\/(status|meus)/i.test(text)) return this.sendStatus(chatId);
+    if(/^\/cancel/i.test(text)){ delete this.sessions[chatId]; return this.send(chatId,'Operação cancelada. Envie /novo para recomeçar.'); }
+    const s=this.sessions[chatId];
+    if(s) return this.handleStep(chatId, s, text, uname);
+    return this.send(chatId,'Não entendi 🤔\nUse <b>/novo</b> para abrir um chamado ou <b>/sla</b> para ver as categorias.', this.menuKb());
+  }
+
+  handleStep(chatId, s, text, uname){
+    if(s.step==='titulo'){
+      if(text.length<4) return this.send(chatId,'O título está curto. Descreva a demanda em poucas palavras.');
+      s.draft.titulo=text; s.step='cat';
+      return this.send(chatId,'Título: <b>'+this.esc(text)+'</b>\n\nEscolha a <b>categoria de esforço</b> (define o SLA):', this.catKb());
+    }
+    if(s.step==='briefing'){
+      if(text.length<12) return this.send(chatId,'O briefing está curto ✍️\nDescreva objetivo, formato e referências (mín. 12 caracteres).');
+      s.draft.briefing=text; s.draft.user=uname; s.step='urg';
+      return this.send(chatId,'Última pergunta: é uma demanda <b>urgente</b>?', [[{text:'⚡ Sim, urgente',callback_data:'u:1'},{text:'Não',callback_data:'u:0'}]]);
+    }
+    return this.send(chatId,'Use os botões acima 👆 ou /cancel para recomeçar.');
+  }
+
+  onCallback(cb){
+    const chatId=cb.message.chat.id; const data=cb.data||'';
+    this.answerCb(cb.id);
+    this.log('▼','[botão] '+data,'var(--ok)');
+    if(data==='m:novo') return this.startFlow(chatId);
+    if(data==='m:sla') return this.sendSla(chatId);
+    if(data==='m:status') return this.sendStatus(chatId);
+    let s=this.sessions[chatId]; if(!s){ s=this.sessions[chatId]={ step:'', draft:{} }; }
+    if(data.startsWith('c:')){ s.draft.cat=data.slice(2); s.step='conc'; return this.send(chatId,'Para qual <b>concessão</b>?', this.concKb()); }
+    if(data.startsWith('o:')){ s.draft.concessao=data.slice(2); s.step='canal'; return this.send(chatId,'Qual o <b>canal</b> de veiculação?', this.canalKb()); }
+    if(data.startsWith('k:')){ s.draft.canal=data.slice(2); s.step='briefing'; return this.send(chatId,'Descreva o <b>briefing</b> (objetivo, mensagem-chave, formato e referências):'); }
+    if(data.startsWith('u:')){ s.draft.urgente=data.slice(2)==='1'; s.draft.user=s.draft.user||(cb.from.username||cb.from.first_name); return this.finalize(chatId, s); }
+  }
+
+  startFlow(chatId){
+    this.sessions[chatId]={ step:'titulo', draft:{} };
+    return this.send(chatId,'📋 <b>Novo chamado</b>\nVamos lá! Qual o <b>título</b> da demanda?\n<i>(envie /cancel para sair)</i>');
+  }
+
+  sendMenu(chatId, name){
+    return this.send(chatId,'Olá, '+this.esc(name)+'! 👋\nSou o <b>HuggiesBot</b>, canal oficial de chamados da Comunicação.\n\nO que você precisa?',
+      [[{text:'📋 Novo chamado',callback_data:'m:novo'}],[{text:'⏱ Ver categorias (SLA)',callback_data:'m:sla'}],[{text:'📊 Meus chamados',callback_data:'m:status'}]]);
+  }
+  sendSla(chatId){
+    let t='⏱ <b>Categorias de esforço (SLA em dias úteis)</b>\n\n';
+    this.CATS.forEach(c=>{ t+='<b>'+c.dias+'d</b> · '+c.nome+'\n'; });
+    t+='\n⏰ Demandas abertas após as 16h iniciam o SLA no próximo dia útil.';
+    return this.send(chatId,t,[[{text:'📋 Abrir chamado',callback_data:'m:novo'}]]);
+  }
+  sendStatus(chatId){
+    const mine=this.state.tickets.filter(t=>t.chatId===chatId);
+    if(!mine.length) return this.send(chatId,'Você ainda não tem chamados. Envie /novo para abrir o primeiro.',[[{text:'📋 Novo chamado',callback_data:'m:novo'}]]);
+    let t='📊 <b>Seus chamados</b>\n\n';
+    mine.slice(0,10).forEach(k=>{ t+='<b>'+k.protocolo+'</b> — '+this.esc(k.titulo)+'\n'+k.cat+'d · prazo '+k.deadline+(k.urgente?' · ⚡ urgente':'')+'\n\n'; });
+    return this.send(chatId,t);
+  }
+
+  catKb(){ return this.CATS.map(c=>[{ text:c.dias+'d · '+c.nome, callback_data:'c:'+c.id }]); }
+  concKb(){ const r=[]; for(let i=0;i<this.CONCESSOES.length;i+=2){ r.push(this.CONCESSOES.slice(i,i+2).map(n=>({text:n,callback_data:'o:'+n}))); } return r; }
+  canalKb(){ const r=[]; for(let i=0;i<this.CANAIS.length;i+=2){ r.push(this.CANAIS.slice(i,i+2).map(n=>({text:n,callback_data:'k:'+n}))); } return r; }
+  menuKb(){ return [[{text:'📋 Novo chamado',callback_data:'m:novo'}],[{text:'⏱ Ver SLA',callback_data:'m:sla'}]]; }
+
+  finalize(chatId, s){
+    const d=s.draft; const c=this.cat(d.cat);
+    this.seq+=1; localStorage.setItem('huggiesbot_seq',String(this.seq));
+    const protocolo='HUG-26-'+String(this.seq).padStart(3,'0');
+    const after16=new Date().getHours()>=16;
+    const deadlineDate=new Date(Date.now()+(c.dias+(after16?1:0))*864e5);
+    const deadline=String(deadlineDate.getDate()).padStart(2,'0')+'/'+String(deadlineDate.getMonth()+1).padStart(2,'0');
+    const ticket={ protocolo, titulo:d.titulo, cat:c.id, color:c.color, concessao:d.concessao, canal:d.canal, urgente:!!d.urgente, user:d.user||'—', deadline, chatId };
+    const tickets=[ticket, ...this.state.tickets].slice(0,50);
+    this.setState({ tickets }); localStorage.setItem('huggiesbot_tickets', JSON.stringify(tickets));
+    delete this.sessions[chatId];
+    this.log('✓','[hook:register] '+protocolo+' registrado','var(--emerald)');
+    let msg='✅ <b>Chamado registrado!</b>\n\n'+
+      '🎫 <b>'+protocolo+'</b>\n'+
+      '📌 '+this.esc(d.titulo)+'\n'+
+      '⏱ '+c.dias+'d · '+c.nome+'\n'+
+      '🏢 '+this.esc(d.concessao)+'\n'+
+      '📣 '+this.esc(d.canal)+'\n'+
+      '📅 Prazo estimado: <b>'+deadline+'</b>'+
+      (d.urgente?'\n⚡ <b>URGENTE</b> — valide com a equipe no Teams/Telegram.':'')+
+      (after16?'\n\n⏰ Aberto após as 16h: SLA inicia no próximo dia útil.':'')+
+      '\n\nVocê acompanha pelo /status. Obrigado! 🙌';
+    return this.send(chatId, msg, [[{text:'📋 Abrir outro',callback_data:'m:novo'},{text:'📊 Meus chamados',callback_data:'m:status'}]]);
+  }
+
+  clearLog(){ this.setState({ updates:[] }); }
+
+  renderVals(){
+    const st=this.state;
+    const map={ idle:['Parado','var(--ink-faint)','none','Iniciar'], connecting:['Conectando…','var(--warn)','pulse 1.2s infinite','Parar'], online:['Online','var(--ok)','pulse 2.4s infinite','Parar'], error:['Erro','var(--breach)','none','Reconectar'] };
+    const m=map[st.status]||map.idle;
+    return {
+      statusText:m[0], statusDot:m[1], statusAnim:m[2],
+      btnLabel: st.running?'Parar':(st.status==='error'?'Reconectar':'Iniciar'),
+      btnBg: st.running?'rgba(0,0,0,.2)':'#fff', btnColor: st.running?'#fff':'#1c87b8',
+      toggle:()=>this.toggle(), reconnect:()=>this.reconnect(),
+      token:st.token, onToken:e=>this.setState({token:e.target.value}),
+      log:st.updates, noLog:st.updates.length===0,
+      statsIn:st.sin, statsOut:st.sout, clearLog:()=>this.clearLog(),
+      tickets:st.tickets, ticketCount:st.tickets.length, hasTickets:st.tickets.length>0, noTickets:st.tickets.length===0,
+      slaCats:this.CATS
+    };
+  }
+}
+</script>
+</body>
+</html>

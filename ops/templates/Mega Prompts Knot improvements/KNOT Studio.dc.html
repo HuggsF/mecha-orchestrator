@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --steel-0:#070a0e; --steel-1:#0c1117; --steel-2:#121a22; --steel-3:#1b2731;
+    --line:#27333d; --line-2:#34434f;
+    --amber:#ffb000; --amber-dim:#9a6c0c; --amber-glow:rgba(255,176,0,.14);
+    --phos:#46f1a6; --phos-dim:#1f6b4c;
+    --cyan:#4ad6e6; --cyan-dim:#1d5f68;
+    --alert:#ff5240;
+    --ink:#d4dce2; --ink-dim:#7c8b96; --ink-faint:#48555f;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --disp:'Chakra Petch','JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--steel-0);color:var(--ink);font-family:var(--mono);font-size:13px;line-height:1.5}
+  ::selection{background:var(--amber);color:#000}
+  ::-webkit-scrollbar{width:10px;height:10px}
+  ::-webkit-scrollbar-track{background:var(--steel-0)}
+  ::-webkit-scrollbar-thumb{background:var(--steel-3);border:1px solid var(--line)}
+  ::-webkit-scrollbar-thumb:hover{background:var(--line-2)}
+  input,button,textarea,select{font-family:inherit}
+  input::placeholder,textarea::placeholder{color:var(--ink-faint)}
+  input:focus,textarea:focus{outline:none}
+  @keyframes blink{0%,92%{opacity:1}96%{opacity:.2}100%{opacity:1}}
+  @keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  @keyframes sweep{0%{transform:translateX(-100%)}100%{transform:translateX(220%)}}
+  @keyframes pulseGlow{0%,100%{box-shadow:0 0 0 0 var(--amber-glow)}50%{box-shadow:0 0 0 4px var(--amber-glow)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--steel-0);font-family:var(--mono);color:var(--ink);position:relative;overflow-x:hidden">
+
+  <sc-if value="{{ glow }}" hint-placeholder-val="{{ true }}">
+    <div style="position:fixed;inset:0;pointer-events:none;z-index:9990;background:repeating-linear-gradient(0deg,rgba(255,255,255,.018) 0 1px,transparent 1px 3px);mix-blend-mode:overlay"></div>
+  </sc-if>
+
+  <!-- ============ HUD ============ -->
+  <header style="position:sticky;top:0;z-index:100;background:linear-gradient(180deg,rgba(7,10,14,.97),rgba(7,10,14,.9));backdrop-filter:blur(8px);border-bottom:1px solid var(--line)">
+    <div style="height:8px;background:repeating-linear-gradient(-45deg,var(--amber) 0 14px,#0a0a0a 14px 28px);filter:saturate(.85);opacity:.85"></div>
+    <div style="display:flex;align-items:center;gap:20px;padding:13px 26px;max-width:1480px;margin:0 auto">
+      <div style="display:flex;flex-direction:column;gap:1px">
+        <div style="font-size:10px;letter-spacing:.32em;color:var(--ink-dim)">MECHA · OPS // STUDIO</div>
+        <div style="font-family:var(--disp);font-weight:700;font-size:21px;letter-spacing:.18em;color:var(--amber);line-height:1">KNOT&nbsp;STUDIO</div>
+      </div>
+      <div style="font-size:10.5px;color:var(--ink-faint);letter-spacing:.06em;border-left:1px solid var(--line);padding-left:18px;max-width:300px;line-height:1.45">
+        Megaprompt assembler<br><span style="color:var(--cyan)">meta-segmented</span> · CQS-scored
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:20px">
+        <div style="text-align:right;line-height:1.3">
+          <div style="font-size:9.5px;letter-spacing:.22em;color:var(--ink-dim)">SEGMENT SIGNAL / SINAL</div>
+          <div style="font-family:var(--disp);font-weight:600;font-size:13px;color:var(--cyan);letter-spacing:.06em">{{ signal }}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:5px;font-size:9.5px;letter-spacing:.12em;color:var(--ink-dim);border-left:1px solid var(--line);padding-left:18px">
+          <span><i style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--phos);box-shadow:0 0 6px var(--phos);margin-right:7px;animation:blink 2.4s infinite"></i>n8n journey</span>
+          <span><i style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan);margin-right:7px;animation:blink 2.4s .6s infinite"></i>ronin · assistant</span>
+          <span><i style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber);margin-right:7px;animation:blink 2.4s 1.2s infinite"></i>segment-engine</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ============ GRID ============ -->
+  <main style="max-width:1480px;margin:0 auto;padding:22px 26px 60px;display:grid;grid-template-columns:288px 1fr 380px;gap:18px;align-items:start">
+
+    <!-- ====== LEFT · SEGMENT MATRIX ====== -->
+    <aside style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <span style="width:7px;height:7px;background:var(--cyan);transform:rotate(45deg)"></span>
+          <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">SEGMENT MATRIX</span>
+          <span style="font-size:9.5px;color:var(--ink-faint);margin-left:auto">matriz</span>
+        </div>
+        <div style="padding:12px 12px 14px">
+          <div style="font-size:9.5px;letter-spacing:.2em;color:var(--cyan);margin-bottom:9px">› PERSONA / ICP</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <sc-for list="{{ personas }}" as="p" hint-placeholder-count="4">
+              <button onClick="{{ p.sel }}" style="position:relative;text-align:left;background:var(--steel-2);border:1px solid var(--line);padding:9px 11px;cursor:pointer;color:var(--ink);transition:border-color .15s,background .15s" style-hover="border-color:var(--line-2);background:var(--steel-3)">
+                <sc-if value="{{ p.active }}" hint-placeholder-val="{{ false }}">
+                  <span style="position:absolute;left:0;top:0;bottom:0;width:2px;background:var(--cyan);box-shadow:0 0 8px var(--cyan)"></span>
+                </sc-if>
+                <div style="display:flex;align-items:center;gap:7px">
+                  <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.08em;color:{{ p.nameColor }}">{{ p.name }}</span>
+                  <sc-if value="{{ p.active }}" hint-placeholder-val="{{ false }}">
+                    <span style="margin-left:auto;width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span>
+                  </sc-if>
+                </div>
+                <div style="font-size:10px;color:var(--ink-dim);margin-top:2px">{{ p.icp }}</div>
+              </button>
+            </sc-for>
+          </div>
+
+          <div style="font-size:9.5px;letter-spacing:.2em;color:var(--cyan);margin:16px 0 9px">› JOURNEY STAGE</div>
+          <div style="display:flex;flex-direction:column;gap:5px">
+            <sc-for list="{{ stages }}" as="s" hint-placeholder-count="5">
+              <button onClick="{{ s.sel }}" style="position:relative;text-align:left;background:var(--steel-2);border:1px solid var(--line);padding:7px 11px;cursor:pointer;color:var(--ink);display:flex;align-items:center;gap:9px;transition:border-color .15s" style-hover="border-color:var(--line-2)">
+                <span style="width:7px;height:7px;border-radius:50%;background:{{ s.dot }};box-shadow:{{ s.glow }}"></span>
+                <span style="font-family:var(--disp);font-weight:500;font-size:11.5px;letter-spacing:.07em;color:{{ s.nameColor }}">{{ s.name }}</span>
+                <span style="margin-left:auto;font-size:9.5px;color:var(--ink-faint)">{{ s.pt }}</span>
+              </button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <!-- pipeline telemetry -->
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 13px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <span style="width:7px;height:7px;background:var(--phos);transform:rotate(45deg)"></span>
+          <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">PIPELINE</span>
+          <span style="font-size:9.5px;color:var(--ink-faint);margin-left:auto">.mecha · live</span>
+        </div>
+        <div style="padding:11px 13px;display:flex;flex-direction:column;gap:9px;font-size:10.5px">
+          <div style="display:flex;align-items:center;gap:9px"><span style="width:6px;height:6px;border-radius:50%;background:var(--phos);box-shadow:0 0 6px var(--phos)"></span><span style="color:var(--ink)">n8n journey flow</span><span style="margin-left:auto;color:var(--phos);letter-spacing:.1em">ACTIVE</span></div>
+          <div style="display:flex;align-items:center;gap:9px"><span style="width:6px;height:6px;border-radius:50%;background:var(--cyan);box-shadow:0 0 6px var(--cyan)"></span><span style="color:var(--ink)">ronin assistant</span><span style="margin-left:auto;color:var(--cyan);letter-spacing:.1em">SYNCED</span></div>
+          <div style="display:flex;align-items:center;gap:9px"><span style="width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 6px var(--amber)"></span><span style="color:var(--ink)">segment-engine</span><span style="margin-left:auto;color:var(--amber);letter-spacing:.1em">FEED</span></div>
+          <div style="border-top:1px solid var(--line);margin-top:3px;padding-top:9px;color:var(--ink-dim);font-size:9.5px;line-height:1.5">Segmento composto injetado no prompt via pipeline ronin + n8n. <span style="color:var(--ink-faint)">Composite segment injected per journey node.</span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ====== CENTER · ASSEMBLY ====== -->
+    <section style="display:flex;flex-direction:column;gap:16px">
+      <!-- format + inputs -->
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <span style="width:7px;height:7px;background:var(--amber);transform:rotate(45deg)"></span>
+          <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">KNOT ASSEMBLY</span>
+          <span style="font-size:9.5px;color:var(--ink-faint);margin-left:auto">montagem do megaprompt</span>
+        </div>
+        <div style="padding:15px">
+          <div style="font-size:9.5px;letter-spacing:.2em;color:var(--amber);margin-bottom:8px">› FORMAT / FORMATO</div>
+          <div style="display:flex;flex-wrap:wrap;gap:7px;margin-bottom:16px">
+            <sc-for list="{{ formats }}" as="f" hint-placeholder-count="5">
+              <button onClick="{{ f.sel }}" style="background:{{ f.bg }};border:1px solid {{ f.border }};color:{{ f.color }};padding:8px 13px;cursor:pointer;font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.09em;transition:all .15s" style-hover="border-color:var(--amber-dim)">{{ f.name }}<span style="display:block;font-family:var(--mono);font-weight:400;font-size:9px;color:var(--ink-faint);letter-spacing:.04em;margin-top:1px">{{ f.pt }}</span></button>
+            </sc-for>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr;gap:13px">
+            <label style="display:block">
+              <span style="font-size:9.5px;letter-spacing:.2em;color:var(--amber)">› TOPIC / TÓPICO</span>
+              <input value="{{ topic }}" onInput="{{ onTopic }}" placeholder="ex: cobrança recorrente que não falha" style="display:block;width:100%;margin-top:7px;background:var(--steel-0);border:1px solid var(--line);color:var(--ink);padding:10px 12px;font-size:13px;letter-spacing:.02em" style-focus="border-color:var(--amber-dim)">
+            </label>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px">
+              <label style="display:block">
+                <span style="font-size:9.5px;letter-spacing:.2em;color:var(--amber)">› TONE / TOM</span>
+                <input value="{{ tone }}" onInput="{{ onTone }}" placeholder="direto, provocador…" style="display:block;width:100%;margin-top:7px;background:var(--steel-0);border:1px solid var(--line);color:var(--ink);padding:10px 12px;font-size:13px" style-focus="border-color:var(--amber-dim)">
+              </label>
+              <div>
+                <span style="font-size:9.5px;letter-spacing:.2em;color:var(--amber)">› DURATION / DURAÇÃO</span>
+                <div style="display:flex;gap:6px;margin-top:7px">
+                  <sc-for list="{{ durations }}" as="d" hint-placeholder-count="3">
+                    <button onClick="{{ d.sel }}" style="flex:1;background:{{ d.bg }};border:1px solid {{ d.border }};color:{{ d.color }};padding:10px 4px;cursor:pointer;font-size:11px;letter-spacing:.04em" style-hover="border-color:var(--amber-dim)">{{ d.label }}</button>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- KNOT spine -->
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <span style="width:7px;height:7px;background:var(--amber);transform:rotate(45deg)"></span>
+          <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">KNOT STRUCTURE</span>
+          <span style="font-size:9.5px;color:var(--ink-faint);margin-left:auto">estrutura isomórfica · Hook → CTA</span>
+        </div>
+        <div style="padding:12px;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="7">
+            <div style="display:flex;gap:12px;align-items:flex-start;padding:9px 12px;border:1px solid var(--line);border-left:2px solid var(--amber-dim);background:var(--steel-2)">
+              <div style="font-family:var(--disp);font-weight:700;color:var(--amber);font-size:12px;min-width:50px;letter-spacing:.02em">{{ b.ts }}</div>
+              <div style="flex:1">
+                <div style="display:flex;gap:8px;align-items:baseline">
+                  <span style="font-family:var(--disp);letter-spacing:.11em;font-weight:600;font-size:11.5px;color:var(--ink)">{{ b.name }}</span>
+                  <span style="color:var(--ink-faint);font-size:10px">{{ b.pt }}</span>
+                </div>
+                <div style="color:var(--ink-dim);font-size:11px;margin-top:2px">{{ b.role }}</div>
+              </div>
+              <span style="width:6px;height:6px;border-radius:50%;background:var(--phos);margin-top:5px;box-shadow:0 0 6px var(--phos)"></span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <!-- assembled prompt -->
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <span style="width:7px;height:7px;background:var(--phos);transform:rotate(45deg)"></span>
+          <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">ASSEMBLED MEGAPROMPT</span>
+          <button onClick="{{ copyPrompt }}" style="margin-left:auto;background:transparent;border:1px solid var(--line-2);color:var(--ink-dim);padding:5px 11px;font-size:9.5px;letter-spacing:.14em;cursor:pointer" style-hover="border-color:var(--phos);color:var(--phos)">COPY</button>
+        </div>
+        <pre style="margin:0;padding:14px;font-family:var(--mono);font-size:11.5px;line-height:1.6;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-height:230px;overflow:auto;background:var(--steel-0)">{{ assembled }}</pre>
+      </div>
+
+      <!-- actions -->
+      <div style="display:flex;gap:11px">
+        <button onClick="{{ gen }}" style="flex:1;background:var(--amber);border:1px solid var(--amber);color:#0a0a0a;padding:15px;cursor:pointer;font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.16em;animation:pulseGlow 3s infinite" style-hover="background:#ffc233">
+            ⏵ ASSEMBLE &amp; GENERATE
+        </button>
+        <button onClick="{{ genHooks }}" style="background:transparent;border:1px solid var(--cyan-dim);color:var(--cyan);padding:15px 18px;cursor:pointer;font-family:var(--disp);font-weight:600;font-size:13px;letter-spacing:.1em" style-hover="border-color:var(--cyan)">⚡ HOOKS ×{{ varCount }}</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;font-size:9.5px;color:var(--ink-faint);letter-spacing:.06em">
+        <span>VARIATIONS:</span>
+        <sc-for list="{{ varOptions }}" as="v" hint-placeholder-count="3">
+          <button onClick="{{ v.sel }}" style="background:{{ v.bg }};border:1px solid {{ v.border }};color:{{ v.color }};padding:4px 11px;cursor:pointer;font-size:10px;letter-spacing:.08em">{{ v.n }}</button>
+        </sc-for>
+        <span style="margin-left:auto">{{ engineLabel }}</span>
+      </div>
+    </section>
+
+    <!-- ====== RIGHT · OUTPUT + CQS ====== -->
+    <aside style="display:flex;flex-direction:column;gap:16px">
+      <div style="background:var(--steel-1);border:1px solid var(--line)">
+        <div style="display:flex;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+            <button onClick="{{ t.sel }}" style="flex:1;background:{{ t.bg }};border:0;border-bottom:2px solid {{ t.line }};color:{{ t.color }};padding:11px 4px;cursor:pointer;font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.12em">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="padding:14px;min-height:300px;position:relative">
+          <!-- loading bar -->
+          <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:0;left:0;right:0;height:2px;background:var(--steel-3);overflow:hidden"><div style="position:absolute;top:0;left:0;height:100%;width:40%;background:var(--amber);box-shadow:0 0 10px var(--amber);animation:sweep 1.1s infinite"></div></div>
+          </sc-if>
+
+          <!-- OUTPUT tab -->
+          <sc-if value="{{ isOutput }}" hint-placeholder-val="{{ true }}">
+            <div>
+              <sc-if value="{{ hasOutput }}" hint-placeholder-val="{{ false }}">
+                <pre style="margin:0;font-family:var(--mono);font-size:11.5px;line-height:1.65;color:var(--ink);white-space:pre-wrap;word-break:break-word;max-height:520px;overflow:auto">{{ output }}</pre>
+              </sc-if>
+              <sc-if value="{{ noOutput }}" hint-placeholder-val="{{ true }}">
+                <div style="color:var(--ink-faint);font-size:11.5px;line-height:1.7;text-align:center;padding:60px 12px">
+                  <div style="font-family:var(--disp);font-size:26px;color:var(--steel-3);letter-spacing:.1em;margin-bottom:10px">◍ IDLE</div>
+                  Defina segmento + tópico e<br>aperte <span style="color:var(--amber)">ASSEMBLE &amp; GENERATE</span>.
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- HOOKS tab -->
+          <sc-if value="{{ isHooks }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <sc-if value="{{ hasHooks }}" hint-placeholder-val="{{ false }}">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <sc-for list="{{ hooks }}" as="h" hint-placeholder-count="3">
+                    <div style="border:1px solid var(--line);border-left:2px solid var(--cyan);background:var(--steel-2);padding:9px 11px">
+                      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span style="font-size:9px;letter-spacing:.12em;color:var(--cyan);border:1px solid var(--cyan-dim);padding:1px 6px">{{ h.type }}</span><span style="margin-left:auto;font-size:9.5px;color:var(--ink-faint)">{{ h.tag }}</span></div>
+                      <div style="font-size:12.5px;color:var(--ink);line-height:1.45">{{ h.text }}</div>
+                    </div>
+                  </sc-for>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noHooks }}" hint-placeholder-val="{{ true }}">
+                <div style="color:var(--ink-faint);font-size:11px;line-height:1.7;padding:18px 4px">
+                  <div style="font-size:9.5px;letter-spacing:.18em;color:var(--cyan);margin-bottom:10px">5 HOOK TYPES · POR EFICÁCIA</div>
+                  <sc-for list="{{ hookTypes }}" as="ht" hint-placeholder-count="5">
+                    <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)"><span style="color:var(--amber);font-family:var(--disp);font-weight:700;width:18px">{{ ht.rank }}</span><span style="color:var(--ink)">{{ ht.type }}</span><span style="margin-left:auto;color:var(--phos);font-family:var(--disp)">{{ ht.ret }}</span></div>
+                  </sc-for>
+                  <div style="margin-top:12px;color:var(--ink-faint)">Aperte <span style="color:var(--cyan)">HOOKS ×{{ varCount }}</span> para gerar.</div>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+
+          <!-- CQS tab -->
+          <sc-if value="{{ isCqs }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <sc-if value="{{ hasCqs }}" hint-placeholder-val="{{ false }}">
+                <div>
+                  <div style="display:flex;align-items:flex-end;gap:12px;margin-bottom:14px">
+                    <div style="font-family:var(--disp);font-weight:700;font-size:46px;line-height:.9;color:{{ cqsColor }}">{{ cqsTotal }}</div>
+                    <div style="padding-bottom:6px"><div style="font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim)">CQS / 100</div><div style="font-size:11px;color:{{ cqsColor }};letter-spacing:.08em">{{ cqsBadge }}</div></div>
+                  </div>
+                  <div style="height:6px;background:var(--steel-3);margin-bottom:16px"><div style="height:100%;width:{{ cqsPct }}%;background:{{ cqsColor }};box-shadow:0 0 8px {{ cqsColor }};transition:width .6s"></div></div>
+                  <div style="display:flex;flex-direction:column;gap:11px">
+                    <sc-for list="{{ cqsRows }}" as="r" hint-placeholder-count="6">
+                      <div>
+                        <div style="display:flex;align-items:baseline;gap:8px;font-size:10.5px;margin-bottom:3px"><span style="color:var(--ink)">{{ r.name }}</span><span style="margin-left:auto;font-family:var(--disp);color:{{ r.color }}">{{ r.score }}/{{ r.max }}</span></div>
+                        <div style="height:3px;background:var(--steel-3)"><div style="height:100%;width:{{ r.pct }}%;background:{{ r.color }}"></div></div>
+                        <div style="font-size:9.5px;color:var(--ink-faint);margin-top:3px;line-height:1.4">{{ r.note }}</div>
+                      </div>
+                    </sc-for>
+                  </div>
+                  <div style="margin-top:14px;border-top:1px solid var(--line);padding-top:10px;font-size:10.5px;color:var(--ink-dim);line-height:1.5"><span style="color:var(--phos)">▸ VERDICT:</span> {{ cqsVerdict }}</div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ noCqs }}" hint-placeholder-val="{{ true }}">
+                <div style="font-size:11px;color:var(--ink-dim);line-height:1.6">
+                  <div style="font-size:9.5px;letter-spacing:.18em;color:var(--amber);margin-bottom:10px">CQS RUBRIC · PUBLIQUE ≥ 70</div>
+                  <sc-for list="{{ cqsRubric }}" as="d" hint-placeholder-count="6">
+                    <div style="display:flex;gap:8px;padding:6px 0;border-bottom:1px solid var(--line)"><span style="color:var(--ink)">{{ d.name }}</span><span style="margin-left:auto;font-family:var(--disp);color:var(--amber)">{{ d.max }}</span></div>
+                  </sc-for>
+                  <button onClick="{{ scoreNow }}" style="width:100%;margin-top:13px;background:transparent;border:1px solid var(--amber-dim);color:var(--amber);padding:11px;cursor:pointer;font-family:var(--disp);font-weight:600;letter-spacing:.12em;font-size:12px" style-hover="border-color:var(--amber)">▸ SCORE CURRENT OUTPUT</button>
+                </div>
+              </sc-if>
+            </div>
+          </sc-if>
+        </div>
+
+        <!-- delivery -->
+        <div style="border-top:1px solid var(--line);padding:12px 14px;display:flex;gap:9px;background:var(--steel-2)">
+          <button onClick="{{ copyOutput }}" style="flex:1;background:transparent;border:1px solid var(--line-2);color:var(--ink-dim);padding:10px;cursor:pointer;font-size:10px;letter-spacing:.12em" style-hover="border-color:var(--ink);color:var(--ink)">⧉ COPY</button>
+          <button onClick="{{ sendTg }}" style="flex:1;background:transparent;border:1px solid var(--phos-dim);color:var(--phos);padding:10px;cursor:pointer;font-size:10px;letter-spacing:.12em" style-hover="border-color:var(--phos)">✈ mecha tg</button>
+        </div>
+      </div>
+
+      <div style="font-size:9.5px;color:var(--ink-faint);line-height:1.6;letter-spacing:.04em;padding:0 2px">
+        Output gerado pelo assistant <span style="color:var(--cyan)">ronin</span>, auditado pela rubrica <span style="color:var(--amber)">CQS</span>, e despachado via <span style="color:var(--phos)">mecha tg</span> → Telegram. <span style="color:var(--ink-dim)">Same loop the .mecha CLI runs.</span>
+      </div>
+    </aside>
+  </main>
+
+  <!-- toast -->
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;background:var(--steel-2);border:1px solid var(--amber-dim);color:var(--amber);padding:11px 20px;font-size:11.5px;letter-spacing:.06em;box-shadow:0 8px 30px rgba(0,0,0,.6)">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;glow&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;liveAI&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;compact&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;}}">
+class Component extends DCLogic {
+  state = {
+    persona: 'growth', stage: 'awareness', format: 'video',
+    topic: '', tone: '', duration: '30–60s', varCount: 3,
+    loading: false, mode: 'output',
+    output: '', hooks: [], cqs: null, toast: ''
+  };
+
+  PERSONAS = [
+    { id:'growth', name:'GROWTH LEAD', icp:'SaaS B2B · founder/CMO', desc:'pipeline previsível, CAC baixo' },
+    { id:'ecom', name:'E-COM OWNER', icp:'D2C · loja própria', desc:'ROAS e recompra' },
+    { id:'creator', name:'INFOPRODUTOR', icp:'creator · cursos/mentoria', desc:'audiência → lançamento → LTV' },
+    { id:'devfounder', name:'DEV FOUNDER', icp:'tech · product-led', desc:'cético a hype, valoriza dado' }
+  ];
+  STAGES = [
+    { id:'awareness', name:'AWARENESS', pt:'descoberta', desc:'não sabe que tem o problema', dot:'var(--alert)' },
+    { id:'consideration', name:'CONSIDERATION', pt:'consideração', desc:'comparando soluções', dot:'var(--amber)' },
+    { id:'decision', name:'DECISION', pt:'decisão', desc:'pronto, falta a objeção final', dot:'var(--phos)' },
+    { id:'retention', name:'RETENTION', pt:'retenção', desc:'cliente — expandir e reter', dot:'var(--cyan)' },
+    { id:'advocacy', name:'ADVOCACY', pt:'indicação', desc:'promotor — vira canal', dot:'var(--cyan)' }
+  ];
+  FORMATS = [
+    { id:'video', name:'VÍDEO', pt:'short-form' },
+    { id:'email', name:'E-MAIL', pt:'cold/nurture' },
+    { id:'landing', name:'LANDING', pt:'above-fold' },
+    { id:'thread', name:'THREAD', pt:'carrossel' },
+    { id:'seo', name:'SEO', pt:'título/desc' }
+  ];
+  BLOCKS = [
+    { ts:'0–1s', name:'PATTERN INTERRUPT', pt:'quebra de padrão', role:'Corte seco, texto grande, som que rompe o feed.' },
+    { ts:'1–2s', name:'CURIOSITY GAP', pt:'lacuna', role:'"A coisa que ninguém te conta sobre…"' },
+    { ts:'2–3s', name:'PROMISE', pt:'promessa', role:'"Depois disso você nunca mais vai…" (+ identidade)' },
+    { ts:'3–10s', name:'PROBLEMA', pt:'tensão', role:'1–2 dados específicos + tensão emocional real.' },
+    { ts:'10–35s', name:'CONTEÚDO', pt:'corpo', role:'3–5 pontos, cada um com dado verificável.' },
+    { ts:'35–50s', name:'REVELAÇÃO', pt:'plot twist', role:'Insight contra-intuitivo de valor máximo.' },
+    { ts:'50–60s', name:'CTA', pt:'chamada', role:'Ação + gancho de identidade ("salva se você é…").' }
+  ];
+  HOOK_TYPES = [
+    { rank:1, type:'Contrarian', ret:'87%' },
+    { rank:2, type:'Specific Number', ret:'82%' },
+    { rank:3, type:'Identity Challenge', ret:'79%' },
+    { rank:4, type:'Reveal / Secret', ret:'76%' },
+    { rank:5, type:'Question', ret:'74%' }
+  ];
+  CQS_RUBRIC = [
+    { name:'Hook', max:25 }, { name:'Clareza de tese', max:15 }, { name:'Densidade de dado', max:20 },
+    { name:'Revelação', max:15 }, { name:'CTA', max:10 }, { name:'Ritmo', max:15 }
+  ];
+
+  persona(){ return this.PERSONAS.find(p=>p.id===this.state.persona) || this.PERSONAS[0]; }
+  stageObj(){ return this.STAGES.find(s=>s.id===this.state.stage) || this.STAGES[0]; }
+  formatObj(){ return this.FORMATS.find(f=>f.id===this.state.format) || this.FORMATS[0]; }
+
+  flash(m){ clearTimeout(this._t); this.setState({ toast:m }); this._t = setTimeout(()=>this.setState({ toast:'' }), 2800); }
+
+  ask(prompt){
+    if (this.props.liveAI === false) return Promise.resolve(null);
+    if (!(window.claude && window.claude.complete)) return Promise.resolve(null);
+    return window.claude.complete(prompt).catch(()=>null);
+  }
+  parseJSON(str){
+    if(!str) return null;
+    try{
+      const a = str.indexOf('{'), b = str.lastIndexOf('}');
+      if(a<0||b<0) return null;
+      return JSON.parse(str.slice(a, b+1));
+    }catch(e){ return null; }
+  }
+
+  buildPrompt(){
+    const p = this.persona(), s = this.stageObj(), f = this.formatObj();
+    const topic = this.state.topic.trim() || '{tópico}';
+    const tone = this.state.tone.trim() || 'direto';
+    const head =
+`Framework KNOT · ${f.name} (${f.pt})
+Tópico: ${topic}
+Persona/ICP: ${p.name} — ${p.icp} (${p.desc})
+Jornada: ${s.name} — ${s.desc}
+Sinal de segmento (ronin + n8n): ${p.id}×${s.id}
+Tom: ${tone}`;
+    let body;
+    if(f.id==='video') body =
+`\n\nEntregue um roteiro de ${this.state.duration} nos blocos: Pattern Interrupt, Curiosity Gap, Promise, Problema (2 dados), Conteúdo (3 pontos c/ dado), Revelação (insight contra-intuitivo), CTA (ação+identidade). Marque o timestamp de cada bloco + 3 variações de hook. Cada afirmação factual com fonte ou [VERIFICAR]. Sem clickbait vazio.`;
+    else if(f.id==='email') body =
+`\n\nEscreva um e-mail no framework KNOT: Hook no assunto (≤45 chars), Curiosity na abertura, Promise, Problema c/ 1 dado, Conteúdo em 3 bullets, Revelação, CTA único. Corpo ≤130 palavras. PT-BR.`;
+    else if(f.id==='landing') body =
+`\n\nGere a dobra principal (above-the-fold): Headline (Promise + Identity Challenge), Subheadline (Curiosity Gap resolvido em 1 linha), 3 bullets (benefício + prova), 1 CTA (verbo + identidade). Derrube a objeção do estágio ${s.name}.`;
+    else if(f.id==='thread') body =
+`\n\nCrie uma thread/carrossel de ${this.state.varCount} posts. Post 1 = Hook (Contrarian ou Reveal). Posts 2..N-1 = um ponto de conteúdo c/ dado. Post N = Revelação + CTA. Sem encher linguiça.`;
+    else body =
+`\n\nGere SEO: 3 títulos (keyword nos primeiros 60 chars), 1 descrição de 150 chars (keyword + CTA), 5 keywords de cauda longa com intenção marcada (info/comercial/transacional).`;
+    return head + body;
+  }
+
+  async gen(){
+    if(!this.state.topic.trim()){ this.flash('▸ Defina um TÓPICO primeiro'); return; }
+    this.setState({ loading:true, mode:'output' });
+    const prompt = this.buildPrompt() + '\n\nResponda em PT-BR, conciso (≤1024 tokens). Use timestamps quando aplicável.';
+    let text = await this.ask(prompt);
+    let demo = false;
+    if(!text){ text = this.mockScript(); demo = true; }
+    this.setState({ output:text, loading:false });
+    if(demo) this.flash('▸ MODO DEMO · window.claude indisponível');
+    this.scoreCQS(text, demo);
+  }
+
+  async genHooks(){
+    if(!this.state.topic.trim()){ this.flash('▸ Defina um TÓPICO primeiro'); return; }
+    this.setState({ loading:true, mode:'hooks' });
+    const n = this.state.varCount, p = this.persona(), s = this.stageObj();
+    const prompt =
+`Gere ${n} hooks no framework KNOT. Tópico: ${this.state.topic}. Persona: ${p.name} (${p.icp}). Estágio: ${s.name}. Cicle os tipos: Contrarian, Specific Number, Identity Challenge, Reveal, Question. Cada hook ≤12 palavras, cria curiosity gap sem clickbait vazio. Responda APENAS JSON válido: {"hooks":[{"type":"Contrarian","text":"..."}]}`;
+    const json = this.parseJSON(await this.ask(prompt));
+    let hooks = json && Array.isArray(json.hooks) ? json.hooks : null;
+    if(!hooks){ hooks = this.mockHooks(n); this.flash('▸ MODO DEMO · window.claude indisponível'); }
+    this.setState({ hooks, loading:false });
+  }
+
+  async scoreCQS(content, demo){
+    const c = content || this.state.output;
+    if(!c){ this.flash('▸ Gere conteúdo antes de pontuar'); return; }
+    const prompt =
+`Avalie com a rubrica CQS do KNOT. Pesos: Hook 25, Clareza de tese 15, Densidade de dado 20, Revelação 15, CTA 10, Ritmo 15. Responda APENAS JSON válido: {"dimensions":[{"name":"Hook","score":0,"max":25,"note":"1 linha"}],"total":0,"verdict":"1 frase"}. CONTEÚDO:\n"""${c}"""`;
+    let json = demo ? null : this.parseJSON(await this.ask(prompt));
+    if(!json || !Array.isArray(json.dimensions)) json = this.mockCQS();
+    this.setState({ cqs:json });
+  }
+
+  copyText(t, msg){ try{ navigator.clipboard.writeText(t); }catch(e){} this.flash(msg); }
+  copyPrompt(){ this.copyText(this.buildPrompt(), '▸ Megaprompt copiado'); }
+  copyOutput(){
+    const payload = this.deliverPayload();
+    if(!payload){ this.flash('▸ Nada para copiar — gere primeiro'); return; }
+    this.copyText(payload, '▸ Output copiado');
+  }
+  deliverPayload(){
+    if(this.state.mode==='hooks' && this.state.hooks.length)
+      return this.state.hooks.map((h,i)=>`${i+1}. [${h.type}] ${h.text}`).join('\n');
+    return this.state.output;
+  }
+  sendTg(){
+    const payload = this.deliverPayload();
+    if(!payload){ this.flash('▸ Nada para enviar — gere primeiro'); return; }
+    this.copyText(payload, '✈ ENFILEIRADO · mecha tg → @huggs_ops (copiado)');
+  }
+
+  mockScript(){
+    const p = this.persona(), s = this.stageObj(), f = this.formatObj();
+    const t = this.state.topic.trim() || 'seu tópico';
+    if(f.id==='email') return `ASSUNTO: ${t}? O erro de ${p.name.toLowerCase()} que ninguém vê\n\n[Curiosity] Tem uma parte de ${t} que destrói o resultado e quase ninguém olha.\n[Promise] Em 90s você sai com um ajuste que aplica hoje.\n[Problema] 87% trava no estágio ${s.name} — perde tempo e CAC [VERIFICAR].\n[Conteúdo]\n  • Ponto 1 + dado\n  • Ponto 2 + dado\n  • Ponto 3 + dado\n[Revelação] O atalho contra-intuitivo: faça o oposto do óbvio.\n[CTA] Responda "QUERO" e te mando o template.`;
+    if(f.id==='seo') return `TÍTULOS\n1. ${t}: o guia que ${p.icp} precisa (2026)\n2. Como resolver ${t} sem desperdício\n3. ${t} — erros que travam ${s.name}\n\nDESCRIÇÃO (150)\nAprenda a dominar ${t} no estágio ${s.name}. Método KNOT, dados reais, zero clickbait. Comece agora →\n\nKEYWORDS\n• ${t} (info) • como fazer ${t} (info) • melhor ${t} (comercial) • ${t} preço (transacional) • ${t} ${p.id} (comercial)`;
+    return `▸ HOOKS\n1. [Contrarian] Tudo que te venderam sobre ${t} está errado.\n2. [Specific Number] 3 erros que matam ${t} em 30 dias.\n3. [Reveal] O que ninguém conta sobre ${t}.\n\n[0–1s] PATTERN INTERRUPT — corte seco + "${t}?" em tela cheia.\n[1–2s] CURIOSITY GAP — "a parte que ninguém explica sobre ${t}…"\n[2–3s] PROMISE — "depois disso você nunca mais erra ${t}." (+ identidade ${p.name})\n[3–10s] PROBLEMA — 87% de ${p.icp} trava no estágio ${s.name} [VERIFICAR]. Tensão: tempo e dinheiro queimados.\n[10–35s] CONTEÚDO —\n  • Ponto 1 + dado verificável\n  • Ponto 2 + dado verificável\n  • Ponto 3 + dado verificável\n[35–50s] REVELAÇÃO — o insight contra-intuitivo que vira a chave.\n[50–60s] CTA — "salva se você é ${p.name.toLowerCase()}." (ação + identidade)\n\n▸ Tom: ${this.state.tone.trim()||'direto'} · Duração: ${this.state.duration}`;
+  }
+  mockHooks(n){
+    const t = this.state.topic.trim() || 'seu tópico';
+    const bank = [
+      { type:'Contrarian', text:`Tudo que te ensinaram sobre ${t} está errado.` },
+      { type:'Specific Number', text:`3 erros que matam ${t} em 30 dias.` },
+      { type:'Identity Challenge', text:`Quem domina ${t} nunca faz isso.` },
+      { type:'Reveal', text:`O que ninguém te conta sobre ${t}.` },
+      { type:'Question', text:`Por que ${t} trava justo agora?` }
+    ];
+    const out = [];
+    for(let i=0;i<n;i++){ const b = bank[i % bank.length]; out.push({ type:b.type, text:b.text }); }
+    return out;
+  }
+  mockCQS(){
+    return { dimensions:[
+      { name:'Hook', score:21, max:25, note:'Trigger Contrarian claro nos 3s.' },
+      { name:'Clareza de tese', score:13, max:15, note:'Um assunto só, formulável em 1 frase.' },
+      { name:'Densidade de dado', score:14, max:20, note:'Faltam 1–2 dados verificáveis.' },
+      { name:'Revelação', score:12, max:15, note:'Insight presente, pode ser mais contra-intuitivo.' },
+      { name:'CTA', score:9, max:10, note:'Ação + identidade bem amarrados.' },
+      { name:'Ritmo', score:12, max:15, note:'Bom; evitar pausa morta no bloco Conteúdo.' }
+    ], total:81, verdict:'Publica — suba densidade de dado para passar de 90.' };
+  }
+
+  cqsColor(total){ return total<50 ? 'var(--alert)' : total<70 ? 'var(--amber)' : 'var(--phos)'; }
+  cqsBadge(total){ return total<50 ? 'REWRITE' : total<70 ? 'AJUSTE' : 'PUBLICA'; }
+
+  renderVals(){
+    const st = this.state;
+    const glow = this.props.glow !== false;
+    const A = { bg:'var(--amber-glow)', border:'var(--amber)', color:'var(--amber)' };
+    const I = { bg:'var(--steel-2)', border:'var(--line)', color:'var(--ink-dim)' };
+
+    const personas = this.PERSONAS.map(p=>({ ...p, active: p.id===st.persona,
+      nameColor: p.id===st.persona ? 'var(--cyan)' : 'var(--ink)',
+      sel: ()=>this.setState({ persona:p.id }) }));
+    const stages = this.STAGES.map(s=>({ ...s, active: s.id===st.stage,
+      nameColor: s.id===st.stage ? 'var(--cyan)' : 'var(--ink-dim)',
+      glow: s.id===st.stage ? '0 0 7px '+s.dot : 'none',
+      sel: ()=>this.setState({ stage:s.id }) }));
+    const formats = this.FORMATS.map(f=>{ const on=f.id===st.format; return { ...f,
+      bg: on?'var(--amber-glow)':'var(--steel-2)', border: on?'var(--amber)':'var(--line)', color: on?'var(--amber)':'var(--ink-dim)',
+      sel: ()=>this.setState({ format:f.id }) }; });
+    const durations = ['30s','30–60s','90s'].map(d=>{ const on=d===st.duration; return { label:d,
+      bg:on?'var(--amber-glow)':'var(--steel-2)', border:on?'var(--amber)':'var(--line)', color:on?'var(--amber)':'var(--ink-dim)',
+      sel:()=>this.setState({ duration:d }) }; });
+    const varOptions = [3,5,10].map(n=>{ const on=n===st.varCount; return { n,
+      bg:on?'var(--cyan-dim)':'var(--steel-2)', border:on?'var(--cyan)':'var(--line)', color:on?'var(--cyan)':'var(--ink-dim)',
+      sel:()=>this.setState({ varCount:n }) }; });
+
+    const tabs = [['output','OUTPUT'],['hooks','HOOKS'],['cqs','CQS']].map(([id,label])=>{ const on=id===st.mode; return { label,
+      bg:on?'var(--steel-1)':'transparent', line:on?'var(--amber)':'transparent', color:on?'var(--amber)':'var(--ink-dim)',
+      sel:()=>this.setState({ mode:id }) }; });
+
+    const cqs = st.cqs;
+    const total = cqs ? cqs.total : 0;
+    const cqsRows = cqs ? cqs.dimensions.map(d=>({ ...d, pct: Math.round((d.score/d.max)*100),
+      color: (d.score/d.max)<0.5 ? 'var(--alert)' : (d.score/d.max)<0.75 ? 'var(--amber)' : 'var(--phos)' })) : [];
+
+    return {
+      glow,
+      signal: `${this.persona().name} × ${this.stageObj().name}`,
+      engineLabel: this.props.liveAI===false ? 'engine: DEMO' : 'engine: ronin · live',
+      personas, stages, formats, durations, varOptions, tabs,
+      blocks: this.BLOCKS, hookTypes: this.HOOK_TYPES, cqsRubric: this.CQS_RUBRIC,
+      topic: st.topic, tone: st.tone, varCount: st.varCount,
+      onTopic: e=>this.setState({ topic:e.target.value }),
+      onTone: e=>this.setState({ tone:e.target.value }),
+      assembled: this.buildPrompt(),
+      loading: st.loading, mode: st.mode,
+      isOutput: st.mode==='output', isHooks: st.mode==='hooks', isCqs: st.mode==='cqs',
+      output: st.output, hasOutput: !!st.output, noOutput: !st.output,
+      hooks: st.hooks.map((h,i)=>({ type:h.type, text:h.text, tag:`#${i+1}` })),
+      hasHooks: st.hooks.length>0, noHooks: st.hooks.length===0,
+      hasCqs: !!cqs, noCqs: !cqs,
+      cqsTotal: total, cqsPct: total, cqsColor: this.cqsColor(total), cqsBadge: this.cqsBadge(total),
+      cqsRows, cqsVerdict: cqs ? cqs.verdict : '',
+      gen: ()=>this.gen(), genHooks: ()=>this.genHooks(), scoreNow: ()=>this.scoreCQS(),
+      copyPrompt: ()=>this.copyPrompt(), copyOutput: ()=>this.copyOutput(), sendTg: ()=>this.sendTg(),
+      toast: st.toast, hasToast: !!st.toast
+    };
+  }
+}
+</script>
+</body>
+</html>

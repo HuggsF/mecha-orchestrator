@@ -1,0 +1,34 @@
+🤖 MECHA + Omega — Resumo simples do alinhamento
+
+Oi! Aqui vai, em linguagem do dia a dia, o que eu analisei sobre juntar os dois sistemas: o MECHA e o Omega RAG.
+
+🏭 Uma analogia rápida
+Pense no MECHA como uma EQUIPE que já trabalha: ela lê, decide, clica, conversa no Telegram/Teams e executa tarefas. Já o Omega é um PRÉDIO NOVO com plantas muito bem desenhadas (salas para arquivo, dashboards, recepção, segurança)... mas ainda sem móveis: as salas estão vazias.
+
+🔎 O que encontrei
+- O MECHA está vivo e funcionando (tem o "trabalho" de verdade acontecendo).
+- O Omega hoje é só o esqueleto: pastas criadas, mas praticamente sem conteúdo.
+- Os dois NÃO estão iguais ainda, MAS combinam muito bem: um é a equipe, o outro é o prédio organizado onde a equipe deveria morar.
+
+✅ O melhor de cada um (que vamos manter)
+Do MECHA: a disciplina (regras claras, conferência automática de qualidade), a memória/conhecimento e a parte que realmente executa as tarefas.
+Do Omega: a organização dos dados (cada coisa no seu lugar), os painéis de acompanhamento (saúde do sistema), o site/app para o usuário e a parte de segurança.
+
+🔄 Como uni os dois (em 3 rodadas)
+1) Coloquei as duas plantas lado a lado e achei o que se repetia.
+2) Resolvi as duplicações: escolhi UM lugar para o conhecimento, UM padrão de nomes e UM jeito de buscar informação.
+3) Organizei tudo em "andares" (camadas): regras → execução → conhecimento → busca → dados → entrada de informação → painéis → telas/usuário → segurança.
+
+🧩 Resultado
+Uma única estrutura organizada onde o MECHA é o "cérebro que faz" e o Omega é a "casa que guarda, mostra e protege". Eles deixam de competir e passam a se completar.
+
+📌 4 decisões que faltam você aprovar
+1) Usar Qdrant + Neo4j para busca (e abandonar o ChromaDB), para não ter três sistemas fazendo a mesma coisa.
+2) Ter UMA fonte de conhecimento (a do MECHA), e o Omega só refletir/organizar.
+3) Adotar as regras de qualidade do MECHA para tudo.
+4) Fazer a mudança aos poucos, sem parar o que já funciona.
+
+🗺️ Próximo passo
+Com esse alinhamento aprovado, o próximo passo é o "System Design" (a planta detalhada da casa unificada). Já deixei pronto o pedido (prompt) para gerar esse desenho.
+
+Qualquer dúvida, é só responder. 🌸

@@ -1,0 +1,53 @@
+{
+    "loop_state": "running",
+    "step": 1,
+    "max_steps": 5,
+    "last_seen_title": "Tribunal Test Window",
+    "current_goal": "Validar logs E2E",
+    "last_thumbnail": null,
+    "timestamp": 1782568900.3620365,
+    "vision": {
+        "active": false,
+        "using_image": false,
+        "last_action": null
+    },
+    "firewall": {
+        "armed": true,
+        "block": null
+    },
+    "recovery": {
+        "misses": 0,
+        "last": null
+    },
+    "incident": {
+        "number": null,
+        "url": null,
+        "kind": null
+    },
+    "events": [
+        {
+            "time": "11:01:40",
+            "level": "ok",
+            "msg": "Automação: Ação física de clique efetuada com sucesso (Teste E2E).",
+            "id": "1782568900.362-0"
+        },
+        {
+            "time": "11:01:40",
+            "level": "warn",
+            "msg": "Automação: Janela de teste saindo de foco temporariamente (Teste E2E).",
+            "id": "1782568900.362-1"
+        },
+        {
+            "time": "11:01:40",
+            "level": "danger",
+            "msg": "Automação: Bloqueio ativo no firewall devido a ação de risco (Teste E2E).",
+            "id": "1782568900.362-2"
+        },
+        {
+            "time": "11:01:40",
+            "level": "judge",
+            "msg": "Juiz IA: Modelo classificou a intenção do clique como segura (Teste E2E).",
+            "id": "1782568900.362-3"
+        }
+    ]
+}

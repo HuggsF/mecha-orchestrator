@@ -1,0 +1,26 @@
+[2026-06-11 23:33:25] ronin score=35 dna=5/10 docs_viol=11 hooks=False
+[2026-06-11 23:39:11] ronin score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-12 11:00:49] ronin score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-12 11:00:49] creative-forge score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-12 11:55:30] Hermes score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-12 13:12:13] Hermes score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-17 21:50:59] Hermes score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-17 21:50:59] ronin score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-17 21:50:59] platform-backend score=62 dna=6/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] churnshield score=41 dna=3/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] ouroboros-monorepo score=34 dna=2/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] ORCHESTRATOR_CORE score=21 dna=3/10 docs_viol=16 hooks=False
+[2026-06-17 21:50:59] AutoProxySystem score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] hf-cognitive-pipeline score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] creative-forge score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] crm-suite score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] sendspeed-platform score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] ssh-all score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] secops-hub score=20 dna=0/10 docs_viol=0 hooks=False
+[2026-06-17 21:50:59] Ultimate Omega RAG score=14 dna=2/10 docs_viol=15 hooks=False
+[2026-06-17 21:50:59] ai-lab score=10 dna=0/10 docs_viol=3 hooks=False
+[2026-06-17 21:50:59] vps score=10 dna=0/10 docs_viol=2 hooks=False
+[2026-06-17 21:54:30] omega-hub score=90 dna=10/10 docs_viol=1 hooks=True
+[2026-06-17 21:54:42] omega-hub score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-17 22:16:13] omega-hub score=100 dna=10/10 docs_viol=0 hooks=True
+[2026-06-17 22:25:25] megaprompts score=12 dna=1/10 docs_viol=5 hooks=False

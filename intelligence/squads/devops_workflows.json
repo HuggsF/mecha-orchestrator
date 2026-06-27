@@ -1,0 +1,36 @@
+{
+  "devops_deploy_pipeline": {
+    "name": "DevOps Infrastructure Provisioning & Deploy Pipeline",
+    "description": "Workflow do DevOpsSquad para provisionar infraestrutura em nuvem, orquestrar manifestos K8s, configurar CI/CD e monitoramento SRE.",
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "TerraformBot",
+        "description": "Gera código Terraform para os recursos de rede e clusters na nuvem",
+        "input_source": "user_prompt",
+        "output_var": "infra_plan"
+      },
+      {
+        "step_id": 2,
+        "agent": "KubernetesBot",
+        "description": "Gera os manifestos do Kubernetes ou Docker Compose com base nos recursos provisionados",
+        "input_source": "infra_plan",
+        "output_var": "k8s_manifests"
+      },
+      {
+        "step_id": 3,
+        "agent": "GitLabCI",
+        "description": "Desenha o fluxo automatizado da esteira de CI/CD para deploy dos manifestos",
+        "input_source": "k8s_manifests",
+        "output_var": "ci_pipeline"
+      },
+      {
+        "step_id": 4,
+        "agent": "SRE_Bot",
+        "description": "Desenha a configuração de alertas do Prometheus e SLOs baseados na infraestrutura",
+        "input_sources": ["infra_plan", "k8s_manifests"],
+        "output_var": "sre_report"
+      }
+    ]
+  }
+}

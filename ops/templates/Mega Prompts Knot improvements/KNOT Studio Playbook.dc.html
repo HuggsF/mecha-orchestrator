@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --steel-0:#070a0e; --steel-1:#0c1117; --steel-2:#121a22; --steel-3:#1b2731;
+    --line:#27333d; --line-2:#34434f;
+    --amber:#ffb000; --amber-dim:#9a6c0c; --amber-glow:rgba(255,176,0,.14);
+    --phos:#46f1a6; --phos-dim:#1f6b4c; --cyan:#4ad6e6; --cyan-dim:#1d5f68; --alert:#ff5240;
+    --ink:#d4dce2; --ink-dim:#7c8b96; --ink-faint:#48555f;
+    --mono:'JetBrains Mono',ui-monospace,Consolas,monospace;
+    --disp:'Chakra Petch','JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--steel-0);color:var(--ink);font-family:var(--mono);font-size:13.5px;line-height:1.6}
+  ::selection{background:var(--amber);color:#000}
+  a{color:var(--cyan);text-decoration:none}
+  @media print{body{background:#fff}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--steel-0);color:var(--ink);font-family:var(--mono)">
+  <div style="height:9px;background:repeating-linear-gradient(-45deg,var(--amber) 0 16px,#0a0a0a 16px 32px);filter:saturate(.85);opacity:.85"></div>
+
+  <div style="max-width:980px;margin:0 auto;padding:40px 32px 80px">
+
+    <!-- TITLE -->
+    <div style="display:flex;align-items:flex-end;gap:18px;flex-wrap:wrap">
+      <div>
+        <div style="font-size:10.5px;letter-spacing:.32em;color:var(--ink-dim);margin-bottom:8px">MECHA · OPS // STUDIO · DOC</div>
+        <h1 style="font-family:var(--disp);font-weight:700;font-size:42px;letter-spacing:.06em;line-height:.98;color:var(--amber)">KNOT STUDIO</h1>
+        <div style="font-family:var(--disp);font-weight:600;font-size:18px;letter-spacing:.18em;color:var(--ink);margin-top:4px">USABILITY PLAYBOOK <span style="color:var(--ink-faint);font-weight:400;letter-spacing:.04em">/ playbook de usabilidade</span></div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:9px;align-items:center">
+        <span style="font-size:10px;letter-spacing:.14em;color:var(--phos);border:1px solid var(--phos-dim);padding:6px 12px"><i style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--phos);box-shadow:0 0 6px var(--phos);margin-right:7px"></i>E2E · PASS</span>
+        <a href="KNOT Studio.dc.html" style="font-size:10px;letter-spacing:.14em;color:var(--amber);border:1px solid var(--amber-dim);padding:6px 12px">⏵ ABRIR COCKPIT</a>
+      </div>
+    </div>
+
+    <p style="color:var(--ink-dim);font-size:13px;max-width:74ch;margin-top:22px;line-height:1.7">
+      O <strong style="color:var(--ink)">KNOT Studio</strong> transforma o pack de megaprompts KNOT num cockpit: você seleciona um <span style="color:var(--cyan)">segmento composto</span> (persona × estágio da jornada), monta o megaprompt, gera com IA (<span style="color:var(--cyan)">ronin</span>), audita pelo <span style="color:var(--amber)">CQS</span> e despacha por <span style="color:var(--phos)">mecha tg</span>. Este documento percorre o fluxo completo — da seleção ao conteúdo finalizado — com o teste E2E executado ao vivo.
+    </p>
+
+    <!-- LOOP -->
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:24px;align-items:center">
+      <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--cyan);border:1px solid var(--cyan-dim);background:rgba(74,214,230,.06);padding:8px 13px">SEGMENT</span>
+      <span style="color:var(--ink-faint)">→</span>
+      <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--amber);border:1px solid var(--amber-dim);background:var(--amber-glow);padding:8px 13px">ASSEMBLE</span>
+      <span style="color:var(--ink-faint)">→</span>
+      <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--amber);border:1px solid var(--amber-dim);background:var(--amber-glow);padding:8px 13px">GENERATE</span>
+      <span style="color:var(--ink-faint)">→</span>
+      <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--phos);border:1px solid var(--phos-dim);background:rgba(70,241,166,.05);padding:8px 13px">CQS SCORE</span>
+      <span style="color:var(--ink-faint)">→</span>
+      <span style="font-family:var(--disp);font-weight:600;font-size:12px;letter-spacing:.1em;color:var(--phos);border:1px solid var(--phos-dim);background:rgba(70,241,166,.05);padding:8px 13px">mecha tg</span>
+    </div>
+
+    <!-- HERO SHOT -->
+    <div style="margin-top:30px;background:var(--steel-1);border:1px solid var(--line)">
+      <div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,var(--steel-2),var(--steel-1))">
+        <span style="width:7px;height:7px;background:var(--amber);transform:rotate(45deg)"></span>
+        <span style="font-size:10px;letter-spacing:.2em;color:var(--ink-dim)">COCKPIT · OVERVIEW</span>
+        <span style="font-size:9.5px;color:var(--ink-faint);margin-left:auto">3 colunas: segmento · montagem · output/CQS</span>
+      </div>
+      <img src="screenshots/pb/01-s.png" alt="KNOT Studio cockpit" style="display:block;width:100%;height:auto;border-top:1px solid #000">
+    </div>
+
+    <!-- ============ STEPS ============ -->
+    <div style="display:flex;align-items:baseline;gap:14px;margin:48px 0 8px">
+      <span style="font-family:var(--disp);font-weight:700;font-size:34px;color:transparent;-webkit-text-stroke:1.5px var(--amber-dim)">A</span>
+      <h2 style="font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:.24em;color:var(--ink)">FLUXO PASSO A PASSO</h2>
+      <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)"></span>
+      <span style="font-size:10px;color:var(--ink-faint);letter-spacing:.1em">step-by-step flow</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;gap:14px;margin-top:18px">
+
+      <!-- step 01 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--cyan);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--cyan);min-width:38px">01</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">SELECIONAR SEGMENTO <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ select segment</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">Na coluna esquerda, escolha a <strong style="color:var(--cyan)">PERSONA/ICP</strong> e o <strong style="color:var(--cyan)">JOURNEY STAGE</strong>. O par vira o <em>sinal de segmento</em> (ex.: <span style="color:var(--cyan)">DEV FOUNDER × DECISION</span>) exibido no HUD e injetado no prompt via pipeline <span style="color:var(--ink)">ronin + n8n</span>.</p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> HUD atualiza o SEGMENT SIGNAL · card ativo ganha borda ciano + LED.</div>
+        </div>
+      </div>
+
+      <!-- step 02 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--amber);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--amber);min-width:38px">02</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">FORMATO + INPUTS <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ format &amp; inputs</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">Escolha o <strong style="color:var(--amber)">FORMATO</strong> (Vídeo · E-mail · Landing · Thread · SEO) e preencha <strong style="color:var(--amber)">TÓPICO</strong>, <strong style="color:var(--amber)">TOM</strong> e <strong style="color:var(--amber)">DURAÇÃO</strong>. O megaprompt montado se reescreve em tempo real abaixo da estrutura KNOT.</p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> bloco ASSEMBLED MEGAPROMPT reflete formato + segmento + tópico instantaneamente.</div>
+        </div>
+      </div>
+
+      <!-- step 03 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--amber);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--amber);min-width:38px">03</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">REVISAR &amp; GERAR <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ review &amp; generate</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">Confira a espinha KNOT (Pattern Interrupt → CTA) e o megaprompt. Aperte <strong style="color:var(--amber)">⏵ ASSEMBLE &amp; GENERATE</strong> — o assistant <span style="color:var(--cyan)">ronin</span> devolve o conteúdo no painel OUTPUT.</p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> barra de varredura âmbar durante a chamada; roteiro completo com timestamps renderiza.</div>
+          <div style="margin-top:13px;background:var(--steel-1);border:1px solid var(--line)">
+            <div style="font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim);padding:7px 12px;border-bottom:1px solid var(--line);background:var(--steel-2)">OUTPUT · roteiro KNOT gerado ao vivo</div>
+            <img src="screenshots/pb/02-s.png" alt="Output gerado" style="display:block;width:100%;height:auto">
+          </div>
+        </div>
+      </div>
+
+      <!-- step 04 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--cyan);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--cyan);min-width:38px">04</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">VARIAÇÕES DE HOOK <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ hook variations</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">Defina <strong style="color:var(--cyan)">VARIATIONS</strong> (3 · 5 · 10) e aperte <strong style="color:var(--cyan)">⚡ HOOKS ×N</strong>. Cada hook vem rotulado pelo tipo (Contrarian, Specific Number, Identity Challenge, Reveal, Question), ≤ 12 palavras, calibrado para o segmento.</p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> aba HOOKS lista N variações com tag de tipo, todas ancoradas no tópico.</div>
+          <div style="margin-top:13px;background:var(--steel-1);border:1px solid var(--line)">
+            <div style="font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim);padding:7px 12px;border-bottom:1px solid var(--line);background:var(--steel-2)">HOOKS · 3 variações por tipo</div>
+            <img src="screenshots/pb/04-s.png" alt="Hooks gerados" style="display:block;width:100%;height:auto">
+          </div>
+        </div>
+      </div>
+
+      <!-- step 05 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--phos);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--phos);min-width:38px">05</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">PONTUAR COM CQS <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ score with CQS</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">O CQS roda automático após gerar — ou aperte <strong style="color:var(--amber)">▸ SCORE CURRENT OUTPUT</strong>. A rubrica (Hook 25 · Clareza 15 · Densidade 20 · Revelação 15 · CTA 10 · Ritmo 15) entrega nota 0–100, barras por dimensão e o veredito. <strong style="color:var(--phos)">≥ 70 = publica.</strong></p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> gauge colore por faixa (vermelho &lt;50 · âmbar 50–69 · fosfórico ≥70) + verdict de 1 linha.</div>
+          <div style="margin-top:13px;background:var(--steel-1);border:1px solid var(--line)">
+            <div style="font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim);padding:7px 12px;border-bottom:1px solid var(--line);background:var(--steel-2)">CQS · score 92/100 · PUBLICA</div>
+            <img src="screenshots/pb/03-s.png" alt="CQS score" style="display:block;width:100%;height:auto">
+          </div>
+        </div>
+      </div>
+
+      <!-- step 06 -->
+      <div style="display:flex;gap:16px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--phos);padding:16px 18px">
+        <div style="font-family:var(--disp);font-weight:700;font-size:24px;color:var(--phos);min-width:38px">06</div>
+        <div style="flex:1">
+          <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:14px;color:var(--ink)">ENTREGAR <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ deliver</span></div>
+          <p style="color:var(--ink-dim);margin-top:6px;line-height:1.65">Com nota ≥ 70, despache: <strong style="color:var(--ink)">⧉ COPY</strong> copia o output (ou as hooks), <strong style="color:var(--phos)">✈ mecha tg</strong> enfileira para o bridge Telegram e copia o payload. Mesmo loop do CLI <span style="color:var(--ink)">.mecha</span>.</p>
+          <div style="margin-top:8px;font-size:11px;color:var(--ink-faint)"><span style="color:var(--phos)">▸ esperado:</span> toast confirma <span style="color:var(--phos)">ENFILEIRADO · mecha tg → @huggs_ops (copiado)</span>.</div>
+          <div style="margin-top:13px;background:var(--steel-1);border:1px solid var(--line)">
+            <div style="font-size:9.5px;letter-spacing:.16em;color:var(--ink-dim);padding:7px 12px;border-bottom:1px solid var(--line);background:var(--steel-2)">DELIVERY · toast de confirmação</div>
+            <img src="screenshots/pb/05-s.png" alt="Entrega mecha tg" style="display:block;width:100%;height:auto">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ E2E RESULTS ============ -->
+    <div style="display:flex;align-items:baseline;gap:14px;margin:52px 0 8px">
+      <span style="font-family:var(--disp);font-weight:700;font-size:34px;color:transparent;-webkit-text-stroke:1.5px var(--phos-dim)">B</span>
+      <h2 style="font-family:var(--disp);font-weight:700;font-size:19px;letter-spacing:.24em;color:var(--ink)">RESULTADO DO TESTE E2E</h2>
+      <span style="flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)"></span>
+      <span style="font-size:10px;color:var(--ink-faint);letter-spacing:.1em">live run · ronin engine</span>
+    </div>
+    <p style="color:var(--ink-dim);font-size:11.5px;margin:6px 0 16px">Cenário: <span style="color:var(--cyan)">DEV FOUNDER × DECISION</span> · formato <span style="color:var(--amber)">VÍDEO (30–60s)</span> · tópico “onboarding que reduz churn no primeiro mês” · tom “técnico, sem hype”.</p>
+
+    <div style="background:var(--steel-1);border:1px solid var(--line)">
+      <div style="display:grid;grid-template-columns:30px 1.4fr 1.6fr 92px;gap:0;font-size:9.5px;letter-spacing:.14em;color:var(--ink-dim);background:var(--steel-2);border-bottom:1px solid var(--line)">
+        <div style="padding:9px 8px">#</div><div style="padding:9px 8px">CHECK</div><div style="padding:9px 8px">RESULTADO OBSERVADO</div><div style="padding:9px 8px;text-align:right">STATUS</div>
+      </div>
+      <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+        <div style="display:grid;grid-template-columns:30px 1.4fr 1.6fr 92px;gap:0;border-bottom:1px solid var(--line);font-size:11.5px;align-items:center">
+          <div style="padding:11px 8px;font-family:var(--disp);color:var(--ink-faint)">{{ r.n }}</div>
+          <div style="padding:11px 8px;color:var(--ink)">{{ r.check }}</div>
+          <div style="padding:11px 8px;color:var(--ink-dim)">{{ r.result }}</div>
+          <div style="padding:11px 8px;text-align:right"><span style="font-size:9.5px;letter-spacing:.12em;color:var(--phos);border:1px solid var(--phos-dim);padding:3px 8px">PASS</span></div>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display:flex;gap:14px;flex-wrap:wrap;margin-top:18px">
+      <div style="flex:1;min-width:200px;background:var(--steel-1);border:1px solid var(--line);border-top:2px solid var(--phos);padding:16px 18px">
+        <div style="font-size:9.5px;letter-spacing:.18em;color:var(--ink-dim)">CQS FINAL</div>
+        <div style="display:flex;align-items:flex-end;gap:10px;margin-top:4px"><span style="font-family:var(--disp);font-weight:700;font-size:40px;color:var(--phos);line-height:.9">92</span><span style="color:var(--phos);font-size:12px;letter-spacing:.1em;padding-bottom:5px">/100 · PUBLICA</span></div>
+        <div style="font-size:10.5px;color:var(--ink-dim);margin-top:6px;line-height:1.5">Hook 24 · Clareza 15 · Densidade 16 · Revelação 14 · CTA 9 · Ritmo 14</div>
+      </div>
+      <div style="flex:1;min-width:200px;background:var(--steel-1);border:1px solid var(--line);border-top:2px solid var(--amber);padding:16px 18px">
+        <div style="font-size:9.5px;letter-spacing:.18em;color:var(--ink-dim)">VEREDITO E2E</div>
+        <div style="font-family:var(--disp);font-weight:700;font-size:18px;color:var(--amber);margin-top:6px;letter-spacing:.06em">6/6 CHECKS · PASS</div>
+        <div style="font-size:10.5px;color:var(--ink-dim);margin-top:6px;line-height:1.5">Seleção → montagem → geração ao vivo → variações → score → entrega: loop completo sem falha.</div>
+      </div>
+    </div>
+
+    <!-- known limits -->
+    <div style="margin-top:34px;background:var(--steel-1);border:1px solid var(--line);border-left:2px solid var(--alert);padding:16px 18px">
+      <div style="font-family:var(--disp);font-weight:600;letter-spacing:.1em;font-size:13px;color:var(--alert)">NOTAS &amp; LIMITES <span style="color:var(--ink-faint);font-weight:400;font-size:11px">/ caveats</span></div>
+      <ul style="margin:10px 0 0 18px;color:var(--ink-dim);line-height:1.8;font-size:12px">
+        <li><span style="color:var(--ink)">mecha tg</span> no browser <strong>enfileira + copia</strong> o payload (não envia direto ao Telegram) — o envio real precisa do bridge <span style="color:var(--ink)">mecha tg</span> rodando no .mecha.</li>
+        <li>Geração usa <span style="color:var(--cyan)">ronin / IA</span> com teto de 1024 tokens por chamada; conteúdos longos saem condensados por design (KNOT é enxuto).</li>
+        <li>Sem chamada de IA disponível, o cockpit cai em <span style="color:var(--ink)">MODO DEMO</span> (saída + CQS mock) para o fluxo nunca travar.</li>
+      </ul>
+    </div>
+
+    <div style="margin-top:40px;border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:.1em;color:var(--ink-faint)">
+      <span>MECHA · OPS // KNOT STUDIO</span>
+      <span style="margin-left:auto"><a href="KNOT Studio.dc.html">⏵ ABRIR COCKPIT</a></span>
+    </div>
+  </div>
+  <div style="height:9px;background:repeating-linear-gradient(-45deg,var(--amber) 0 16px,#0a0a0a 16px 32px);filter:saturate(.85);opacity:.85"></div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      rows: [
+        { n:'01', check:'Segmento composto', result:'Sinal “DEV FOUNDER × DECISION” no HUD + injetado no prompt' },
+        { n:'02', check:'Megaprompt montado', result:'611 chars · formato VÍDEO · reescreve em tempo real' },
+        { n:'03', check:'Geração ao vivo (ronin)', result:'Roteiro KNOT com hooks + blocos timestampados retornado' },
+        { n:'04', check:'Variações de hook', result:'3 hooks: Contrarian · Specific Number · Identity Challenge' },
+        { n:'05', check:'Auto-score CQS', result:'92/100 · PUBLICA · 6 dimensões com barras + verdict' },
+        { n:'06', check:'Entrega mecha tg', result:'Toast “ENFILEIRADO → @huggs_ops (copiado)”' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

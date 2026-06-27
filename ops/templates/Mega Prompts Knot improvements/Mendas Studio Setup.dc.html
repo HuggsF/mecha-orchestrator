@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#3a3d52;font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
+  section{font-family:'Segoe UI',system-ui,-apple-system,Arial,sans-serif}
+</style>
+</helmet>
+<x-import component-from-global-scope="deck-stage" from="./deck-stage.js" width="1920" height="1080" hint-size="100%,100%">
+
+  <!-- 01 COVER -->
+  <section data-label="Capa" data-speaker-notes="Guia de configuração do sistema de chamados Mendas Studio: bot de hooks no Teams como SSOT, baseado no PR.COM.001." style="width:1920px;height:1080px;background:#5b5fc7;color:#fff;padding:120px 130px;display:flex;flex-direction:column;justify-content:space-between;overflow:hidden;position:relative">
+    <div style="position:absolute;right:-160px;top:-160px;width:760px;height:760px;border:2px solid rgba(255,255,255,.12);border-radius:50%"></div>
+    <div style="position:absolute;right:30px;bottom:-220px;width:560px;height:560px;border:2px solid rgba(255,255,255,.1);border-radius:50%"></div>
+    <div style="display:flex;align-items:center;gap:20px;position:relative">
+      <div style="width:72px;height:72px;border-radius:16px;background:#fff;color:#5b5fc7;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:42px;font-family:'JetBrains Mono',monospace">M</div>
+      <div style="font-size:24px;letter-spacing:.18em;font-weight:600;opacity:.92">MENDAS STUDIO</div>
+    </div>
+    <div style="position:relative">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:22px;letter-spacing:.32em;opacity:.7;margin-bottom:26px">GUIA DE CONFIGURAÇÃO</div>
+      <h1 style="font-size:118px;font-weight:700;line-height:.98;letter-spacing:-.01em">Central de Chamados<br>via Teams</h1>
+      <p style="font-size:30px;opacity:.86;margin-top:34px;max-width:30ch;line-height:1.4">Um bot de <em>hooks</em> como sistema de chamados — SLA, esteira de produção e vitrine editorial automatizados.</p>
+    </div>
+    <div style="display:flex;align-items:center;gap:26px;font-size:19px;opacity:.8;position:relative;font-family:'JetBrains Mono',monospace">
+      <span>baseado em PR.COM.001 — Comunicação</span><span style="opacity:.5">·</span><span>REV. 00</span><span style="opacity:.5">·</span><span>5 ciclos × 10 sprints</span>
+    </div>
+  </section>
+
+  <!-- 02 VISÃO GERAL -->
+  <section data-label="Visão geral" data-speaker-notes="O modelo: hoje o canal oficial é Forms; aqui o foco migra para o bot no Teams como SSOT, com automações de hooks dirigindo todo o ciclo." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">01</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">O MODELO</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:64px;font-weight:700;line-height:1.05;max-width:24ch;margin-bottom:48px">O Teams deixa de ser conversa e vira o <span style="color:#5b5fc7">canal oficial</span></h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px">
+      <div style="background:#f6f7f9;border:1px solid #e2e4ea;border-radius:16px;padding:38px 40px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:17px;color:#c4314b;letter-spacing:.06em;margin-bottom:16px">ANTES</div>
+        <div style="font-size:27px;font-weight:600;margin-bottom:14px;color:#5e6470">Demandas soltas</div>
+        <p style="font-size:21px;color:#5e6470;line-height:1.5">Pedidos por e-mail, Teams e WhatsApp. Sem briefing mínimo, sem SLA confiável, sem rastreio. A área de comunicação vira balcão.</p>
+      </div>
+      <div style="background:#ecebf9;border:1px solid #c9c7ef;border-radius:16px;padding:38px 40px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:17px;color:#1f8a5b;letter-spacing:.06em;margin-bottom:16px">AGORA · MENDAS STUDIO</div>
+        <div style="font-size:27px;font-weight:700;margin-bottom:14px;color:#494ea3">Bot de hooks = SSOT</div>
+        <p style="font-size:21px;color:#3a3d52;line-height:1.5">Todo chamado entra por um card estruturado no Teams. O bot valida, registra, cronometra o SLA e publica a vitrine — sem intervenção manual.</p>
+      </div>
+    </div>
+    <div style="margin-top:auto;display:flex;gap:14px;flex-wrap:wrap;padding-top:40px">
+      <span style="background:#fff;border:1px solid #e2e4ea;border-radius:999px;padding:12px 24px;font-size:19px;color:#5e6470">Microsoft Teams</span>
+      <span style="background:#fff;border:1px solid #e2e4ea;border-radius:999px;padding:12px 24px;font-size:19px;color:#5e6470">Power Automate · hooks</span>
+      <span style="background:#fff;border:1px solid #e2e4ea;border-radius:999px;padding:12px 24px;font-size:19px;color:#5e6470">Planner · esteira</span>
+      <span style="background:#fff;border:1px solid #e2e4ea;border-radius:999px;padding:12px 24px;font-size:19px;color:#5e6470">Lists · calendário editorial</span>
+    </div>
+  </section>
+
+  <!-- 03 ARQUITETURA -->
+  <section data-label="Arquitetura" data-speaker-notes="Os quatro blocos Microsoft 365 e como os hooks os conectam num pipeline único." style="width:1920px;height:1080px;background:#f6f7f9;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">02</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">ARQUITETURA</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:54px">Quatro blocos, um pipeline de hooks</h2>
+    <div style="display:flex;align-items:stretch;gap:0">
+      <sc-for list="{{ arch }}" as="a" hint-placeholder-count="4">
+        <div style="flex:1;display:flex;align-items:center">
+          <div style="flex:1;background:#fff;border:1px solid #e2e4ea;border-top:5px solid {{ a.color }};border-radius:16px;padding:34px 28px;min-height:330px">
+            <div style="font-size:42px;margin-bottom:18px">{{ a.icon }}</div>
+            <div style="font-size:26px;font-weight:700;margin-bottom:8px">{{ a.name }}</div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ a.color }};margin-bottom:16px">{{ a.tool }}</div>
+            <p style="font-size:18px;color:#5e6470;line-height:1.45">{{ a.desc }}</p>
+          </div>
+          <sc-if value="{{ a.arrow }}" hint-placeholder-val="{{ true }}"><div style="width:54px;text-align:center;font-size:34px;color:#b9bdc9;flex:none">→</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:46px;background:#23252b;border-radius:14px;padding:26px 34px;display:flex;align-items:center;gap:20px">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#46f1a6;letter-spacing:.08em;flex:none">FLUXO</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:19px;color:#d4dce2">intake → register → triagem → sla → approval → adjust → done → <span style="color:#46f1a6">calendário editorial</span></span>
+    </div>
+  </section>
+
+  <!-- 04 SLA MATRIX -->
+  <section data-label="Matriz SLA" data-speaker-notes="As cinco categorias de esforço definem o prazo. Corte às 16h: depois disso, o SLA inicia no próximo dia útil." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">03</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">MATRIZ DE SLA · DIAS ÚTEIS</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:56px;font-weight:700;line-height:1.05;margin-bottom:34px">A categoria de esforço define o prazo</h2>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ sla }}" as="s" hint-placeholder-count="5">
+        <div style="display:grid;grid-template-columns:120px 1.1fr 2fr;gap:24px;align-items:center;background:#f6f7f9;border:1px solid #e2e4ea;border-left:6px solid {{ s.color }};border-radius:12px;padding:20px 28px">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:46px;font-weight:700;color:{{ s.color }}">{{ s.dias }}d</div>
+          <div style="font-size:24px;font-weight:700;line-height:1.2">{{ s.nome }}</div>
+          <div style="font-size:18px;color:#5e6470;line-height:1.4">{{ s.ex }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:auto;padding-top:30px;display:flex;align-items:center;gap:14px"><span style="background:#fbf0e1;border:1px solid #eccfa0;color:#b85c00;border-radius:10px;padding:14px 22px;font-size:20px;font-weight:600">⏰ Corte 16h</span><span style="font-size:20px;color:#5e6470">Chamados abertos após as 16h têm o SLA iniciado no próximo dia útil.</span></div>
+  </section>
+
+  <!-- 05 ESTEIRA -->
+  <section data-label="Esteira" data-speaker-notes="A esteira de produção em sete etapas. Triagem não conta SLA até o briefing estar completo." style="width:1920px;height:1080px;background:#23252b;color:#fff;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#9aa0ff;font-weight:700">04</span><span style="font-size:20px;letter-spacing:.2em;color:#8a8f9c;font-weight:600">ESTEIRA DE PRODUÇÃO</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#3a3d52,transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:56px">Sete etapas, da entrada à vitrine</h2>
+    <div style="display:flex;gap:14px">
+      <sc-for list="{{ esteira }}" as="e" hint-placeholder-count="7">
+        <div style="flex:1;background:#2d3042;border:1px solid #3a3d52;border-top:4px solid {{ e.color }};border-radius:14px;padding:26px 18px;min-height:340px;display:flex;flex-direction:column">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ e.color }};margin-bottom:14px">{{ e.n }}</div>
+          <div style="font-size:23px;font-weight:700;margin-bottom:12px">{{ e.name }}</div>
+          <p style="font-size:16px;color:#aeb3c0;line-height:1.45">{{ e.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 06 REGRAS DE PRAZO -->
+  <section data-label="Regras de prazo" data-speaker-notes="As três regras que protegem o SLA: aprovação 24h, On Hold após 2 dias, ajustes em 2 dias." style="width:1920px;height:1080px;background:#f6f7f9;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">05</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">REGRAS QUE PROTEGEM O SLA</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:54px">O prazo é compartilhado com o solicitante</h2>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:28px">
+      <div style="background:#fff;border:1px solid #e2e4ea;border-radius:16px;padding:40px 36px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:700;color:#1f8a5b;margin-bottom:16px">24h</div>
+        <div style="font-size:26px;font-weight:700;margin-bottom:12px">Janela de aprovação</div>
+        <p style="font-size:20px;color:#5e6470;line-height:1.5">Aprovação da 1ª versão em até 24h úteis mantém o deadline. Cada dia de atraso é somado à data final.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e4ea;border-radius:16px;padding:40px 36px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:700;color:#c4314b;margin-bottom:16px">+2d</div>
+        <div style="font-size:26px;font-weight:700;margin-bottom:12px">On Hold automático</div>
+        <p style="font-size:20px;color:#5e6470;line-height:1.5">Sem retorno por mais de 2 dias úteis, o SLA é congelado e o chamado vai para "On Hold", perdendo prioridade na fila.</p>
+      </div>
+      <div style="background:#fff;border:1px solid #e2e4ea;border-radius:16px;padding:40px 36px">
+        <div style="font-family:'JetBrains Mono',monospace;font-size:54px;font-weight:700;color:#c8791a;margin-bottom:16px">2d</div>
+        <div style="font-size:26px;font-weight:700;margin-bottom:12px">Ciclo de ajustes</div>
+        <p style="font-size:20px;color:#5e6470;line-height:1.5">Ajustes solicitados são executados em até 2 dias úteis, então a peça retorna para nova aprovação.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 OS 8 HOOKS -->
+  <section data-label="8 Hooks" data-speaker-notes="Os oito hooks que compõem o bot. Cada um é um fluxo do Power Automate disparado por um gatilho." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:88px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">06</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">O BOT DE HOOKS</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:54px;font-weight:700;line-height:1.05;margin-bottom:36px">Oito automações, um chamado de ponta a ponta</h2>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:18px">
+      <sc-for list="{{ hooks }}" as="h" hint-placeholder-count="8">
+        <div style="background:#f6f7f9;border:1px solid #e2e4ea;border-radius:14px;padding:24px 22px;min-height:226px">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><span style="width:30px;height:30px;border-radius:8px;background:{{ h.color }};color:#fff;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px">{{ h.i }}</span><span style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ h.color }};font-weight:500">{{ h.id }}</span></div>
+          <div style="font-size:21px;font-weight:700;margin-bottom:8px">{{ h.name }}</div>
+          <p style="font-size:16px;color:#5e6470;line-height:1.45">{{ h.desc }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 08 DoD -->
+  <section data-label="DoD" data-speaker-notes="Definition of Done: o chamado só fecha e o SLA só encerra quando os cinco itens estão cumpridos." style="width:1920px;height:1080px;background:#ecebf9;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#5b5fc7;font-weight:700">07</span><span style="font-size:20px;letter-spacing:.2em;color:#7c80a8;font-weight:600">DEFINITION OF DONE</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#c9c7ef,transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:18px">O SLA só encerra com o DoD cumprido</h2>
+    <p style="font-size:23px;color:#5e6470;margin-bottom:46px;max-width:60ch">Cinco critérios obrigatórios. O <span style="font-family:'JetBrains Mono',monospace;color:#494ea3">hook:done</span> bloqueia a baixa enquanto algum item estiver pendente.</p>
+    <div style="display:flex;flex-direction:column;gap:16px;max-width:1180px">
+      <sc-for list="{{ dod }}" as="d" hint-placeholder-count="5">
+        <div style="display:flex;align-items:center;gap:22px;background:#fff;border:1px solid #d8d6f2;border-radius:14px;padding:24px 30px">
+          <span style="width:42px;height:42px;border-radius:50%;background:#1f8a5b;color:#fff;display:flex;align-items:center;justify-content:center;font-size:22px;flex:none">✓</span>
+          <div><div style="font-size:24px;font-weight:700">{{ d.t }}</div><div style="font-size:19px;color:#5e6470;margin-top:2px">{{ d.d }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 09 EXCEÇÃO -->
+  <section data-label="Exceção" data-speaker-notes="O fluxo de urgência: sinalizado no card, validado via Teams, reprioriza a fila da área." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#c4314b;font-weight:700">08</span><span style="font-size:20px;letter-spacing:.2em;color:#9aa0ad;font-weight:600">FLUXO DE EXCEÇÃO · URGÊNCIA</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#e2e4ea,transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:54px">Urgência é exceção — e tem custo de fila</h2>
+    <div style="display:flex;align-items:stretch;gap:0;margin-bottom:44px">
+      <sc-for list="{{ urgent }}" as="u" hint-placeholder-count="3">
+        <div style="flex:1;display:flex;align-items:center">
+          <div style="flex:1;background:#fbe9ed;border:1px solid #eab8c2;border-radius:16px;padding:34px 30px;min-height:220px">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:16px;color:#c4314b;margin-bottom:14px">{{ u.n }}</div>
+            <div style="font-size:25px;font-weight:700;margin-bottom:10px">{{ u.t }}</div>
+            <p style="font-size:19px;color:#5e6470;line-height:1.45">{{ u.d }}</p>
+          </div>
+          <sc-if value="{{ u.arrow }}" hint-placeholder-val="{{ true }}"><div style="width:50px;text-align:center;font-size:32px;color:#eab8c2;flex:none">→</div></sc-if>
+        </div>
+      </sc-for>
+    </div>
+    <div style="background:#fbf0e1;border:1px solid #eccfa0;border-radius:14px;padding:24px 32px;font-size:21px;color:#b85c00"><strong>Atenção:</strong> priorizar uma urgência empurra o cronograma das demais demandas da mesma área. O bot registra o trade-off no log.</div>
+  </section>
+
+  <!-- 10 WORKFLOW DE CONFIGURAÇÃO -->
+  <section data-label="Setup" data-speaker-notes="O passo a passo de implantação em seis movimentos, do canal do Teams ao go-live." style="width:1920px;height:1080px;background:#23252b;color:#fff;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#46f1a6;font-weight:700">09</span><span style="font-size:20px;letter-spacing:.2em;color:#8a8f9c;font-weight:600">WORKFLOW DE CONFIGURAÇÃO</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#3a3d52,transparent)"></span></div>
+    <h2 style="font-size:58px;font-weight:700;line-height:1.05;margin-bottom:48px">Implantação em seis movimentos</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px 40px">
+      <sc-for list="{{ setup }}" as="s" hint-placeholder-count="6">
+        <div style="display:flex;gap:20px;align-items:flex-start;background:#2d3042;border:1px solid #3a3d52;border-radius:12px;padding:22px 26px">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:30px;font-weight:700;color:#46f1a6;flex:none;min-width:44px">{{ s.n }}</span>
+          <div><div style="font-size:23px;font-weight:700;margin-bottom:5px">{{ s.t }}</div><div style="font-size:17px;color:#aeb3c0;line-height:1.45">{{ s.d }}</div></div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 11 ROADMAP OVERVIEW -->
+  <section data-label="Roadmap" data-speaker-notes="O plano de implantação: 5 ciclos de 10 sprints cada. Cada ciclo entrega uma camada funcional do sistema." style="width:1920px;height:1080px;background:#5b5fc7;color:#fff;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden;position:relative">
+    <div style="position:absolute;right:-140px;bottom:-200px;width:600px;height:600px;border:2px solid rgba(255,255,255,.12);border-radius:50%"></div>
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px;position:relative"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#fff;font-weight:700">10</span><span style="font-size:20px;letter-spacing:.2em;color:rgba(255,255,255,.7);font-weight:600">ROADMAP · 5 CICLOS × 10 SPRINTS</span><span style="flex:1;height:2px;background:linear-gradient(90deg,rgba(255,255,255,.3),transparent)"></span></div>
+    <h2 style="font-size:60px;font-weight:700;line-height:1.05;margin-bottom:14px;position:relative">50 sprints, 5 camadas funcionais</h2>
+    <p style="font-size:23px;opacity:.85;margin-bottom:48px;max-width:62ch;position:relative">Cada ciclo entrega uma parte navegável do sistema. Ao fim do Ciclo 5, o bot de hooks opera o chamado de ponta a ponta.</p>
+    <div style="display:flex;gap:16px;position:relative">
+      <sc-for list="{{ cycleCards }}" as="c" hint-placeholder-count="5">
+        <div style="flex:1;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-top:4px solid {{ c.color }};border-radius:14px;padding:28px 22px;min-height:300px;backdrop-filter:blur(2px)">
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;opacity:.7;margin-bottom:8px">CICLO {{ c.n }}</div>
+          <div style="font-size:25px;font-weight:700;line-height:1.15;margin-bottom:14px">{{ c.name }}</div>
+          <p style="font-size:16px;opacity:.82;line-height:1.45">{{ c.goal }}</p>
+          <div style="margin-top:18px;font-family:'JetBrains Mono',monospace;font-size:13px;opacity:.7">10 sprints</div>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 12 CICLO 1 -->
+  <section data-label="Ciclo 1" data-speaker-notes="Ciclo 1 — Fundação: base no Teams, intake bot e SSOT." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:90px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#5b5fc7">CICLO 1</span><span style="font-size:20px;letter-spacing:.16em;color:#9aa0ad;font-weight:600">FUNDAÇÃO</span></div>
+    <h2 style="font-size:48px;font-weight:700;line-height:1.05;margin-bottom:8px">Base no Teams, intake e SSOT</h2>
+    <p style="font-size:21px;color:#5e6470;margin-bottom:38px">Meta: abrir um chamado válido pelo bot e vê-lo registrado.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 40px">
+      <sc-for list="{{ c1 }}" as="s" hint-placeholder-count="10">
+        <div style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #eef0f5;padding:10px 0"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#5b5fc7;min-width:42px">S{{ s.n }}</span><span style="font-size:20px;color:#3a3d52">{{ s.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 13 CICLO 2 -->
+  <section data-label="Ciclo 2" data-speaker-notes="Ciclo 2 — SLA Engine: categorias, timers e corte 16h." style="width:1920px;height:1080px;background:#f6f7f9;color:#23252b;padding:90px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#c8791a">CICLO 2</span><span style="font-size:20px;letter-spacing:.16em;color:#9aa0ad;font-weight:600">SLA ENGINE</span></div>
+    <h2 style="font-size:48px;font-weight:700;line-height:1.05;margin-bottom:8px">Categorias, timers e corte 16h</h2>
+    <p style="font-size:21px;color:#5e6470;margin-bottom:38px">Meta: cada chamado nasce com prazo correto e alertas automáticos.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 40px">
+      <sc-for list="{{ c2 }}" as="s" hint-placeholder-count="10">
+        <div style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #e2e4ea;padding:10px 0"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#c8791a;min-width:42px">S{{ s.n }}</span><span style="font-size:20px;color:#3a3d52">{{ s.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 14 CICLO 3 -->
+  <section data-label="Ciclo 3" data-speaker-notes="Ciclo 3 — Esteira e Aprovação: Planner, On Hold e ciclo de ajustes." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:90px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#9061d6">CICLO 3</span><span style="font-size:20px;letter-spacing:.16em;color:#9aa0ad;font-weight:600">ESTEIRA & APROVAÇÃO</span></div>
+    <h2 style="font-size:48px;font-weight:700;line-height:1.05;margin-bottom:8px">Planner, On Hold e ajustes</h2>
+    <p style="font-size:21px;color:#5e6470;margin-bottom:38px">Meta: o chamado percorre a esteira com regras de prazo aplicadas.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 40px">
+      <sc-for list="{{ c3 }}" as="s" hint-placeholder-count="10">
+        <div style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #eef0f5;padding:10px 0"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#9061d6;min-width:42px">S{{ s.n }}</span><span style="font-size:20px;color:#3a3d52">{{ s.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 15 CICLO 4 -->
+  <section data-label="Ciclo 4" data-speaker-notes="Ciclo 4 — Conclusão e Vitrine: DoD e o calendário editorial automático." style="width:1920px;height:1080px;background:#f6f7f9;color:#23252b;padding:90px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#1f8a5b">CICLO 4</span><span style="font-size:20px;letter-spacing:.16em;color:#9aa0ad;font-weight:600">CONCLUSÃO & VITRINE</span></div>
+    <h2 style="font-size:48px;font-weight:700;line-height:1.05;margin-bottom:8px">DoD e calendário editorial</h2>
+    <p style="font-size:21px;color:#5e6470;margin-bottom:38px">Meta: concluir com checklist e gerar transparência sem esforço.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 40px">
+      <sc-for list="{{ c4 }}" as="s" hint-placeholder-count="10">
+        <div style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #e2e4ea;padding:10px 0"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#1f8a5b;min-width:42px">S{{ s.n }}</span><span style="font-size:20px;color:#3a3d52">{{ s.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 16 CICLO 5 -->
+  <section data-label="Ciclo 5" data-speaker-notes="Ciclo 5 — Inteligência e Escala: urgências, métricas, governança e rollout." style="width:1920px;height:1080px;background:#ffffff;color:#23252b;padding:90px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:baseline;gap:18px;margin-bottom:8px"><span style="font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700;color:#c4314b">CICLO 5</span><span style="font-size:20px;letter-spacing:.16em;color:#9aa0ad;font-weight:600">INTELIGÊNCIA & ESCALA</span></div>
+    <h2 style="font-size:48px;font-weight:700;line-height:1.05;margin-bottom:8px">Urgências, métricas e governança</h2>
+    <p style="font-size:21px;color:#5e6470;margin-bottom:38px">Meta: operar em escala, medir o SLA e escalar para todo o Grupo.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px 40px">
+      <sc-for list="{{ c5 }}" as="s" hint-placeholder-count="10">
+        <div style="display:flex;gap:16px;align-items:center;border-bottom:1px solid #eef0f5;padding:10px 0"><span style="font-family:'JetBrains Mono',monospace;font-size:16px;font-weight:700;color:#c4314b;min-width:42px">S{{ s.n }}</span><span style="font-size:20px;color:#3a3d52">{{ s.t }}</span></div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 17 PLAYBOOKS -->
+  <section data-label="Playbooks" data-speaker-notes="Os playbooks operacionais que o time usa no dia a dia, um por situação crítica." style="width:1920px;height:1080px;background:#23252b;color:#fff;padding:96px 130px;display:flex;flex-direction:column;overflow:hidden">
+    <div style="display:flex;align-items:center;gap:16px;margin-bottom:14px"><span style="font-family:'JetBrains Mono',monospace;font-size:20px;color:#46f1a6;font-weight:700">11</span><span style="font-size:20px;letter-spacing:.2em;color:#8a8f9c;font-weight:600">PLAYBOOKS OPERACIONAIS</span><span style="flex:1;height:2px;background:linear-gradient(90deg,#3a3d52,transparent)"></span></div>
+    <h2 style="font-size:56px;font-weight:700;line-height:1.05;margin-bottom:44px">Um roteiro para cada situação</h2>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+      <sc-for list="{{ playbooks }}" as="p" hint-placeholder-count="4">
+        <div style="background:#2d3042;border:1px solid #3a3d52;border-left:4px solid {{ p.color }};border-radius:14px;padding:30px 32px">
+          <div style="font-size:25px;font-weight:700;margin-bottom:6px">{{ p.t }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:15px;color:{{ p.color }};margin-bottom:16px">{{ p.hook }}</div>
+          <p style="font-size:18px;color:#aeb3c0;line-height:1.5">{{ p.d }}</p>
+        </div>
+      </sc-for>
+    </div>
+  </section>
+
+  <!-- 18 CLOSING -->
+  <section data-label="Encerramento" data-speaker-notes="Resumo e próximo passo: piloto com uma concessão e go-live." style="width:1920px;height:1080px;background:#5b5fc7;color:#fff;padding:120px 130px;display:flex;flex-direction:column;justify-content:center;overflow:hidden;position:relative">
+    <div style="position:absolute;left:-160px;top:-160px;width:640px;height:640px;border:2px solid rgba(255,255,255,.12);border-radius:50%"></div>
+    <div style="position:relative">
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;letter-spacing:.3em;opacity:.7;margin-bottom:24px">MENDAS STUDIO · CENTRAL DE CHAMADOS</div>
+      <h2 style="font-size:84px;font-weight:700;line-height:1.02;max-width:22ch;margin-bottom:34px">O chamado entra no Teams e sai como vitrine — sozinho.</h2>
+      <p style="font-size:27px;opacity:.88;max-width:60ch;line-height:1.5">Próximo passo: piloto de uma semana com uma concessão, calibrar os SLAs reais e liberar o bot para todo o Grupo.</p>
+      <div style="display:flex;gap:14px;margin-top:46px;flex-wrap:wrap">
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:13px 26px;font-size:19px">8 hooks</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:13px 26px;font-size:19px">5 categorias de SLA</span>
+        <span style="background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:13px 26px;font-size:19px">5 ciclos × 10 sprints</span>
+      </div>
+    </div>
+  </section>
+
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+  renderVals(){
+    return {
+      arch:[
+        { icon:'💬', name:'Entrada', tool:'Microsoft Teams', color:'#5b5fc7', desc:'Bot publica um Adaptive Card. Único canal oficial (SSOT) — captura briefing mínimo na origem.', arrow:true },
+        { icon:'⚙️', name:'Automação', tool:'Power Automate', color:'#9061d6', desc:'Hooks disparam em cada evento: valida, registra, cronometra o SLA e notifica no Teams.', arrow:true },
+        { icon:'▦', name:'Esteira', tool:'Microsoft Planner', color:'#c8791a', desc:'Card por chamado, categorizado por esforço/concessão. Estados visíveis e prioridade.', arrow:true },
+        { icon:'🗓', name:'Vitrine', tool:'Microsoft Lists', color:'#1f8a5b', desc:'Na conclusão, gera o card do Calendário Editorial — transparência para gestores em tempo real.', arrow:false }
+      ],
+      sla:[
+        { dias:2, color:'#8a8f9c', nome:'Operacional / Distribuição', ex:'Fotos/vídeos prontos · comunicados em texto · vagas padrão · republicação institucional.' },
+        { dias:3, color:'#5b5fc7', nome:'Comunicação simples / Informativa', ex:'Peça única p/ redes · atualização em arte existente · release · pós-evento · post LinkedIn.' },
+        { dias:5, color:'#9061d6', nome:'Criação e Design', ex:'Banners/cartazes · design redes externas · marca em brindes/frota · id. visual de praças.' },
+        { dias:10, color:'#c8791a', nome:'Produção AV e Identidade estruturada', ex:'Marcas de novos programas · produção de vídeos (roteiro + aprovação + pós).' },
+        { dias:15, color:'#c4314b', nome:'Projetos e campanhas integradas', ex:'Id. visual + pacote + cobertura · campanhas anuais (Maio Amarelo, SIPAT, GPTW).' }
+      ],
+      esteira:[
+        { n:'01', color:'#5b5fc7', name:'Entrada', desc:'Bot recebe o Adaptive Card no Teams (SSOT).' },
+        { n:'02', color:'#5b5fc7', name:'Registro', desc:'Card criado no Planner, categorizado por esforço e concessão.' },
+        { n:'03', color:'#8a8f9c', name:'Triagem', desc:'Briefing validado. Incompleto → devolve; SLA não inicia.' },
+        { n:'04', color:'#9061d6', name:'Produção', desc:'Execução conforme o SLA da categoria.' },
+        { n:'05', color:'#c8791a', name:'Aprovação', desc:'1ª versão; 24h para retorno; +2d → On Hold.' },
+        { n:'06', color:'#c8791a', name:'Ajustes', desc:'Refinamentos em até 2 dias úteis.' },
+        { n:'07', color:'#1f8a5b', name:'Conclusão', desc:'DoD ok → card no Calendário Editorial.' }
+      ],
+      hooks:[
+        { i:'1', id:'hook:intake', color:'#5b5fc7', name:'Intake', desc:'Recebe o Adaptive Card no Teams e valida o briefing mínimo.' },
+        { i:'2', id:'hook:register', color:'#5b5fc7', name:'Registro', desc:'Cria o card no Planner, categoriza e inicia o SLA (corte 16h).' },
+        { i:'3', id:'hook:triagem', color:'#8a8f9c', name:'Triagem', desc:'Briefing incompleto → devolve e congela o SLA.' },
+        { i:'4', id:'hook:sla', color:'#c8791a', name:'SLA Timer', desc:'Conta o prazo; alerta em D-2, D-1 e no estouro.' },
+        { i:'5', id:'hook:approval', color:'#c8791a', name:'Aprovação', desc:'1ª versão; janela de 24h; +2d sem retorno → On Hold.' },
+        { i:'6', id:'hook:adjust', color:'#9061d6', name:'Ajustes', desc:'Ciclo de ajustes em até 2 dias úteis.' },
+        { i:'7', id:'hook:done', color:'#1f8a5b', name:'Conclusão / DoD', desc:'Checklist DoD → conclui e gera o card editorial.' },
+        { i:'8', id:'hook:urgent', color:'#c4314b', name:'Exceção', desc:'Urgência validada via Teams; reprioriza a fila.' }
+      ],
+      dod:[
+        { t:'Aprovação formal', d:'Arte e texto validados e aprovados pelo solicitante.' },
+        { t:'Arquivos fechados', d:'Material final em PDF / PNG / MP4, nos repositórios oficiais.' },
+        { t:'Veiculação', d:'Conteúdo disparado nos canais oficiais definidos no planejamento.' },
+        { t:'Baixa no sistema', d:'Tarefa marcada como "Concluída" no Planner.' },
+        { t:'Visibilidade', d:'Card gerado no Calendário Editorial com data e canal.' }
+      ],
+      urgent:[
+        { n:'PASSO 1', t:'Sinalizar no card', d:'Solicitante marca "urgente" no Adaptive Card de abertura.', arrow:true },
+        { n:'PASSO 2', t:'Validar via Teams', d:'Validação obrigatória com a equipe de Comunicação no Teams.', arrow:true },
+        { n:'PASSO 3', t:'Repriorizar a fila', d:'hook:urgent move o chamado ao topo e recalcula os demais.', arrow:false }
+      ],
+      setup:[
+        { n:'1', t:'Canal & app no Teams', d:'Crie o time "Mendas Studio · Chamados" e fixe o app do bot na guia.' },
+        { n:'2', t:'Adaptive Card de intake', d:'Modele o card com título, categoria, concessão, canal, briefing e urgência.' },
+        { n:'3', t:'Fluxos de hook', d:'Crie no Power Automate os 8 fluxos, um por gatilho de evento.' },
+        { n:'4', t:'Planner & categorias', d:'Configure o plano, os buckets da esteira e as etiquetas de esforço.' },
+        { n:'5', t:'Lists editorial', d:'Monte a lista do calendário e a automação hook:done de criação de card.' },
+        { n:'6', t:'Piloto & go-live', d:'Rode 1 semana com uma concessão, calibre SLA e libere para o grupo.' }
+      ],
+      cycleCards:[
+        { n:'1', name:'Fundação', color:'#5b5fc7', goal:'Base no Teams, intake bot e SSOT.' },
+        { n:'2', name:'SLA Engine', color:'#c8791a', goal:'Categorias, timers e corte das 16h.' },
+        { n:'3', name:'Esteira & Aprovação', color:'#9061d6', goal:'Planner, On Hold e ciclo de ajustes.' },
+        { n:'4', name:'Conclusão & Vitrine', color:'#1f8a5b', goal:'DoD e calendário editorial automático.' },
+        { n:'5', name:'Inteligência & Escala', color:'#c4314b', goal:'Urgências, métricas e governança.' }
+      ],
+      c1:this.sp(['Provisionar time e canal no Teams','Definir papéis: solicitante, triador, produtor','Modelar o Adaptive Card de abertura','Validação de briefing mínimo no card','Publicar o bot como app fixado','Mapear concessões e canais oficiais','hook:intake — receber e parsear o card','hook:register — criar registro do chamado','Mensagem de confirmação com protocolo','Teste de ponta: abrir e registrar 1 chamado']),
+      c2:this.sp(['Cadastrar as 5 categorias de esforço','Mapear cada categoria ao prazo (2/3/5/10/15)','hook:sla — iniciar contagem no registro','Regra de corte às 16h / próximo dia útil','Calendário de dias úteis e feriados','Alertas D-2 e D-1 no Teams','Alerta de estouro de prazo','Painel de SLA por chamado','Estimativa de prazo no card de abertura','Teste: prazos corretos em todas as categorias']),
+      c3:this.sp(['Criar plano e buckets no Planner','hook:triagem — validar e devolver briefing','Congelar SLA enquanto em triagem','Mover Triagem → Produção ao validar','hook:approval — enviar 1ª versão','Janela de 24h para retorno do solicitante','Soma de dias por atraso de aprovação','On Hold automático após 2 dias sem retorno','hook:adjust — ciclo de ajustes (2 dias)','Teste: percorrer a esteira inteira']),
+      c4:this.sp(['Definir o checklist DoD (5 itens)','hook:done — bloquear baixa sem DoD','Repositórios oficiais de arquivos fechados','Confirmação de veiculação por canal','Marcar "Concluída" no Planner','Modelar a lista do Calendário Editorial','Geração automática de card na conclusão','Campos: data, canal, categoria, concessão','Visão de calendário para gestores','Teste: concluir e ver na vitrine']),
+      c5:this.sp(['hook:urgent — fluxo de exceção','Validação de urgência via Teams','Repriorização e recálculo da fila','Métricas: SLA cumprido, tempo por etapa','Dashboard de volume por concessão/canal','Relatório de On Hold e gargalos','Governança: donos de hook e versionamento','Trilha de auditoria dos eventos','Onboarding das demais concessões','Go-live geral e revisão do procedimento']),
+      playbooks:[
+        { t:'Briefing incompleto', hook:'hook:triagem', color:'#8a8f9c', d:'Devolver pelo bot com os campos faltantes destacados. O SLA não inicia até o reenvio completo.' },
+        { t:'Solicitante sumiu', hook:'hook:approval', color:'#c4314b', d:'Após 2 dias úteis sem retorno, mover para On Hold, notificar o gestor e liberar a vaga da fila.' },
+        { t:'Urgência real', hook:'hook:urgent', color:'#c8791a', d:'Validar via Teams, repriorizar e comunicar o impacto no cronograma das outras demandas da área.' },
+        { t:'Fechamento & vitrine', hook:'hook:done', color:'#1f8a5b', d:'Rodar o checklist DoD, fechar no Planner e conferir o card gerado no Calendário Editorial.' }
+      ]
+    };
+  }
+
+  sp(arr){ return arr.map((t,i)=>({ n:i+1, t })); }
+}
+</script>
+</body>
+</html>

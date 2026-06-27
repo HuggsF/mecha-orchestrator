@@ -1,0 +1,36 @@
+{
+  "spec_driven_dev": {
+    "name": "Spec-Driven Development Pipeline",
+    "description": "Workflow sequencial para criar código a partir de uma especificação formal de interface.",
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "Uncle Bob",
+        "description": "Recebe o requisito e gera a especificação de interface (spec.md)",
+        "input_source": "user_prompt",
+        "output_var": "specification"
+      },
+      {
+        "step_id": 2,
+        "agent": "Linus",
+        "description": "Lê a especificação e escreve o código correspondente",
+        "input_source": "specification",
+        "output_var": "implementation"
+      },
+      {
+        "step_id": 3,
+        "agent": "Kent Beck",
+        "description": "Lê a especificação e escreve os testes unitários correspondentes",
+        "input_source": "specification",
+        "output_var": "tests"
+      },
+      {
+        "step_id": 4,
+        "agent": "Mitnick",
+        "description": "Valida e audita a especificação, implementação e testes",
+        "input_sources": ["specification", "implementation", "tests"],
+        "output_var": "audit_report"
+      }
+    ]
+  }
+}

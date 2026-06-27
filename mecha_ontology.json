@@ -1,0 +1,508 @@
+{
+  "name": "MECHA Multi-Agent Orchestrator Ontology",
+  "version": "1.0.0",
+  "root": "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha",
+  "domains": [
+    {
+      "id": "ops",
+      "type": "Core Domain",
+      "path": ".mecha/ops",
+      "description": "Domínio responsável pelos fluxos de ops",
+      "components": [
+        {
+          "name": "bootstrap.js",
+          "type": "Module"
+        },
+        {
+          "name": "enviar_relatorio_telegram.py",
+          "type": "Module"
+        },
+        {
+          "name": "generate_ontology.py",
+          "type": "Module"
+        },
+        {
+          "name": "mecha_app.py",
+          "type": "Module"
+        }
+      ]
+    },
+    {
+      "id": "squads",
+      "type": "Core Domain",
+      "path": ".mecha/squads",
+      "description": "Domínio responsável pelos fluxos de squads",
+      "components": []
+    },
+    {
+      "id": "rag-dojo",
+      "type": "Core Domain",
+      "path": ".mecha/rag-dojo",
+      "description": "**RAG Spiral Training** — do zero ao estado da arte em 6 espirais.",
+      "components": [
+        {
+          "name": "CLAUDE.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "cli.py",
+          "type": "Module"
+        },
+        {
+          "name": "contracts.py",
+          "type": "Module"
+        },
+        {
+          "name": "guia_patterns_funcionais_v2.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "pipeline_factory.py",
+          "type": "Module"
+        },
+        {
+          "name": "README.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "replication_checklist_bulletproof_v2.md",
+          "type": "Documentation"
+        }
+      ]
+    },
+    {
+      "id": "kernel",
+      "type": "Core Domain",
+      "path": ".mecha/kernel",
+      "description": "Domínio responsável pelos fluxos de kernel",
+      "components": []
+    },
+    {
+      "id": "behavior",
+      "type": "Core Domain",
+      "path": ".mecha/behavior",
+      "description": "Domínio responsável pelos fluxos de behavior",
+      "components": []
+    },
+    {
+      "id": "intelligence",
+      "type": "Core Domain",
+      "path": ".mecha/intelligence",
+      "description": "Domínio responsável pelos fluxos de intelligence",
+      "components": []
+    },
+    {
+      "id": "foundation",
+      "type": "Core Domain",
+      "path": ".mecha/foundation",
+      "description": "Domínio responsável pelos fluxos de foundation",
+      "components": []
+    },
+    {
+      "id": "governance",
+      "type": "Core Domain",
+      "path": ".mecha/governance",
+      "description": "Domínio responsável pelos fluxos de governance",
+      "components": []
+    },
+    {
+      "id": "test_db",
+      "type": "Core Domain",
+      "path": ".mecha/test_db",
+      "description": "Domínio responsável pelos fluxos de test_db",
+      "components": []
+    },
+    {
+      "id": "docs",
+      "type": "Core Domain",
+      "path": ".mecha/docs",
+      "description": "Domínio responsável pelos fluxos de docs",
+      "components": [
+        {
+          "name": "ANTIGRAVITY_BRIDGE_PROMPT.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "EVENT_BUS.md",
+          "type": "Documentation"
+        }
+      ]
+    },
+    {
+      "id": "CORE",
+      "type": "Core Domain",
+      "path": ".mecha/CORE",
+      "description": "Domínio responsável pelos fluxos de CORE",
+      "components": [
+        {
+          "name": "AI-OS-META-SEGMENTED.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "aprendizado-vanessa(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "aprendizado-vanessa.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "arquitetura-projeto(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "arquitetura-projeto.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "claudio-requisitos-v1.1(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "claudio-requisitos-v1.1.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-arcgis-sde-postgresql(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-arcgis-sde-postgresql.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-cdp-browser-debug(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-cdp-browser-debug.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-etl-convenios(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-etl-convenios.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-rag-chromadb(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "conhecimento-rag-chromadb.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "diretriz-ai-os-meta-segmented(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "diretriz-ai-os-meta-segmented.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-credenciais(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-credenciais.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-gdrive-leitura(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-gdrive-leitura.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-memoria-somente-drive(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-memoria-somente-drive.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-monitoramento-eventos(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-monitoramento-eventos.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-padrao-codigo-vanessa(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-padrao-codigo-vanessa.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-rotina-sessao(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-rotina-sessao.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-separacao-projetos(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-separacao-projetos.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-sincronia-dna-vanessa(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-sincronia-dna-vanessa.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-tom-personalidade(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "feedback-tom-personalidade.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "gemini-sync.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "mapa-de-estudo-vanessa(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "mapa-de-estudo-vanessa.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "MEMORY(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "memory-work-etl-consulta-portal(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "memory-work-etl-consulta-portal.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "memory-work-etl-gdrive(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "memory-work-etl-gdrive.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "MEMORY.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "migracao-maquina(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "migracao-maquina.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-arcgis-prefeitura(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-arcgis-prefeitura.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-claudio-bot(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-claudio-bot.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-rag-vanessa(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "projeto-rag-vanessa.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "repo-claudio-kb(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "repo-claudio-kb.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "validacao-pipeline(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "validacao-pipeline.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-05(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-05.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-15(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-15.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-16(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-16.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-17(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-17.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-18(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-18.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-22(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-22.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-24(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-24-b(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-24-b.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-24.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-25(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-25.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-26(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-26-b(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-26-b.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-26.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-27(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-27-b(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-27-b.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-27.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-30(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-30.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-31(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-03-31.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-02(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-02.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-03(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-03.md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-06(1).md",
+          "type": "Documentation"
+        },
+        {
+          "name": "vanessa-sessao-2026-04-06.md",
+          "type": "Documentation"
+        }
+      ]
+    }
+  ]
+}
