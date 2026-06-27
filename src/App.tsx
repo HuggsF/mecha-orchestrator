@@ -577,36 +577,48 @@ X O R I G I N   Z E R O`}
                     id: 'vanessa', 
                     icon: '🐺', 
                     title: 'Vanessa (Anúbis)', 
+                    skills: ['Systemic Analysis', 'Lore Auditing', 'RAG Alignment'],
+                    strengths: 'Uncovers hidden flow dependencies, manages RSD check-sums, and secures raw narrative logic.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Vanessa (Anúbis - Lore / Control)\n---\n/knot vanessa:\n\nFocus: Systemic Analysis & Lore\nContext: \nQuery: ' 
                   },
                   { 
                     id: 'hugo', 
                     icon: '📡', 
                     title: 'Hugo (Thoth)', 
+                    skills: ['Telemetry/SMS', 'System Arch', 'Improbability Tuning'],
+                    strengths: 'Secures architectural alignment, constructs clean APIs, and designs robust database schemas.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Hugo (Thoth - Telemetry / SMS)\n---\n/knot hugo:\n\nFocus: Architecture & Telemetry\nFeature: \nQuery: ' 
                   },
                   { 
                     id: 'amanda', 
                     icon: '📦', 
                     title: 'Amanda (Maat)', 
+                    skills: ['Product Design', 'Flow Safety', 'UX Strategy'],
+                    strengths: 'Acts as the compliance and quality gatekeeper, smoothing user flows and proving business value.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Amanda (Maat - Product / UX Flow)\n---\n/knot amanda:\n\nFocus: Product & UX Flow\nFeature: \nQuery: ' 
                   },
                   { 
                     id: 'rodolfo', 
                     icon: '⚒️', 
                     title: 'Rodolfo (Hefesto)', 
+                    skills: ['.NET Engineering', 'Forja de Estrutura', 'Code Review'],
+                    strengths: 'Constructs highly resilient, enterprise-grade backend microservices and reviews complex logic.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Rodolfo (Hefesto - .NET Engineering / Code Review)\n---\n/knot rodolfo:\n\nFocus: .NET Engineering & Code Review\nService: \nQuery: ' 
                   },
                   { 
                     id: 'henrique', 
                     icon: '⚡', 
                     title: 'Henrique (Hermes)', 
+                    skills: ['DevOps Pipeline', 'DBA & Queries', 'Husky Automation'],
+                    strengths: 'Optimizes database query bottlenecks, streamlines CI/CD environments, and automates pre-commits.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Henrique (Hermes - DevOps / DBA)\n---\n/knot henrique:\n\nFocus: DevOps & DBA\nInfrastructure: \nQuery: ' 
                   },
                   { 
                     id: 'felipe', 
                     icon: '🛡️', 
                     title: 'Felipe (Prometeu)', 
+                    skills: ['CyberSec Audits', 'Alpha Security', 'Threat Hunting'],
+                    strengths: 'Hardens authentication protocols, scans code vulnerabilities, and deploys strict containment shield firewalls.',
                     prompt: '---\nMETADATA:\n  Active Skills: [front-end-system-design, mecha-backend-engineering, mecha-agentic-workflow]\n  Commit Standard: Conventional Commits with Quality Gate v2.0\n  Squad Focus: Felipe (Prometeu - CyberSec / AlphaTM)\n---\n/knot felipe:\n\nFocus: CyberSec & AlphaTM\nComponent: \nQuery: ' 
                   },
                 ].map(card => (
@@ -616,8 +628,24 @@ X O R I G I N   Z E R O`}
                       setInput(card.prompt)
                       setTimeout(() => textareaRef.current?.focus(), 10)
                     }}
-                    className="flex flex-col items-start gap-2 p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-violet-500/40 transition-all text-left group"
+                    className="flex flex-col items-start gap-2 p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-violet-500/40 transition-all text-left group relative"
                   >
+                    {/* Tooltip Hover Box (Detailed Skills & Strengths) */}
+                    <div className="absolute bottom-[108%] mb-1.5 left-1/2 -translate-x-1/2 w-64 p-3.5 bg-[#121216]/98 border border-white/10 rounded-xl shadow-2xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-50 flex flex-col gap-2.5 backdrop-blur-md">
+                      <div className="text-[9px] font-bold uppercase tracking-wider text-slate-500 border-b border-white/5 pb-1">Skills & Core Strengths</div>
+                      <div className="flex flex-wrap gap-1">
+                        {card.skills.map(s => (
+                          <span key={s} className="text-[8.5px] font-mono px-2 py-0.5 rounded bg-white/5 border border-white/10 text-slate-300">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="p-2 rounded bg-emerald-500/5 border border-emerald-500/10 text-emerald-400 text-[9.5px] leading-relaxed">
+                        <div className="font-bold uppercase tracking-wider text-[8px] text-emerald-300 mb-0.5">Core Advantage</div>
+                        {card.strengths}
+                      </div>
+                    </div>
+
                     <div className="flex items-center gap-2 w-full">
                       <span className="text-base grayscale group-hover:grayscale-0 transition-all">{card.icon}</span>
                       <span className="text-[11px] font-semibold text-slate-300 group-hover:text-violet-300 transition-colors">{card.title}</span>
