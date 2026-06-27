@@ -100,6 +100,15 @@ ipcMain.handle('git:diff', async (_e, cwd, file) => {
   }
 })
 
+ipcMain.handle('git:runQualityGate', async (_e, cwd) => {
+  return new Promise((resolve) => {
+    const { exec } = require('child_process')
+    exec('node scripts/quality-gate.js', { cwd }, (err, stdout, stderr) => {
+      resolve({ ok: !err, output: stdout || stderr || '' })
+    })
+  })
+})
+
 app.whenReady().then(() => {
   createWindow()
   app.on('activate', () => {

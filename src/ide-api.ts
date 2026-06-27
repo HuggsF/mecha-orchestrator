@@ -31,6 +31,7 @@ interface AntigravityAPI {
     status: (cwd: string) => Promise<GitStatus>
     init: (cwd: string) => Promise<{ ok: boolean; message: string }>
     diff: (cwd: string, file: string) => Promise<string>
+    runQualityGate: (cwd: string) => Promise<{ ok: boolean; output: string }>
   }
 }
 

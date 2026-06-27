@@ -13,5 +13,6 @@ contextBridge.exposeInMainWorld('antigravity', {
     status: (cwd) => ipcRenderer.invoke('git:status', cwd),
     init: (cwd) => ipcRenderer.invoke('git:init', cwd),
     diff: (cwd, file) => ipcRenderer.invoke('git:diff', cwd, file),
+    runQualityGate: (cwd) => ipcRenderer.invoke('git:runQualityGate', cwd),
   },
 })
