@@ -226,6 +226,15 @@ function PipelineHeader({ squad }: { squad?: SquadInfo }) {
   )
 }
 
+const PERSONA_FOCUS: Record<string, string> = {
+  vanessa: 'Systemic Analysis & Lore',
+  hugo: 'Architecture & Telemetry',
+  amanda: 'Product & UX Flow',
+  rodolfo: '.NET Engineering & Code Review',
+  henrique: 'DevOps & DBA',
+  felipe: 'CyberSec & AlphaTM',
+}
+
 // ── Main App ──────────────────────────────────────────────────────────────────
 export default function App() {
   const [items, setItems] = useState<ChatItem[]>([])
@@ -235,6 +244,33 @@ export default function App() {
   const [catalog, setCatalog] = useState<SquadCatalog>({})
   const [ragEnabled, setRagEnabled] = useState(true)
   const [spend, setSpend] = useState(0)
+
+  // Interactive Prompt Builder States
+  const [activePersona, setActivePersona] = useState<string | null>(null)
+  const [activeSkills, setActiveSkills] = useState<string[]>(['front-end-system-design', 'mecha-backend-engineering', 'mecha-agentic-workflow'])
+  const [activeProtocols, setActiveProtocols] = useState<string[]>(['rsd_check', 'alignment'])
+  const [activeSections, setActiveSections] = useState<string[]>(['focus', 'context', 'query'])
+
+  const updatePromptText = useCallback((persona: string, skills: string[], protocols: string[], sections: string[]) => {
+    const skillsStr = skills.length > 0 ? skills.join(',') : 'none';
+    const protoStr = protocols.length > 0 ? protocols.map(p => `${p}=true`).join('&') : 'none';
+    
+    const metaLink = `[🛡️ Mecha Metadata](https://mecha.orchestrator/meta?skills=${skillsStr}&commit=conventional-commits-gate-v2.0)`;
+    const protoLink = `[💬 Protocol: ${persona}](https://mecha.orchestrator/rules?recipient=${persona}&${protoStr})`;
+    
+    let body = `/knot ${persona}:`;
+    if (sections.includes('focus')) {
+      body += `\n• Focus: ${PERSONA_FOCUS[persona]}`;
+    }
+    if (sections.includes('context')) {
+      body += `\n• Context: [descreva aqui o contexto da tarefa]`;
+    }
+    if (sections.includes('query')) {
+      body += `\n• Query: [descreva aqui o comando/pergunta]`;
+    }
+    
+    setInput(`${metaLink} | ${protoLink}\n\n${body}`);
+  }, [])
   
   const [leftW, setLeftW] = useState(320)
   const [reviewW, setReviewW] = useState(280)
@@ -625,10 +661,11 @@ X O R I G I N   Z E R O`}
                   <button
                     key={card.id}
                     onClick={() => {
-                      setInput(card.prompt)
+                      setActivePersona(card.id)
+                      updatePromptText(card.id, activeSkills, activeProtocols, activeSections)
                       setTimeout(() => textareaRef.current?.focus(), 10)
                     }}
-                    className="flex flex-col items-start gap-2 p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-violet-500/40 transition-all text-left group relative"
+                    className="flex flex-col items-start gap-2 p-3.5 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.06] hover:border-violet-500/40 transition-all text-left group relative hover:scale-[1.02] hover:shadow-[0_0_15px_rgba(139,92,246,0.1)] active:scale-[0.98] cursor-pointer"
                   >
                     {/* Tooltip Hover Box (Detailed Skills & Strengths) */}
                     <div className="absolute bottom-[108%] mb-1.5 left-1/2 -translate-x-1/2 w-64 p-3.5 bg-[#121216]/98 border border-white/10 rounded-xl shadow-2xl opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 z-50 flex flex-col gap-2.5 backdrop-blur-md">
@@ -667,6 +704,99 @@ X O R I G I N   Z E R O`}
 
         {/* Input */}
         <div className="px-5 pb-5 pt-3 border-t border-white/[0.05] shrink-0">
+          {/* Prompt Builder Panel */}
+          {activePersona && (
+            <div className="mb-3 p-3 bg-[#121216] border border-white/[0.05] rounded-xl flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-violet-400">Prompt Configurator Panel</span>
+                <button onClick={() => { setActivePersona(null); setInput('') }} className="text-[9px] text-slate-500 hover:text-slate-300">FECHAR</button>
+              </div>
+              
+              <div className="flex flex-col gap-2">
+                {/* H1: Active Skills */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] font-semibold text-slate-500 uppercase">H1: Active Skills</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['front-end-system-design', 'mecha-backend-engineering', 'mecha-agentic-workflow'].map(s => {
+                      const active = activeSkills.includes(s)
+                      return (
+                        <button
+                          key={s}
+                          onClick={() => {
+                            const next = active ? activeSkills.filter(x => x !== s) : [...activeSkills, s]
+                            setActiveSkills(next)
+                            updatePromptText(activePersona, next, activeProtocols, activeSections)
+                          }}
+                          className={`px-2 py-0.5 rounded text-[9px] font-mono border transition-all ${
+                            active
+                              ? 'bg-violet-500/10 border-violet-500/40 text-violet-400 font-semibold'
+                              : 'bg-transparent border-white/5 text-slate-500 hover:text-slate-400'
+                          }`}
+                        >
+                          {s}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* H2: Protocols */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] font-semibold text-slate-500 uppercase">H2: Protocols</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['rsd_check', 'alignment', 'husky_hooks'].map(p => {
+                      const active = activeProtocols.includes(p)
+                      return (
+                        <button
+                          key={p}
+                          onClick={() => {
+                            const next = active ? activeProtocols.filter(x => x !== p) : [...activeProtocols, p]
+                            setActiveProtocols(next)
+                            updatePromptText(activePersona, activeSkills, next, activeSections)
+                          }}
+                          className={`px-2 py-0.5 rounded text-[9px] font-mono border transition-all ${
+                            active
+                              ? 'bg-emerald-500/10 border-emerald-500/40 text-emerald-400 font-semibold'
+                              : 'bg-transparent border-white/5 text-slate-500 hover:text-slate-400'
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+
+                {/* H3: Prompt Sections */}
+                <div className="flex flex-col gap-1">
+                  <span className="text-[9px] font-semibold text-slate-500 uppercase">H3: Prompt Sections</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {['focus', 'context', 'query'].map(sec => {
+                      const active = activeSections.includes(sec)
+                      return (
+                        <button
+                          key={sec}
+                          onClick={() => {
+                            const next = active ? activeSections.filter(x => x !== sec) : [...activeSections, sec]
+                            setActiveSections(next)
+                            updatePromptText(activePersona, activeSkills, activeProtocols, next)
+                          }}
+                          className={`px-2 py-0.5 rounded text-[9px] font-mono border transition-all ${
+                            active
+                              ? 'bg-cyan-500/10 border-cyan-500/40 text-cyan-400 font-semibold'
+                              : 'bg-transparent border-white/5 text-slate-500 hover:text-slate-400'
+                          }`}
+                        >
+                          {sec}
+                        </button>
+                      )
+                    })}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
           <div className="relative">
             <textarea
               ref={textareaRef}
