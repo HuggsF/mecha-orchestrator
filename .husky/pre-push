@@ -1,5 +1,9 @@
 #!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-echo "[Husky] Executando Rebase automático antes do push (Sincronizando com origin/main)..."
-git pull --rebase origin main
+# Sincroniza refs do remoto antes do push (fetch nao-destrutivo).
+# Antes: 'git pull --rebase origin main' — travava TODO push deste repo:
+#   (1) o remoto usa 'master', nao 'main' (ref inexistente);
+#   (2) rebase automatico exige arvore limpa e reescreveria feature branches.
+# Trocado por um fetch informativo que nunca bloqueia o push.
+echo "[Husky] Sincronizando refs do remoto (git fetch)..."
+git fetch origin --quiet 2>/dev/null || true
+exit 0
