@@ -14,6 +14,7 @@ import json
 import time
 import asyncio
 import logging
+from collections import deque
 from typing import Dict, Any, List, Optional
 
 if hasattr(sys.stdout, 'reconfigure'):
@@ -128,7 +129,7 @@ SQUAD_ROUTES = {
         "trigger_squad": "dev",
         "trigger_output": "audit_report",
         "trigger_condition": "[APROVADO]",
-        "target_squad": "qa",
+        "target_squad": ["qa", "qa_2"],
         "target_workflow": "qa_workflows",
         "target_pipeline": "qa_audit_pipeline",
         "input_mapping": {
@@ -162,6 +163,93 @@ SQUAD_ROUTES = {
 
 
 # =============================================================================
+# SQUAD METRICS (ORCH-13) - observador PASSIVO do AgentBus
+# =============================================================================
+
+METRICS_TTL_SEC = 120   # metricas mais velhas que isto sao consideradas obsoletas (fail-open)
+STALE_TTL = 300         # poda de entradas _start_ts orfas (crash mid-run)
+
+
+class SquadMetrics:
+    """
+    ORCH-13: deriva prontidao/carga/latencia por dominio a partir de eventos
+    REAIS do AgentBus (workflow.started/completed/aborted), via um handler
+    on_channel. NAO usa nenhum KV store (bus.get/has NAO existem). Observador
+    puro: nunca roteia, nunca publica no hot path, so muta os proprios dicts.
+    """
+
+    def __init__(self, bus: AgentBus):
+        self.bus = bus
+        self._inflight: Dict[str, int] = {}
+        self._last_started: Dict[str, float] = {}
+        self._last_completed: Dict[str, float] = {}
+        self._lat: Dict[str, deque] = {}
+        self._start_ts: Dict[Any, float] = {}  # (dominio, thread_id) -> ts inicial
+        # Idempotencia: o AgentBus e singleton (get_instance) e os testes criam
+        # multiplos routers no mesmo bus; anexa o handler UMA unica vez.
+        if not getattr(bus, "_orch13_attached", False):
+            bus.on_channel("pipeline.events", self._on_pipeline)
+            setattr(bus, "_orch13_attached", True)
+
+    def _on_pipeline(self, msg: "BusMessage"):
+        try:
+            payload = msg.payload or {}
+            ev = payload.get("event")
+            squad = payload.get("squad")
+            thread_id = payload.get("thread_id")
+            ts = getattr(msg, "timestamp", time.time())
+            if not squad:
+                return
+            d = squad.replace("_squad", "")
+            if ev == "workflow.started":
+                self._inflight[d] = self._inflight.get(d, 0) + 1
+                self._last_started[d] = ts
+                self._start_ts[(d, thread_id)] = ts
+            elif ev in ("workflow.completed", "workflow.aborted"):
+                self._inflight[d] = max(0, self._inflight.get(d, 0) - 1)
+                self._last_completed[d] = ts
+                start = self._start_ts.pop((d, thread_id), None)
+                if start is not None and ev == "workflow.completed":
+                    self._lat.setdefault(d, deque(maxlen=20)).append(ts - start)
+            # Poda entradas orfas (workflow que comecou e nunca terminou) p/ limitar memoria
+            if len(self._start_ts) > 256:
+                cutoff = ts - STALE_TTL
+                for k in [k for k, v in self._start_ts.items() if v < cutoff]:
+                    self._start_ts.pop(k, None)
+        except Exception:
+            pass  # uma falha de metrica JAMAIS pode quebrar o roteamento
+
+    def in_flight(self, d: str) -> int:
+        return self._inflight.get(d, 0)
+
+    def avg_latency(self, d: str) -> Optional[float]:
+        samples = self._lat.get(d)
+        return (sum(samples) / len(samples)) if samples else None
+
+    def last_event_ts(self, d: str) -> float:
+        return max(self._last_started.get(d, 0.0), self._last_completed.get(d, 0.0))
+
+    def is_stale(self, d: str, now: float) -> bool:
+        last = self.last_event_ts(d)
+        return last > 0 and (now - last) > METRICS_TTL_SEC
+
+    def is_ready(self, d: str) -> bool:
+        # Pronto = o squad tem agentes registrados no bus (config carregavel).
+        return bool(self.bus.list_agents(squad=f"{d}_squad")) or bool(self.bus.list_agents(squad=d))
+
+    def snapshot(self) -> Dict[str, Any]:
+        out = {}
+        for d in set(list(self._inflight) + list(self._last_started) + list(self._last_completed)):
+            out[d] = {
+                "in_flight": self._inflight.get(d, 0),
+                "avg_latency": self.avg_latency(d),
+                "last_event_ts": self.last_event_ts(d),
+                "samples": len(self._lat.get(d, [])),
+            }
+        return out
+
+
+# =============================================================================
 # CROSS-SQUAD ROUTER
 # =============================================================================
 
@@ -185,7 +273,10 @@ class CrossSquadRouter:
             os.path.join(workspace_root, ".mecha", "ops", "logs", "conversations")
         )
         self.routes = dict(SQUAD_ROUTES)
+        self._active_squads: Dict[str, str] = {}  # ORCH-12: dominio -> thread_id em execucao
+        self.metrics = SquadMetrics(self.bus)       # ORCH-13: observador passivo de carga/latencia
         self._register_system_agent()
+        self._warm_pools()                          # ORCH-13: aquece os pools declarados (balanceia ja no 1o pipeline frio)
 
     def _register_system_agent(self):
         if not self.bus.get_agent("router"):
@@ -194,6 +285,30 @@ class CrossSquadRouter:
                 squad="system", role="Message Router",
                 capabilities=["routing", "chaining", "history"]
             )
+
+    def _warm_pools(self):
+        """
+        ORCH-13: pre-registra os agentes de qualquer rota declarada como POOL
+        (target_squad = lista), para que o balanceamento de carga valha ja no
+        PRIMEIRO pipeline frio, sem esperar cada membro 'esquentar' na 1a execucao.
+        Idempotente (register_squad_agents nao duplica agentes existentes) e
+        tolerante a falha (um membro com config ausente nao derruba o router).
+        """
+        seen = set()
+        for route in self.routes.values():
+            tgt = route.get("target_squad")
+            if not isinstance(tgt, list):
+                continue
+            for member in tgt:
+                squad_file = member if member.endswith("_squad") else f"{member}_squad"
+                if squad_file in seen:
+                    continue
+                seen.add(squad_file)
+                try:
+                    self.register_squad_agents(squad_file)
+                    logger.info("[ROUTER] Pool member pre-aquecido (ORCH-13): %s", squad_file)
+                except Exception as e:
+                    logger.warning("[ROUTER] Falha ao pre-aquecer pool member %s: %s", squad_file, e)
 
     # -------------------------------------------------------------------------
     # SQUAD AGENT REGISTRATION
@@ -258,9 +373,24 @@ class CrossSquadRouter:
             {"inputs_keys": list(initial_inputs.keys())}
         )
 
-        results = await self.orchestrator.run_workflow(
-            squad_name, workflow_name, pipeline_key, initial_inputs
-        )
+        norm_active = squad_name.replace("_squad", "")
+        self._active_squads[norm_active] = thread_id  # ORCH-12: marca dominio em execucao
+        _run_ok = False
+        try:
+            results = await self.orchestrator.run_workflow(
+                squad_name, workflow_name, pipeline_key, initial_inputs
+            )
+            _run_ok = True
+        finally:
+            self._active_squads.pop(norm_active, None)
+            if not _run_ok:
+                # ORCH-13: mantem in_flight honesto se o workflow abortou antes do workflow.completed
+                try:
+                    self.bus.publish("router", "pipeline.events", {
+                        "event": "workflow.aborted", "squad": squad_name,
+                        "pipeline": pipeline_key, "thread_id": thread_id})
+                except Exception:
+                    pass
 
         for var_name, content in results.items():
             if var_name.startswith("_"):
@@ -307,6 +437,38 @@ class CrossSquadRouter:
     # AUTO-CHAINING
     # -------------------------------------------------------------------------
 
+    def _domain_busy(self, target_norm: str, thread_id: str) -> Optional[str]:
+        """ORCH-12: retorna o thread_id de uma tarefa em andamento no dominio alvo (se for outra que nao a atual)."""
+        active = self._active_squads.get(target_norm)
+        if active and active != thread_id:
+            return active
+        return None
+
+    def _select_target(self, route: Dict[str, Any], route_name: str, thread_id: str):
+        """
+        ORCH-13: escolhe o membro PRONTO de menor carga num POOL de squads do
+        mesmo dominio (target_squad como lista). Fast path: target_squad string
+        => no-op byte-identico ao comportamento atual (rota 1:1). WARN-only:
+        nunca bloqueia; se nenhum membro estiver pronto, degrada para o preferido.
+        """
+        tgt = route["target_squad"]
+        if isinstance(tgt, str):
+            return tgt.replace("_squad", ""), {"pool": False}
+        candidates = [c.replace("_squad", "") for c in tgt]
+        now = time.time()
+        ready = [c for c in candidates
+                 if self.metrics.is_ready(c)
+                 and self._domain_busy(c, thread_id) is None
+                 and not self.metrics.is_stale(c, now)]
+        if not ready:
+            return candidates[0], {"pool": True, "failover": True,
+                                   "preferred": candidates[0], "reason": "nenhum membro pronto"}
+        chosen = min(ready, key=lambda c: (self.metrics.in_flight(c),
+                                           self.metrics.avg_latency(c) or 0.0,
+                                           candidates.index(c)))
+        return chosen, {"pool": True, "failover": False, "preferred": candidates[0],
+                        "queue_sizes": {c: self.metrics.in_flight(c) for c in candidates}}
+
     async def _check_and_chain(self, source_squad: str, results: Dict[str, Any],
                                 thread_id: str) -> Optional[Dict[str, Any]]:
         norm_source = source_squad.replace("_squad", "")
@@ -332,9 +494,37 @@ class CrossSquadRouter:
             if not target_inputs:
                 continue
 
-            target_squad_file = route["target_squad"]
-            if not target_squad_file.endswith("_squad"):
-                target_squad_file += "_squad"
+            # ORCH-13: selecao dinamica do alvo (pool least-loaded). No-op byte-identico p/ rota 1:1 (string).
+            chosen_norm, sel_meta = self._select_target(route, route_name, thread_id)
+            target_squad_file = chosen_norm if chosen_norm.endswith("_squad") else chosen_norm + "_squad"
+            norm_target = chosen_norm
+
+            # ORCH-12: pre-verificacao de dominio antes do handoff (evita tarefas cruzadas)
+            busy = self._domain_busy(norm_target, thread_id)
+            if busy:
+                reason = f"dominio '{norm_target}' ocupado por tarefa em andamento ({busy})"
+                logger.warning(f"[ROUTER] HANDOFF BLOQUEADO (ORCH-12): {reason}")
+                self.bus.publish("router", "pipeline.events", {
+                    "event": "handoff.blocked", "rule": "ORCH-12", "route": route_name,
+                    "source_squad": source_squad, "target_squad": target_squad_file,
+                    "reason": reason, "thread_id": thread_id
+                })
+                self.history.save_turn(thread_id, "router", "system",
+                                       f"Handoff bloqueado (ORCH-12): {reason}", {"rule": "ORCH-12"})
+                continue
+
+            # ORCH-13: anuncia rebalanceamento/failover de pool (WARN-only, nunca bloqueia)
+            if sel_meta.get("pool") and (sel_meta.get("failover") or chosen_norm != sel_meta.get("preferred")):
+                logger.warning("[ROUTER] ORCH-13 rebalance -> %s (preferido=%s, failover=%s)",
+                               target_squad_file, sel_meta.get("preferred"), sel_meta.get("failover", False))
+                self.bus.publish("router", "pipeline.events", {
+                    "event": "route.rebalanced", "rule": "ORCH-13", "route": route_name,
+                    "source_squad": source_squad, "chosen": target_squad_file,
+                    "preferred": sel_meta.get("preferred"), "failover": sel_meta.get("failover", False),
+                    "queue_sizes": sel_meta.get("queue_sizes", {}), "thread_id": thread_id
+                })
+                self.history.save_turn(thread_id, "router", "system",
+                                       f"ORCH-13 rebalance -> {target_squad_file}", {"rule": "ORCH-13"})
 
             logger.info(f"[ROUTER] Auto-chaining: {source_squad} -> {target_squad_file} via route '{route_name}'")
 
@@ -444,7 +634,8 @@ class CrossSquadRouter:
             "bus": self.bus.stats(),
             "routes": list(self.routes.keys()),
             "conversations": len(self.history.list_threads()),
-            "orchestrator_spend": self.orchestrator.tracker.current_spend
+            "orchestrator_spend": self.orchestrator.tracker.current_spend,
+            "squad_metrics": self.metrics.snapshot()
         }
 
 

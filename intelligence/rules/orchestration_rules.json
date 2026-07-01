@@ -94,6 +94,24 @@
       "severity": "hard",
       "on_violation": "block",
       "exceptions": []
+    },
+    {
+      "id": "ORCH-12",
+      "title": "Pre-verificacao de dominio antes do handoff",
+      "statement": "Antes de validar um handoff, se o squad de destino ja possui uma tarefa em andamento (workflow.started sem workflow.completed) no mesmo dominio, o handoff e bloqueado. Evita tarefas cruzadas acidentais; reforca ORCH-04.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": ["cross-domain via shura explicito"]
+    },
+    {
+      "id": "ORCH-13",
+      "title": "Balanceamento de carga dinamico e roteamento inteligente",
+      "statement": "Quando uma rota declara um POOL de squads intercambiaveis do MESMO dominio (target_squad como lista, ex.: ['qa','qa_2']), o roteamento escolhe o squad PRONTO de menor carga: menor in_flight (derivado de workflow.started/completed no AgentBus via SquadMetrics), latencia media como desempate e ordem do pool como criterio final. E camada de OTIMIZACAO/FAILOVER aplicada APOS os gates ORCH-01..04 e ORCH-12: nunca escolhe squad fora do dominio (preserva ORCH-04), nunca cria handoff sem veredito 1 (preserva ORCH-01..03), reutiliza _domain_busy (preserva ORCH-12) e JAMAIS bloqueia. Metricas obsoletas (> METRICS_TTL_SEC=120s) fazem fail-open para o preferido. Com rota de alvo unico (string, realidade 1:1) a selecao e no-op byte-identica, adicionando apenas telemetria passiva.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "warn",
+      "exceptions": ["alvo unico (string / rota 1:1) - selecao no-op", "cold-start sem metricas - usa preferido", "metricas obsoletas (> METRICS_TTL_SEC) - fail-open para o preferido", "nenhum membro do pool ready - mantem preferido e alerta operador"]
     }
   ]
 }
