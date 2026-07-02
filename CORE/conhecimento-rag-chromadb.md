@@ -2,6 +2,10 @@
 name: Conhecimento RAG e ChromaDB
 description: Fundamentos de RAG explicados com analogias SQL, ChromaDB como PostgreSQL dos vetores, chunking, embeddings, busca semantica
 type: project
+status: deprecated
+deprecated_date: 2026-07-01
+deprecated_reason: ChromaDB descartado pelo System Design (decisão ratificada 1) — busca híbrida canônica é Qdrant (vetorial) + Neo4j (grafo) via rag_client. Conceitos de RAG seguem válidos; a stack ChromaDB não.
+superseded_by: SYSTEM_DESIGN_INICIAL.md
 ---
 
 # Conhecimento Tecnico — RAG e ChromaDB
