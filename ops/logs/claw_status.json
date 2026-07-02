@@ -48,6 +48,144 @@
             "level": "judge",
             "msg": "Juiz IA: Modelo classificou a intenção do clique como segura (Teste E2E).",
             "id": "1782975989.343-3"
+        },
+        {
+            "time": "04:21:59",
+            "level": "info",
+            "msg": "Auditoria do Tribunal Hermes iniciada: Test topic...",
+            "id": "bot_1782976919.6980603_628736935395970690"
+        },
+        {
+            "time": "04:21:59",
+            "level": "ok",
+            "msg": "Tribunal Hermes finalizado. Veredito: APROVADO [1]",
+            "id": "bot_1782976919.7098396_1143431870026050376"
+        },
+        {
+            "time": "04:21:59",
+            "level": "ok",
+            "msg": "Outreach disparado para lead: Test topic",
+            "id": "ghost_1782976919.7246206_-8634404707506567477"
+        },
+        {
+            "time": "04:21:59",
+            "level": "info",
+            "msg": "Qdrant RAG: Buscando 'kafka'...",
+            "id": "bot_1782976919.7266266_5005476835188846967"
+        },
+        {
+            "time": "04:21:59",
+            "level": "ok",
+            "msg": "Qdrant RAG: 1 hits retornados para 'kafka'",
+            "id": "bot_1782976919.7304685_3750908697745457890"
+        },
+        {
+            "time": "04:21:59",
+            "level": "warn",
+            "msg": "Executando Playbook RPA: test_pb",
+            "id": "bot_1782976919.73648_3264280967983149149"
+        },
+        {
+            "time": "04:21:59",
+            "level": "info",
+            "msg": "Playbook [test_pb]: click 10 20",
+            "id": "bot_1782976919.7417262_5758797296083339526"
+        },
+        {
+            "time": "04:22:01",
+            "level": "info",
+            "msg": "Playbook [test_pb]: type 'hello'",
+            "id": "bot_1782976921.2516854_5840989070381615988"
+        },
+        {
+            "time": "04:22:02",
+            "level": "info",
+            "msg": "Playbook [test_pb]: wait 1",
+            "id": "bot_1782976922.7621322_5826848955536268025"
+        },
+        {
+            "time": "04:22:05",
+            "level": "info",
+            "msg": "Playbook [test_pb]: set_goal 'test'",
+            "id": "bot_1782976925.2687058_5407318297784936999"
+        },
+        {
+            "time": "04:22:06",
+            "level": "info",
+            "msg": "Playbook [test_pb]: custom_cmd params",
+            "id": "bot_1782976926.779877_3413101642347691000"
+        },
+        {
+            "time": "04:22:08",
+            "level": "ok",
+            "msg": "Playbook 'test_pb' concluído com sucesso.",
+            "id": "bot_1782976928.289115_758543180859466728"
+        },
+        {
+            "time": "04:22:08",
+            "level": "info",
+            "msg": "[Amanda Teams] Mensagem recebida de @User: test query",
+            "id": "amanda_1782976928.337629_8657156671564676243"
+        },
+        {
+            "time": "04:22:40",
+            "level": "ok",
+            "msg": "[Amanda Teams] Amanda respondeu a @User",
+            "id": "amanda_1782976960.7591121_2374725368326210397"
+        },
+        {
+            "time": "04:22:40",
+            "level": "info",
+            "msg": "[Amanda Teams] Mensagem recebida de @User: /task list",
+            "id": "amanda_1782976960.770402_5247872346172166625"
+        },
+        {
+            "time": "04:22:40",
+            "level": "info",
+            "msg": "[Amanda Teams] Mensagem recebida de @User: /tribunal Test topic",
+            "id": "amanda_1782976960.7783244_8437567434428898382"
+        },
+        {
+            "time": "04:22:40",
+            "level": "warn",
+            "msg": "[Amanda Teams] Tribunal evocado via Teams para: Test topic",
+            "id": "amanda_1782976960.782578_3601173792078171909"
+        },
+        {
+            "time": "04:22:40",
+            "level": "danger",
+            "msg": "[Amanda Teams] Erro na execução do Tribunal (Teams): Pipeline 'tribunal_pipeline' não encontrado no workflow 'tribunal_workflows'.",
+            "id": "amanda_1782976960.7909338_3284702604013463327"
+        },
+        {
+            "time": "04:22:42",
+            "level": "info",
+            "msg": "[Amanda Teams] Mensagem recebida de @User: /dev spec-driven Calculator",
+            "id": "amanda_1782976962.626034_1475418274941136313"
+        },
+        {
+            "time": "04:22:42",
+            "level": "info",
+            "msg": "[Amanda Teams] DevSquad ativado via Teams para: Calculator",
+            "id": "amanda_1782976962.6312194_140483639865663260"
+        },
+        {
+            "time": "04:22:42",
+            "level": "info",
+            "msg": "[Amanda Teams] Mensagem recebida de @User: /qa source.py test.py",
+            "id": "amanda_1782976962.6478126_5849194762885893083"
+        },
+        {
+            "time": "04:22:42",
+            "level": "info",
+            "msg": "[Amanda Teams] QASquad ativado via Teams para: source.py",
+            "id": "amanda_1782976962.654843_3131093996546020970"
+        },
+        {
+            "time": "04:22:43",
+            "level": "danger",
+            "msg": "[Amanda Teams] Erro na execução do Tribunal (Teams): Pipeline 'tribunal_pipeline' não encontrado no workflow 'tribunal_workflows'.",
+            "id": "amanda_1782976963.8667555_3284702604013463327"
         }
     ]
 }
