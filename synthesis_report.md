@@ -178,3 +178,40 @@ Commits (.mecha, branch squad/qa/test-loop): 57dde6e (ontologia+docs), 427dabd (
 - ORCHESTRATOR_CORE não é repositório git — rollback do item 7 é o backup em `_archive/o6-pre-move-backup-OC/`. Recomendação: `git init` (decisão humana).
 - Os commits varreram também alterações pré-existentes pendentes na working tree (dedup antigo do CORE, edições em ide_backend/qdrant_client_helper/telegram_bot) — estavam não-commitadas antes da sessão.
 - `ops/qdrant_db/` (dados vivos do Qdrant) está versionado no git e sincronizado no OneDrive — recomendação forte do Rodolfo: gitignorar + excluir do sync (P2).
+
+---
+
+## 7. O6 #2 — Absorção SendSpeed (2026-07-01)
+
+> Pattern: O6-multi-agent-topology-debate #2 // Personas: Hiansen // Henrique // Rodolfo
+> Decisão: **RATIFICADA** (tiebreaker: Henrique) — absorção SendSpeed é problema de INGESTÃO e correção, não de construção nova.
+> Plano de sprints S1–S5: `SPRINTS_SENDSPEED_ABSORPTION.md` (S1 em execução nesta sessão).
+
+Síntese: nenhuma engine ou server de orquestração novo. Item #1 inegociável = fix do `WORKSPACE_ROOT` em `ops\patterns\mecha_mcp_server.py:24` + registro do server existente como `mecha-core`. O conhecimento SendSpeed entra como server dedicado **read-only** `sendspeed_mcp_server.py` (`sendspeed-mecha`, 5 módulos / ~15 tools, pattern `neo4j_mcp_server.py`: FastMCP stdio, tools nunca levantam exceção, zero escrita, zero segredos inline). Toda tool carrega proveniência (`source`/`status`/`blocked_by`) e `sendspeed_gaps()` é obrigatória — incógnita servida como incógnita (SEND-504, SEND-498). Journeys viram squad + workflows LINEARES v1 executados pelo SquadOrchestrator existente via `run_squad_workflow` pós-fix (eventos ORCH-12/13 no AgentBus); delay/branch/event-trigger não entram no schema — evolução event-driven é Sprint 3 via bridge AgentBus/EventEnvelope. Ontologia nunca hand-edit: modo merge no `generate_ontology.py` ou ciclo formal → v2.2.0 → `neo4j_ontology_ingest.py`, corrigindo o drift no mesmo bump. Itens estruturais/destrutivos = P2 "HITL pendente" (nada deletado/movido sem GO do Hugo). Infra verificada UP (Neo4j 7687, Qdrant 6333) — Redis/Kafka da SendSpeed não são dependência.
+
+### Matriz consolidada P0/P1/P2
+
+| # | P | Ação | Racional |
+|---|----|------|----------|
+| 1 | P0 | Fix `WORKSPACE_ROOT` em `mecha_mcp_server.py:24` (normpath 4 níveis, padrão ide_backend.py) + `test_workspace_root_contract.py` | `_load_json` retorna `{}` em silêncio; `run_squad_workflow` falha para qualquer pipeline — único caminho MCP→workflow |
+| 2 | P0 | Registrar `mecha-core` (existente) + `sendspeed-mecha` (novo) no `mcp_config.json`; env inline só `PYTHONIOENCODING=utf-8` + dirs, sem segredos | 4 servers para 1 registro; módulo novo sem registrar o existente = três planos divergentes + anti-padrão rootroot |
+| 3 | P0 | Segurança de borda antes de expor journeys: bind `127.0.0.1` default no FastAPI (hoje 0.0.0.0 sem auth) + token nos endpoints de escrita do bus | Canal sem auth passa a disparar pipelines multi-agente com custo OpenRouter real e injeção de input no desktop |
+| 4 | P0 | Caminho seguro de ontologia: modo merge no `generate_ontology.py` OU ciclo formal baseline→curadoria→v2.2.0→`neo4j_ontology_ingest.py`; linear-export em `expected_domains` | Impossível registrar módulos SendSpeed sem violar a regra estrutural 3 ou destruir a curadoria v2.1.0 |
+| 5 | P0 | Journeys = pipelines LINEARES v1 no schema confirmado; delay/branch/event-trigger proibidos — event-driven só via AgentBus/EventEnvelope (fase 2) | Extensão silenciosa do schema quebraria os runners; MECHA não tem scheduler/estado persistente |
+| 6 | P1 | Anti-alucinação por design: proveniência (`source`/`status`/`blocked_by`) + `pending_fasttrack_doc` em toda tool; `sendspeed_gaps()` >= 4 gaps | Conhecimento de segunda mão com furos documentados não pode ser servido como fato |
+| 7 | P1 | Drift da ontologia no bump v2.2.0: +rag_client.py, +neo4j_mcp_server.py, +schemas/, +ingestor; path mecha.html; remover squads fantasma; +sendspeed; linear-export como Knowledge Base | Digital Twin não conhece nem o server que o expõe nem o ingestor que o alimenta |
+| 8 | P1 | Campo `entry_inputs` no schema de pipeline + validação Let It Fail, eliminando if/else por nome de squad | Heurística hardcoded não escala — squad nova falharia em silêncio ou por sorte |
+| 9 | P1 | Rota `target_squad ['sendspeed']` em `orchestration_rules.json` + eventos `workflow.started/completed` no AgentBus; handoff via Shura (ORCH-01) | Sem rota e eventos, ORCH-12 bloqueia handoffs ou roteamento fail-open com métricas obsoletas (TTL 120s) |
+| 10 | P1 | `ingest_sendspeed_linear.py` → Qdrant `sendspeed_knowledge`: leitura tolerante a OneDrive, temp+rename, scrub de segredos nos 317 SEND-*.md | Risco de leituras parciais documentado no PROMPT_SYSTEM_DESIGN.md + issues de ops vazam tokens |
+| 11 | P1 | Orchestrator sinaliza `mock=true` com `MOCK_KEY`/`MECHA_FORCE_MOCK_LLM=1` | Journey pode ser "validada" inteira contra mocks sem o chamador saber |
+| 12 | P1 | Studio: copiar `docs/mecha.html` para `ops/` (fix 404) + validar health/status/preempt/WS; badge via `/api/health` (claw_status.json stale ~3 dias) | Serving do dashboard quebrado; validação do front é entregável obrigatório do S1 |
+| 13 | P1 | Conhecimento curado em `CORE\sendspeed\*.md` (frontmatter 4 campos + emoji rail ➔) validado por `dynamic_typing.py --validate`; MCP lê o curado | Decisão n.2 do ARCHITECTURE.md: fonte de verdade = vault CORE; índices derivados |
+| 14 | P2 | `git rm --cached ops/qdrant_db/` + `.gitignore` — **HITL pendente** | Banco binário + git + OneDrive = corrupção esperando acontecer; exige aprovação do Hugo |
+| 15 | P2 | Mover `linear-export/` → `CORE\sendspeed\linear-export\` — **HITL pendente**; até lá leitura in place via env `SENDSPEED_EXPORT_DIR` | Movimentação estrutural sob OneDrive; conflito Hiansen vs Henrique resolvido como diferimento |
+| 16 | P2 | Rotacionar `NEO4J_PASS` "rootroot" → `ops/.env` + consolidar os 2 `.env` — **HITL pendente** | Afeta serviços em execução; o server novo já nasce sem copiar o padrão |
+| 17 | P2 | Quarentena (não deleção) do lixo estrutural: `zi89DD7K/`, `node_modules` raiz, transcripts/scratch em ops/, mecha.html stale em templates/ — **HITL pendente** | Regra do ciclo: nada deletado; anotar fora-da-ontologia, candidato a remoção no próximo ciclo |
+| 18 | P2 | Consolidar taxonomia `squads`/`intelligence` + destino dos 2 servers órfãos (`mcp_codebase_transform.py`, `webview_toolkit_mcp.py`) | Próximo ciclo — cristalizar convenção `<dominio>_mcp_server.py` + `<dominio>-mecha` sem renomear agora |
+
+Sprints: **S1** fundação executável (MCP SendSpeed + journeys como squad + Studio, EM EXECUÇÃO) → **S2** ontologia v2.2.0 + curadoria + multi-CRM core → **S3** journeys profundas + bridge event-driven + canais → **S4** UserIn/dashboards/billing + P2 HITL aprovados → **S5** integrações externas (FastTrack/NGX/Atlas/fazendinha — nada executável unilateralmente; contratos absorvidos como `blocked`). Detalhamento completo por sprint (issues SEND-*, deliverables, critérios de conclusão) em `SPRINTS_SENDSPEED_ABSORPTION.md`.
+
+*Gerado pelo debate O6 #2 — Hiansen // Henrique // Rodolfo — orquestrado via Cowork.*

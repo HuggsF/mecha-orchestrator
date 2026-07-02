@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__5dceca6d-b43c-4552-972a-322facf652dc__get_issue",
+      "mcp__5dceca6d-b43c-4552-972a-322facf652dc__list_documents",
+      "mcp__5dceca6d-b43c-4552-972a-322facf652dc__extract_images"
+    ]
+  }
+}

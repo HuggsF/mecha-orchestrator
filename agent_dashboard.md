@@ -22,3 +22,20 @@
 - Qdrant HTTP: 36.580 chunks em mecha_collection
 - Neo4j dev local: neo4j/rootroot OK (mcp_config.json global+local atualizados)
 - verify_ingestion.py: prefixo Obsidian/ normalizado + propriedade 'content' — casamento de IDs Qdrant<->Neo4j validado
+
+---
+
+## 2026-07-01 — Debate O6 #2 — Absorção SendSpeed
+
+> Pattern: O6-multi-agent-topology-debate (Ingestão SendSpeed → MECHA)
+> Decisão: RATIFICADA (tiebreaker: Henrique — absorção é INGESTÃO e correção, não construção nova)
+> Plano de sprints: [SPRINTS_SENDSPEED_ABSORPTION.md](SPRINTS_SENDSPEED_ABSORPTION.md) // Matriz consolidada: synthesis_report.md §7
+
+| Etapa                        | Status    | Observação |
+|------------------------------|-----------|------------|
+| Análise Hiansen              | CONCLUÍDO | Ontologia como gargalo: modo merge/ciclo formal v2.2.0, drift do Digital Twin, rota ORCH sendspeed |
+| Análise Henrique             | CONCLUÍDO | P0 factual: WORKSPACE_ROOT em mecha_mcp_server.py:24 (3 dirnames em vez de 4) + registro mecha-core |
+| Análise Rodolfo              | CONCLUÍDO | QA inegociável: proveniência em toda tool, sendspeed_gaps() obrigatória, segurança de borda (bind 0.0.0.0 sem auth), mock=true |
+| Síntese + ratificação        | DONE      | Server dedicado read-only sendspeed-mecha (5 módulos, ~15 tools); journeys = workflows LINEARES v1; event-driven só no S3 via AgentBus |
+| Matriz P0/P1/P2              | DONE      | 18 itens (5 P0, 8 P1, 5 P2) — 4 P2 em HITL pendente (nada deletado/movido sem GO do Hugo) |
+| Plano de sprints S1–S5       | DONE      | SPRINTS_SENDSPEED_ABSORPTION.md — S1 EM EXECUÇÃO nesta sessão (infra UP: Neo4j 7687, Qdrant 6333) |

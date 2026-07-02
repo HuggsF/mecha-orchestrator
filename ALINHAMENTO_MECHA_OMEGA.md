@@ -10,7 +10,7 @@
 - **M1 · Governança rígida:** contratos Pydantic, validação AST de hierarquia (H1→H2→H3), *emoji rails* semânticos para roteamento e compressão de atenção.
 - **M2 · RAG-first ("Lei 2"):** o conhecimento vive em notas/RAG (Obsidian + Qdrant), nunca escondido em configs.
 - **M3 · Execução madura e funcional:** Claw (RPA, visão, firewall cognitivo, auto-recuperação), squads multi-agente (Tribunal Hermes, CodeSquad, QASquad), bots Telegram/Teams, dashboard de telemetria. *(209 arquivos reais em `ops`)*
-- **M4 · Resiliência local:** kill-lixo, escrita atômica, fail-closed, recuperação automática.
+- **M4 · Resiliência local:** Ephemeral Asset Pruning (kill-lixo), escrita atômica, Secure Default State (fail-closed), recuperação automática.
 - **M5 · Memória rica:** `CORE` com ~97 notas — base de conhecimento real e versionada.
 
 ### Omega RAG — a plataforma de dados/produto
@@ -60,7 +60,7 @@ Sobrepor as duas árvores revela **4 conflitos** a resolver:
 workspace/
 ├─ kernel/             # contratos + governança + tipos  [MECHA kernel/governance]
 │  ├─ contracts/       #   modelos Pydantic compartilhados (coords, payloads, RAG hits)
-│  ├─ governance/      #   Lei 2, kill-lixo, fail-closed, vocabulário de emoji rails
+│  ├─ governance/      #   Lei 2, Ephemeral Asset Pruning (kill-lixo), Secure Default State (fail-closed), vocabulário de emoji rails
 │  └─ validators/      #   dynamic_typing.py (AST), checagem de schema
 ├─ execution/          # cérebro de execução  [MECHA ops/patterns]
 │  ├─ claw/            #   loop, visão, firewall cognitivo, recuperação
