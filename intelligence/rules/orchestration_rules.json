@@ -1,5 +1,5 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "adr": "ADR-001",
   "owner": "Shura 255",
   "enforcement": "code",
@@ -112,6 +112,15 @@
       "severity": "hard",
       "on_violation": "warn",
       "exceptions": ["alvo unico (string / rota 1:1) - selecao no-op", "cold-start sem metricas - usa preferido", "metricas obsoletas (> METRICS_TTL_SEC) - fail-open para o preferido", "nenhum membro do pool ready - mantem preferido e alerta operador"]
+    },
+    {
+      "id": "ORCH-14",
+      "title": "Rota do dominio sendspeed (pool-ready)",
+      "statement": "Rota dedicada ao dominio sendspeed: target_squad declarado como POOL ['sendspeed'] no padrao pool-ready da ORCH-13 (selecao pelo squad PRONTO de menor in_flight via SquadMetrics; pool de membro unico e selecao no-op), com destino sendspeed_squad e workflows sendspeed_workflows (journey_recuperacao_cadastro_userin, journey_callback_multicrm_fasttrack, journey_rcs_encurtador, journey_otp_whatsapp). Todo handoff para o squad sendspeed passa por Shura (ORCH-01), exige gate de validacao com veredito 1 (ORCH-02/03), respeita a pre-verificacao de dominio (ORCH-12) e o runner emite workflow.started/workflow.completed no AgentBus para alimentar as metricas da ORCH-13.",
+      "enforced_at": "cross_squad_router.py",
+      "severity": "hard",
+      "on_violation": "block",
+      "exceptions": ["pool de membro unico ['sendspeed'] - selecao no-op equivalente a rota 1:1", "cold-start sem metricas - usa preferido", "metricas obsoletas (> METRICS_TTL_SEC) - fail-open para o preferido"]
     }
   ]
 }

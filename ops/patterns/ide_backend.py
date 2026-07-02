@@ -6,6 +6,9 @@ from typing import Dict, Any, AsyncGenerator, List
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from starlette.requests import Request as StarletteRequest
+from starlette.responses import JSONResponse
 from pydantic import BaseModel
 
 if hasattr(sys.stdout, 'reconfigure'):
@@ -40,6 +43,30 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# ── Token guard mínimo nos endpoints de escrita (P0-segurança debate O6) ───────
+# Se IDE_BUS_TOKEN estiver configurado no env, todos os endpoints de escrita
+# (POST/PUT/PATCH/DELETE) exigem o header "X-Bus-Token: <valor>".
+# Sem a var o backend opera sem auth (uso local somente via loopback).
+_IDE_BUS_TOKEN: str = os.environ.get("IDE_BUS_TOKEN", "")
+WRITE_METHODS = {"POST", "PUT", "PATCH", "DELETE"}
+WRITE_EXEMPT_PATHS = {"/health", "/api/v1/squads", "/api/v1/mcp/servers"}
+
+
+class BusTokenMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: StarletteRequest, call_next):
+        if (
+            _IDE_BUS_TOKEN
+            and request.method in WRITE_METHODS
+            and request.url.path not in WRITE_EXEMPT_PATHS
+        ):
+            token = request.headers.get("X-Bus-Token", "")
+            if token != _IDE_BUS_TOKEN:
+                return JSONResponse(
+                    {"detail": "Unauthorized — X-Bus-Token ausente ou inválido"},
+                    status_code=401,
+                )
+        return await call_next(request)
 
 orchestrator = SquadOrchestrator(WORKSPACE_ROOT)
 
@@ -99,6 +126,21 @@ SQUAD_CATALOG: Dict[str, Dict] = {
         "input_key": "user_prompt",
         "color": "rose",
         "agents": ["Planner", "Architect", "Executor", "Integrator"],
+    },
+    "sendspeed_squad": {
+        "label": "SendSpeed",
+        "icon": "📡",
+        "workflow": "sendspeed_workflows",
+        "pipelines": [
+            "journey_callback_multicrm_fasttrack",
+            "journey_recuperacao_cadastro_userin",
+            "journey_rcs_encurtador",
+            "journey_otp_whatsapp",
+        ],
+        "input_key": "user_prompt",
+        "color": "sky",
+        "agents": ["CatalogBot", "CallbackBot", "JourneyBot",
+                   "ChannelBot", "IntegrationBot", "SmartFlowBot"],
     },
 }
 
@@ -376,6 +418,11 @@ def list_mcp_servers():
 
 if __name__ == "__main__":
     import uvicorn
+    # P0-segurança (debate O6): bind apenas loopback por default.
+    # Para expor à LAN defina IDE_HOST=0.0.0.0 e IDE_BUS_TOKEN=<segredo> no env.
+    host = os.environ.get("IDE_HOST", "127.0.0.1")
+    port = int(os.environ.get("IDE_PORT", "8000"))
     print(f"[Antigravity IDE v3] Workspace: {WORKSPACE_ROOT}")
     print(f"[Antigravity IDE v3] Superpowers: {active_superpowers}")
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+    print(f"[Antigravity IDE v3] Ouvindo em {host}:{port} (defina IDE_HOST para mudar)")
+    uvicorn.run(app, host=host, port=port)

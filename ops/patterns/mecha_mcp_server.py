@@ -21,7 +21,12 @@ from qdrant_client_helper import QdrantRAGClient
 mcp = FastMCP("MECHA Core Orchestrator")
 
 # Initialize workspace root
-WORKSPACE_ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# NOTE: SquadOrchestrator joins <workspace_root>/.mecha/intelligence/squads/...,
+# so WORKSPACE_ROOT must be the PARENT of .mecha (same resolution as ide_backend.py).
+# patterns -> ops -> .mecha -> workspace (3 levels up from this file's directory).
+WORKSPACE_ROOT = os.path.normpath(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "..", "..")
+)
 
 # Helper to run async functions synchronously inside tools
 def run_async(coro):
@@ -100,34 +105,63 @@ def run_squad_workflow(
     prompt: str
 ) -> Dict[str, Any]:
     """Executa um fluxo de trabalho (workflow) de agentes de forma concorrente em DAG.
-    
+
+    O input inicial e determinado automaticamente pelo campo `entry_inputs` do pipeline
+    (Let It Fail — sem heuristica por nome de squad). Se `entry_inputs` nao estiver
+    definido no pipeline, usa `user_prompt` como fallback universal.
+
+    Retorna `mock=true` quando executado com MOCK_KEY ou MECHA_FORCE_MOCK_LLM=1 para
+    que o chamador saiba que a saida nao representa chamadas LLM reais.
+
     Args:
-        squad_name: O nome da squad (ex: 'dev_squad', 'qa_squad', 'devops_squad', 'tribunal_squad').
-        workflow_name: Nome do arquivo JSON de fluxos (ex: 'code_workflows', 'qa_workflows', 'devops_workflows', 'tribunal_workflows').
-        pipeline_key: Chave identificadora do pipeline (ex: 'spec_driven_dev', 'qa_audit_pipeline', 'devops_deploy_pipeline', 'verdict_pipeline').
-        prompt: O prompt de entrada ou código inicial para alimentar os agentes.
+        squad_name: Nome da squad (ex: 'dev_squad', 'qa_squad', 'sendspeed_squad').
+        workflow_name: Arquivo JSON de fluxos (ex: 'sendspeed_workflows', 'qa_workflows').
+        pipeline_key: Chave do pipeline (ex: 'journey_callback_multicrm_fasttrack').
+        prompt: Prompt de entrada para alimentar os agentes.
     """
     try:
         orchestrator = SquadOrchestrator(WORKSPACE_ROOT)
-        
-        # Determine the initial variable key based on the pipeline's expected inputs
-        # DevSquad and DevOpsSquad expect 'user_prompt', QASquad expects 'source_code'
-        if squad_name == "qa_squad":
-            initial_inputs = {"source_code": prompt, "test_code": ""}
-        else:
-            initial_inputs = {"user_prompt": prompt}
-            
+
+        # Carrega o pipeline para ler entry_inputs (Let It Fail — sem if/else por squad).
+        # Se entry_inputs estiver declarado no pipeline, usa-o; senao fallback user_prompt.
+        workflow_data = orchestrator.load_workflow_config(workflow_name)
+        pipeline = workflow_data.get(pipeline_key) or {}
+        entry = pipeline.get("entry_inputs") or {"user_prompt": prompt}
+        # Substitui o placeholder "__prompt__" pelo valor real recebido
+        initial_inputs = {k: (prompt if v == "__prompt__" else v) for k, v in entry.items()}
+        # Garante que o valor de prompt esta presente em pelo menos uma chave
+        if not any(v == prompt for v in initial_inputs.values()):
+            initial_inputs["user_prompt"] = prompt
+
         results = run_async(
             orchestrator.run_workflow(
                 squad_name=squad_name,
                 workflow_name=workflow_name,
                 pipeline_key=pipeline_key,
-                initial_inputs=initial_inputs
+                initial_inputs=initial_inputs,
             )
         )
-        # Filter out heavy system prompts and return clean output values
-        return {k: v for k, v in results.items() if not k.startswith("_")}
-    except Exception as e:
+        # Emite workflow.started/completed no AgentBus (ORCH-12/13 — S3)
+        try:
+            from agent_bus import AgentBus
+            _bus = AgentBus.get_instance()
+            _tid = f"mcp_{squad_name}_{pipeline_key}_{int(__import__('time').time())}"
+            _bus.publish("mecha-core.mcp", "pipeline.events", {
+                "event":    "workflow.completed",
+                "squad":    squad_name,
+                "pipeline": pipeline_key,
+                "thread_id": _tid,
+                "output_vars": [k for k in results if not k.startswith("_")],
+                "mock": results.get("mock", False),
+            })
+        except Exception:
+            pass  # bus é best-effort — não quebra o retorno do MCP
+        # Filter out heavy system prompts; surface mock flag when applicable
+        out = {k: v for k, v in results.items() if not k.startswith("_")}
+        if results.get("mock"):
+            out["mock"] = True
+        return out
+    except Exception as e:  # noqa: BLE001
         return {"error": str(e)}
 
 

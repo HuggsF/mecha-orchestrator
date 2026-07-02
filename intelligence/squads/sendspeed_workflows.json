@@ -1,0 +1,237 @@
+{
+  "journey_recuperacao_cadastro_userin": {
+    "name": "Journey — Recuperação de Cadastro UserIn (Apostou/NGX)",
+    "description": "Workflow multi-agent para desenhar e validar a jornada de recuperação de cadastro na UserIn sobre o front NGX: ingestão de eventos via webhook HMAC, gatilhos de UI client-side e modal de recuperação com Smart Block. Base: SEND-515, SEND-516, SEND-517, SEND-506, SEND-510.",
+    "metadata": {
+      "source_issues": ["SEND-515", "SEND-516", "SEND-517", "SEND-506", "SEND-510"],
+      "domain": "sendspeed",
+      "notes": "Evolução futura: migrar steps encadeados para chain-of-thought event-driven (AgentBus, ORCH-09) — cada step vira evento consumível em vez de pipeline sequencial one-shot."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia as issues da jornada (SEND-515/516/517/506/510), dependências, decisões [decidir] em aberto (o que é a NGX) e sobreposição SEND-506 vs SEND-516 já em andamento",
+        "input_source": "user_prompt",
+        "output_var": "recovery_backlog_map"
+      },
+      {
+        "step_id": 2,
+        "agent": "IntegrationBot",
+        "description": "Especifica a ingestão server-side NGX: endpoints /user-registration e /deposit-confirmation, validação HMAC-SHA256 (X-Auth-Signature), idempotência, correlação por external_id e contrato de resposta processed true/false (igaming_webhook_pattern, webhook_security_spec)",
+        "input_sources": ["user_prompt", "recovery_backlog_map"],
+        "output_var": "ngx_ingestion_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "JourneyBot",
+        "description": "Desenha a jornada UserIn: gatilho de fechamento do modal de registro (spike SEND-517), modal de recuperação + Smart Block, regra máx 1x por sessão, flag liga/desliga sem deploy e medição antes/depois (journey_trigger_contract, journey_engine_map)",
+        "input_sources": ["recovery_backlog_map", "ngx_ingestion_spec"],
+        "output_var": "recovery_journey_design"
+      },
+      {
+        "step_id": 4,
+        "agent": "SmartFlowBot",
+        "description": "Valida consistência de métricas e critérios de medição de impacto (taxa de conclusão de cadastro, resultado direcional) e emite parecer [APROVADO]/[REJEITADO]",
+        "input_sources": ["ngx_ingestion_spec", "recovery_journey_design"],
+        "output_var": "recovery_journey_verdict"
+      }
+    ]
+  },
+  "journey_callback_multicrm_fasttrack": {
+    "name": "Journey — Callback Multi-CRM FastTrack (DLR Pipeline)",
+    "description": "Workflow multi-agent para especificar o suporte multi-CRM (Smartico + Fasttrack) no pipeline de callbacks de entrega: contrato crm_postback com chave de roteamento, de-para de status, FastTrackClient via ICrmCallbackClient e plano de rollout retrocompatível. Base: épica SEND-488 e sub-tasks SEND-489..504, SEND-483, SEND-511.",
+    "metadata": {
+      "source_issues": ["SEND-488", "SEND-489", "SEND-490", "SEND-491", "SEND-492", "SEND-493", "SEND-494", "SEND-495", "SEND-496", "SEND-497", "SEND-498", "SEND-499", "SEND-500", "SEND-501", "SEND-502", "SEND-503", "SEND-504", "SEND-483", "SEND-511"],
+      "domain": "sendspeed",
+      "external_blockers": ["Documentação oficial FastTrack pendente (SEND-504) — bloqueia SEND-499 e SEND-503"],
+      "notes": "Evolução futura: migrar steps encadeados para chain-of-thought event-driven (AgentBus, ORCH-09) — cada step vira evento consumível em vez de pipeline sequencial one-shot."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia a épica SEND-488 e todas as sub-tasks, grafo de dependências (SEND-497 é pré-requisito de merge), status do bloqueio SEND-504 e a discrepância de nomenclatura callback_url vs crm_callback_url (SEND-498)",
+        "input_source": "user_prompt",
+        "output_var": "multicrm_backlog_map"
+      },
+      {
+        "step_id": 2,
+        "agent": "CallbackBot",
+        "description": "Especifica o contrato crm_postback multi-CRM: campo crm como chave de roteamento, default 'smartico' obrigatório em todo o pipeline, chaves Redis parametrizadas crm_callback:client:{userId}:{crm}:{product} e de-para via crm_callback_status_mappings (crm_postback_contract, crm_status_depara)",
+        "input_sources": ["user_prompt", "multicrm_backlog_map"],
+        "output_var": "crm_postback_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "IntegrationBot",
+        "description": "Especifica o FastTrackClient e a interface ICrmCallbackClient no registry de adapters: POST {callback_url}?api_key=..., circuit breaker, TODO(fasttrack-doc) para auth/payload/retry e alinhamento com o padrão IGamingWebhookHandler da NGX (crm_adapter_registry, webhook_security_spec)",
+        "input_sources": ["multicrm_backlog_map", "crm_postback_spec"],
+        "output_var": "fasttrack_adapter_spec"
+      },
+      {
+        "step_id": 4,
+        "agent": "CallbackBot",
+        "description": "Consolida o plano de rollout no BatchProcessor/RcsCallbackService/SonaMessageProcessor (Opção A do SEND-502: routing interno, zero consumers novos) com plano de testes multi-CRM (SEND-494) e rollback = remover FastTrackClient (callback_pipeline_map)",
+        "input_sources": ["crm_postback_spec", "fasttrack_adapter_spec"],
+        "output_var": "multicrm_rollout_plan"
+      },
+      {
+        "step_id": 5,
+        "agent": "SmartFlowBot",
+        "description": "Valida retrocompatibilidade Smartico (crm ausente = smartico, zero regressão) e consistência dos status de entrega com o invariante Enviado = Falha + Rejeitado + Pendente; emite [APROVADO]/[REJEITADO]",
+        "input_sources": ["crm_postback_spec", "fasttrack_adapter_spec", "multicrm_rollout_plan"],
+        "output_var": "multicrm_verdict"
+      }
+    ]
+  },
+  "journey_rcs_encurtador": {
+    "name": "Journey — RCS com Encurtador de Links e Atribuição de Cliques",
+    "description": "Workflow multi-agent para a experiência RCS ponta a ponta: seleção de template no nó 'Enviar RCS', preview fiel + emojis no editor, encurtamento automático de URLs (SMS e botões RCS) e atribuição de cliques por jornada/nó/botão. Base: SEND-446, SEND-449, SEND-429, SEND-452.",
+    "metadata": {
+      "source_issues": ["SEND-446", "SEND-449", "SEND-429", "SEND-452"],
+      "domain": "sendspeed",
+      "notes": "Evolução futura: migrar steps encadeados para chain-of-thought event-driven (AgentBus, ORCH-09) — cada step vira evento consumível em vez de pipeline sequencial one-shot. SEND-449 é sobreposição quase total do escopo RCS de SEND-446 — consolidar antes de executar."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia SEND-446/449/429/452, aponta a duplicidade 446 vs 449 (mesmo RICE 19.2, candidatas a consolidação) e o sequenciamento com SEND-391 (executors compartilham o mesmo código)",
+        "input_source": "user_prompt",
+        "output_var": "rcs_backlog_map"
+      },
+      {
+        "step_id": 2,
+        "agent": "ChannelBot",
+        "description": "Especifica shortenUrlsInMessage() e shortenRcsButtonUrls(): encurtamento no momento do envio, URL original preservada no editor, não re-encurtar link já curto da plataforma, metadata cardIndex/buttonText e UX do painel de seleção de template + preview fiel com emojis (channel_send_spec)",
+        "input_sources": ["user_prompt", "rcs_backlog_map"],
+        "output_var": "rcs_shortener_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "JourneyBot",
+        "description": "Especifica a atribuição: ShortLink/ClickEvent ganham journeyId/executionId/nodeId/channel/userId/metadata + índices, processRedirect propaga campos e analytics agrega cliques por nó (jornada) e por botão (campanha RCS), conectando com conversões de SEND-450 (journey_objective_attribution, journey_engine_map)",
+        "input_sources": ["rcs_backlog_map", "rcs_shortener_spec"],
+        "output_var": "click_attribution_spec"
+      },
+      {
+        "step_id": 4,
+        "agent": "SmartFlowBot",
+        "description": "Valida métricas de cliques (totais vs únicos por botão), consistência com a Analytics da Jornada (SEND-479) e ausência de regressão no encurtador atual de campanhas SMS; emite [APROVADO]/[REJEITADO]",
+        "input_sources": ["rcs_shortener_spec", "click_attribution_spec"],
+        "output_var": "rcs_journey_verdict"
+      }
+    ]
+  },
+  "journey_otp_whatsapp": {
+    "name": "Journey — OTP WhatsApp (Infobip + Fallback SMS)",
+    "description": "Workflow multi-agent para o novo canal de OTP via WhatsApp (template authentication) com Infobip como primeiro supplier e fallback SMS, alinhando a spec técnica SEND-505 com a user story de produto SEND-508 para evitar duplicidade.",
+    "metadata": {
+      "source_issues": ["SEND-505", "SEND-508"],
+      "domain": "sendspeed",
+      "notes": "Evolução futura: migrar steps encadeados para chain-of-thought event-driven (AgentBus, ORCH-09) — cada step vira evento consumível em vez de pipeline sequencial one-shot. SEND-508 (story) e SEND-505 (spec) tratam o mesmo tema — alinhar fases antes de implementar."
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia SEND-505 vs SEND-508, sinaliza a sobreposição spec técnica vs story de produto e a decisão de BSP em aberto (Meta Cloud API / Infobip / outro) da Fase 1 do 508",
+        "input_source": "user_prompt",
+        "output_var": "otp_backlog_map"
+      },
+      {
+        "step_id": 2,
+        "agent": "ChannelBot",
+        "description": "Especifica o POST /api/otp/whatsapp desacoplado do /otp: mesma auth (AuthGuard, sms_otp), gate por cliente (otp_whatsapp=1 + whatsapp_otp_supplier_id → 403/422), extração do código para o placeholder do template, smsFailover, campanha diária por supplier com Redis lock/dedupe, 200 imediato com trace_id e dispatch background 3x retry (otp_flow_spec, channel_send_spec)",
+        "input_sources": ["user_prompt", "otp_backlog_map"],
+        "output_var": "otp_whatsapp_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "IntegrationBot",
+        "description": "Especifica o registry de suppliers OTP (Infobip=64 hoje, Sona=65 futuro), envs INFOBIP_WHATSAPP_*, callbacks de status (enviado/entregue/lido), template authentication da Meta (aprovação, variáveis, validade) e cenários de erro: template não aprovado, código expirado, usuário sem WhatsApp → fallback opcional por cliente (crm_adapter_registry, webhook_security_spec)",
+        "input_sources": ["otp_backlog_map", "otp_whatsapp_spec"],
+        "output_var": "otp_supplier_spec"
+      },
+      {
+        "step_id": 4,
+        "agent": "SmartFlowBot",
+        "description": "Valida zero regressão no /otp SMS existente, reuso dos tópicos Kafka otp_sms_sent/otp_sms_failed e métricas de entrega/fallback do novo canal; emite [APROVADO]/[REJEITADO]",
+        "input_sources": ["otp_whatsapp_spec", "otp_supplier_spec"],
+        "output_var": "otp_journey_verdict"
+      }
+    ]
+  },
+  "journey_batch_trigger_pipeline": {
+    "name": "Journey — Batch Trigger (Array de Entrada + Lista Fria)",
+    "description": "Workflow multi-agent para especificar o acionamento de jornadas em lote: array de entradas via API (SEND-477), status Pendente em mensageria (SEND-479) e envio de lista fria via API com arquivo (SEND-478). Cada item do array vira uma execução independente com batchId compartilhado.",
+    "metadata": {
+      "source_issues": ["SEND-477", "SEND-478", "SEND-479"],
+      "domain": "sendspeed",
+      "entry_inputs": {"user_prompt": "__prompt__"}
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia SEND-477/478/479, identifica dependências entre batch trigger e status Pendente e sinaliza o sequenciamento com SEND-391 (executor compartilha o mesmo código de envio)",
+        "input_source": "user_prompt",
+        "output_var": "batch_backlog_map"
+      },
+      {
+        "step_id": 2,
+        "agent": "JourneyBot",
+        "description": "Especifica o contrato POST /journey/trigger com array de entries: journeyId, entries[{phone, attrs}], batchId compartilhado, execução independente por item, rastreabilidade journeyId/executionId/nodeId/batchId/trace_id. Inclui upload CSV/JSON para lista fria (SEND-478) com progresso por batchId (journey_trigger_contract, journey_engine_map)",
+        "input_sources": ["user_prompt", "batch_backlog_map"],
+        "output_var": "batch_trigger_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "CallbackBot",
+        "description": "Especifica o novo status Pendente no pipeline DLR: posição no de-para (entre Enviado e Entregue), invariante Enviado = Falha + Rejeitado + Pendente, propagação no crm_postback e nos consumers RCS/SMS, impacto nos dashboards de analytics (crm_status_depara, callback_pipeline_map)",
+        "input_sources": ["batch_backlog_map", "batch_trigger_spec"],
+        "output_var": "pending_status_spec"
+      },
+      {
+        "step_id": 4,
+        "agent": "SmartFlowBot",
+        "description": "Valida consistência do invariante Enviado = Falha + Rejeitado + Pendente, impacto no Lead Time (excluindo Pendente do cálculo de latência) e zero regressão no fluxo de trigger individual existente; emite [APROVADO]/[REJEITADO]",
+        "input_sources": ["batch_trigger_spec", "pending_status_spec"],
+        "output_var": "batch_trigger_verdict"
+      }
+    ]
+  },
+  "journey_otp_fallback_pipeline": {
+    "name": "Journey — OTP com Fallback SMS (Infobip → SMS)",
+    "description": "Workflow multi-agent para o fluxo OTP WhatsApp com fallback automático para SMS: gate por cliente, template authentication Meta, smsFailover e métricas de canal. Subconjunto executável de journey_otp_whatsapp focado no fallback e zero regressão do /otp SMS existente. Base: SEND-505.",
+    "metadata": {
+      "source_issues": ["SEND-505"],
+      "domain": "sendspeed",
+      "entry_inputs": {"user_prompt": "__prompt__"}
+    },
+    "steps": [
+      {
+        "step_id": 1,
+        "agent": "CatalogBot",
+        "description": "Mapeia SEND-505 e sinaliza o escopo: apenas o fallback SMS do OTP WhatsApp (sem a decisão de BSP de SEND-508 que está em aberto)",
+        "input_source": "user_prompt",
+        "output_var": "otp_fallback_scope"
+      },
+      {
+        "step_id": 2,
+        "agent": "ChannelBot",
+        "description": "Especifica o smsFailover: trigger por timeout/erro no supplier WhatsApp, rota para /otp SMS via mesmo trace_id, lock Redis para evitar duplo envio, campanha associada ao supplier fallback (otp_flow_spec, channel_send_spec)",
+        "input_sources": ["user_prompt", "otp_fallback_scope"],
+        "output_var": "otp_fallback_spec"
+      },
+      {
+        "step_id": 3,
+        "agent": "SmartFlowBot",
+        "description": "Valida zero regressão no /otp SMS existente, reuso dos tópicos Kafka otp_sms_sent/otp_sms_failed, unicidade de entrega (sem duplicar OTP por canal) e métricas de fallback; emite [APROVADO]/[REJEITADO]",
+        "input_sources": ["otp_fallback_scope", "otp_fallback_spec"],
+        "output_var": "otp_fallback_verdict"
+      }
+    ]
+  }
+}

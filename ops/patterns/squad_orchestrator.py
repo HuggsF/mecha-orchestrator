@@ -283,8 +283,12 @@ class SquadOrchestrator:
         else:
             return f"[MOCK] Resposta simulada para o agente {agent_name} sobre o tema: {topic_context[:50]}"
 
+    def _is_mock_mode(self) -> bool:
+        """True when LLM calls are mocked (no API key or forced via MECHA_FORCE_MOCK_LLM=1)."""
+        return self.api_key == "MOCK_KEY" or not self.api_key or os.getenv("MECHA_FORCE_MOCK_LLM") == "1"
+
     async def _call_openrouter(self, model: str, system_prompt: str, user_content: str, agent_name: str, topic_context: str) -> str:
-        if self.api_key == "MOCK_KEY" or not self.api_key or os.getenv("MECHA_FORCE_MOCK_LLM") == "1":
+        if self._is_mock_mode():
             await asyncio.sleep(0.5)
             return self._get_mock_response(agent_name, user_content)
 
@@ -329,6 +333,31 @@ class SquadOrchestrator:
         pipeline = workflow_data.get(pipeline_key)
         if not pipeline:
             raise ValueError(f"Pipeline '{pipeline_key}' não encontrado no workflow '{workflow_name}'.")
+
+        # ── Validação Let It Fail: entry_inputs (S3) ───────────────────────────
+        # Coleta todos os inputs exigidos pelo step 1 (ou steps sem dependências
+        # externas além de user_prompt). Se algum input esperado estiver ausente
+        # em initial_inputs, falha explicitamente — sem adivinhar por nome de squad.
+        first_step_deps: List[str] = []
+        for step in pipeline.get("steps", []):
+            # Coleta deps deste step
+            deps = []
+            if step.get("input_source"):
+                deps.append(step["input_source"])
+            if step.get("input_sources"):
+                deps.extend(step["input_sources"])
+            # Step raiz: deps que não são output de nenhum step anterior
+            step_output_vars = {s.get("output_var") for s in pipeline.get("steps", [])}
+            root_deps = [d for d in deps if d not in step_output_vars]
+            first_step_deps.extend(root_deps)
+        
+        missing = [dep for dep in first_step_deps if dep not in initial_inputs]
+        if missing:
+            raise RuntimeError(
+                f"[Let It Fail] Pipeline '{pipeline_key}' exige inputs {missing} "
+                f"que não foram fornecidos. Recebidos: {list(initial_inputs.keys())}. "
+                f"Declare entry_inputs no metadata do pipeline ou ajuste o chamador."
+            )
 
         print(f"\n{Obsidian}============================================================{Reset}")
         print(f"{Roxo}      📡 [ MECHA DELEGATOR - SQUAD: {squad_name.upper()} ] 📡{Reset}")
@@ -405,6 +434,8 @@ class SquadOrchestrator:
                 print(f"{Verde}[{agent_name} - Concluído]{Reset}\n{result}\n")
         
         print(f"{Obsidian}============================================================{Reset}\n")
+        if self._is_mock_mode():
+            env["mock"] = True
         return env
 
 if __name__ == "__main__":  # pragma: no cover

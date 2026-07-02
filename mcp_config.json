@@ -13,6 +13,27 @@
         "PYTHONIOENCODING": "utf-8"
       },
       "description": "Grafo MECHA (Digital Twin): ontologia v2.1.0 + second_brain. Tools: neo4j_status, cypher_read (read-only guard), ontology_domains, ontology_layers, find_component, neighbors."
+    },
+    "sendspeed-mecha": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha\\ops\\patterns\\sendspeed_mcp_server.py"
+      ],
+      "env": {
+        "MECHA_ROOT": "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha",
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "description": "Cerebro de dominio SendSpeed (debate O6): conhecimento do linear-export (317 issues SEND) + journeys multi-agent. Read-only, stdio. Tools: sendspeed_status, sendspeed_module_map, sendspeed_find_issue, sendspeed_search, sendspeed_gaps, crm_postback_contract, crm_status_depara, callback_pipeline_map, journey_engine_map, journey_trigger_contract, journey_objective_attribution, journey_catalog, channel_send_spec, otp_flow_spec, igaming_webhook_pattern, webhook_security_spec, crm_adapter_registry."
+    },
+    "mecha-core": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha\\ops\\patterns\\mecha_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "description": "MECHA Core Orchestrator (FastMCP, stdio): squads em DAG, RAG Qdrant, AgentBus e bridge Claw. Tools: get_qdrant_status, search_rag, index_engram, run_squad_workflow, bus_list_agents, bus_send_message, bus_get_inbox, bus_compliance_report, bus_stats, claw_evaluate_action, get_conversation, search_conversations."
     }
   }
 }
