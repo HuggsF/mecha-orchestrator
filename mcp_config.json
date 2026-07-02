@@ -34,6 +34,16 @@
         "PYTHONIOENCODING": "utf-8"
       },
       "description": "MECHA Core Orchestrator (FastMCP, stdio): squads em DAG, RAG Qdrant, AgentBus e bridge Claw. Tools: get_qdrant_status, search_rag, index_engram, run_squad_workflow, bus_list_agents, bus_send_message, bus_get_inbox, bus_compliance_report, bus_stats, claw_evaluate_action, get_conversation, search_conversations."
+    },
+    "rpg-cortex-mecha": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha\\ops\\patterns\\rpg_cortex_mcp_server.py"
+      ],
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "description": "RPG Cortex Domain (FastMCP, stdio, read-only): conhecimento arquitetural do modulo rpg_cortex (hardware automation, Jitbit, macros). Tools: rpg_cortex_status, rpg_cortex_hardware_spec, rpg_cortex_integration_contract, rpg_cortex_gaps."
     }
   }
 }
