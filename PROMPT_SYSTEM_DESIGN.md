@@ -10,7 +10,7 @@
 
 **Contexto (dado, não rediscutir):**
 Estamos fundindo dois sistemas existentes:
-- **MECHA** — cérebro de execução já funcional: automação de desktop (Claw: RPA + visão + firewall cognitivo + auto-recuperação), squads multi-agente (Tribunal Hermes, CodeSquad, QASquad), bots Telegram/Teams (FastAPI + servidor HTTP de dashboard na porta 8585/8686), RAG em Qdrant, base de conhecimento em Obsidian/`CORE`. Governança forte: contratos Pydantic, validação AST de hierarquia, *emoji rails* semânticos, princípios "Lei 2" (conhecimento no RAG/notas), "kill-lixo", escrita atômica, fail-closed.
+- **MECHA** — cérebro de execução já funcional: automação de desktop (Claw: RPA + visão + firewall cognitivo + auto-recuperação), squads multi-agente (Tribunal Hermes, CodeSquad, QASquad), bots Telegram/Teams (FastAPI + servidor HTTP de dashboard na porta 8585/8686), RAG em Qdrant, base de conhecimento em Obsidian/`CORE`. Governança forte: contratos Pydantic, validação AST de hierarquia, *emoji rails* semânticos, princípios "Lei 2" (conhecimento no RAG/notas), "Ephemeral Asset Pruning" (kill-lixo), escrita atômica, Secure Default State (fail-closed).
 - **Omega RAG** — plataforma de dados/produto (hoje só esqueleto): data lake `OmegaData/*`, observabilidade Grafana+Prometheus, frontend Next.js (`omega-frontend`), `omega_sdk`, knowledge graph (`graphify`), honeypots, canal Signal, pipeline de handover/ingestão.
 
 **Decisões de arquitetura já tomadas (trate como requisitos):**

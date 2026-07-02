@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MECHA SDK — Navigation, Telemetry & Resilience (Fase 7)</title>
+    <title>Mecha Huggs Workforce Studio</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Inter:wght@300;400;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -175,12 +175,16 @@
         .rail-head { display: flex; align-items: center; justify-content: space-between; }
         .rail-head .clear { font-size: 10px; color: var(--text-muted); cursor: pointer; border: 1px solid var(--border-color); border-radius: 6px; padding: 3px 8px; }
         .rail-head .clear:hover { color: var(--accent-red); border-color: var(--accent-red); }
+
+        /* Banner de erro — grafo real indisponível (fallback demo) */
+        .demo-banner { display: none; background: var(--accent-red); color: #fff; font-family: var(--mono); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-align: center; padding: 8px 14px; border-bottom: 1px solid rgba(255,255,255,.25); animation: chipAlert 1.1s infinite; }
+        .demo-banner.show { display: block; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>🤖 MECHA <span>// Telemetry &amp; Resilience · Fase 7</span></h1>
+        <h1>🤖 Mecha Huggs Workforce Studio <span>// Telemetry &amp; Resilience · Fase 7</span></h1>
 
         <div class="phase7">
             <div class="chip" id="chip-vision"><span class="chip-ico">👁️</span><span class="chip-txt"><span class="chip-name">VISÃO</span><span class="chip-state" id="chip-vision-state">offline</span></span></div>
@@ -188,11 +192,18 @@
             <div class="chip" id="chip-recovery"><span class="chip-ico">➰</span><span class="chip-txt"><span class="chip-name">RECUPERAÇÃO</span><span class="chip-state" id="chip-recovery-state">offline</span></span></div>
         </div>
 
+        <div class="status-badge offline" id="backend-status-badge">
+            <div class="status-dot"></div>
+            <span id="backend-status-text">BACKEND ...</span>
+        </div>
+
         <div class="status-badge offline" id="global-status-badge">
             <div class="status-dot"></div>
             <span id="global-status-text">CLAW OFFLINE</span>
         </div>
     </header>
+
+    <div class="demo-banner" id="demo-banner">⚠ MODO DEMO — grafo real indisponível (falha ao carregar /maps/navigation_graph.json)</div>
 
     <main>
         <!-- ░░ LEFT SIDEBAR ░░ -->
@@ -268,6 +279,18 @@
 
     <script>
         // ───────────────────────────────────────────────────────────
+        // Configuração do backend (STUDIO_BACKEND_CONTRACT.md)
+        // Vazio = mesma origem (servido pelo telegram_bot.py a partir de ops/).
+        // Hospedado à parte: ex. "http://localhost:8585".
+        // ───────────────────────────────────────────────────────────
+        const BACKEND_URL = "";
+        function wsBase() {
+            if (BACKEND_URL) return BACKEND_URL.replace(/^http/, "ws");
+            const loc = window.location;
+            return (loc.protocol === "https:" ? "wss:" : "ws:") + "//" + loc.host;
+        }
+
+        // ───────────────────────────────────────────────────────────
         // Demo fallback (visualização inicial sem servidor)
         // ───────────────────────────────────────────────────────────
         const demoGraph = {
@@ -319,7 +342,7 @@
         }
         async function sendPreempt(action, params = {}) {
             try {
-                const r = await fetch('/api/preempt', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action, params }) });
+                const r = await fetch(BACKEND_URL + '/api/preempt', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ action, params }) });
                 const d = await r.json();
                 if (d.ok) { showMessage(`Comando '${action}' enviado!`); pushLog('warn', `Preempção enviada: ${action}${Object.keys(params).length? ' '+JSON.stringify(params):''}`); }
                 else { showMessage(`Erro: ${d.error}`, true); }
@@ -380,6 +403,9 @@
             }
         }
         function loadDemoGraph() {
+            // ESTADO DE ERRO: grafo real indisponível — demo é apenas fallback visual.
+            document.getElementById("demo-banner").classList.add("show");
+            lastGraphHash = ""; // força re-render quando o grafo real voltar
             renderNodes(demoGraph.nodes); drawConnections(demoGraph.nodes, demoGraph.edges);
             document.getElementById("stat-nodes").innerText = "3 Janelas (Demo)";
             document.getElementById("stat-edges").innerText = "2 Transições (Demo)";
@@ -387,9 +413,10 @@
         let lastGraphHash = "";
         async function loadRealGraph(activeTitle = "") {
             try {
-                const r = await fetch('/maps/navigation_graph.json'); if (!r.ok) throw new Error("Sem arquivo real");
-                const data = await r.json(); 
-                
+                const r = await fetch(BACKEND_URL + '/maps/navigation_graph.json'); if (!r.ok) throw new Error("Sem arquivo real");
+                const data = await r.json();
+                document.getElementById("demo-banner").classList.remove("show");
+
                 // Fast serialization to detect structural changes and skip heavy DOM recreation
                 const currentHash = JSON.stringify(data.nodes) + "|" + JSON.stringify(data.edges) + "|" + activeTitle;
                 if (currentHash === lastGraphHash) {
@@ -475,19 +502,42 @@
         }
 
         // ───────────────────────────────────────────────────────────
+        // Health do backend (/api/health) — badge + identidade do produto
+        // claw_loop verifica frescor (45s) do claw_status.json no servidor.
+        // ───────────────────────────────────────────────────────────
+        const health = { online: null, claw_loop: null };
+        async function updateHealth() {
+            const badge = document.getElementById('backend-status-badge'), txt = document.getElementById('backend-status-text');
+            try {
+                const r = await fetch(BACKEND_URL + '/api/health'); if (!r.ok) throw new Error('HTTP ' + r.status);
+                const d = await r.json();
+                health.online = true; health.claw_loop = d.claw_loop || 'offline';
+                badge.className = 'status-badge running'; txt.innerText = 'BACKEND ONLINE';
+                if (d.product) { document.title = d.product; }
+            } catch (err) {
+                health.online = false; health.claw_loop = null;
+                badge.className = 'status-badge offline'; txt.innerText = 'BACKEND OFFLINE';
+            }
+        }
+
+        // ───────────────────────────────────────────────────────────
         // Polling principal
         // ───────────────────────────────────────────────────────────
         async function updateStatus() {
             let online = false, data = {};
             try {
-                const r = await fetch('/api/status'); if (!r.ok) throw new Error("Offline");
+                const r = await fetch(BACKEND_URL + '/api/status'); if (!r.ok) throw new Error("Offline");
                 data = await r.json(); if (data.error) throw new Error(data.error); online = true;
             } catch (err) { online = false; }
 
             const badge = document.getElementById("global-status-badge"), text = document.getElementById("global-status-text");
             if (online) {
-                const state = data.loop_state || "offline";
-                badge.className = `status-badge ${state}`; text.innerText = `CLAW ${state.toUpperCase()}`;
+                // Badge CLAW dirigido pelo claw_loop do /api/health (frescor 45s),
+                // não pelo loop_state do /api/status (pode estar stale há dias).
+                const stale = (health.claw_loop !== null && health.claw_loop !== 'online');
+                const state = stale ? "offline" : (data.loop_state || "offline");
+                badge.className = `status-badge ${state}`;
+                text.innerText = stale ? "CLAW OFFLINE (STALE)" : `CLAW ${state.toUpperCase()}`;
                 document.getElementById("stat-goal").innerText = data.current_goal || "Nenhuma meta ativa";
                 document.getElementById("stat-seen-title").innerText = data.last_seen_title || "Nenhuma janela focada";
 
@@ -496,7 +546,7 @@
                 if (data.last_thumbnail) {
                     let clean = data.last_thumbnail.replace(/\\/g, '/'); let parts = clean.split('/ops/'); let rel = '';
                     if (parts.length > 1) rel = parts[1]; else rel = clean.substring(clean.lastIndexOf('/assets/'));
-                    img.src = `/${rel}?t=${Date.now()}`; img.style.display = 'block'; noImg.style.display = 'none';
+                    img.src = `${BACKEND_URL}/${rel}?t=${Date.now()}`; img.style.display = 'block'; noImg.style.display = 'none';
                 } else { img.src = ''; img.style.display = 'none'; noImg.style.display = 'block'; noImg.innerText = 'Nenhuma captura de tela disponível.'; }
 
                 // eventos vindos do servidor (opcional): data.events = [{time,level,msg,id} | "texto"]
@@ -535,8 +585,7 @@
         // ───────────────────────────────────────────────────────────
         let ws;
         function connectWS() {
-            const loc = window.location;
-            const wsUri = (loc.protocol === "https:" ? "wss:" : "ws:") + "//" + loc.host + "/ws/bus";
+            const wsUri = wsBase() + "/ws/bus";
             ws = new WebSocket(wsUri);
 
             ws.onopen = function() {
@@ -608,7 +657,7 @@
                     event: event
                 }));
             } else {
-                fetch('/api/bus/publish', {
+                fetch(BACKEND_URL + '/api/bus/publish', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(event)
@@ -629,10 +678,12 @@
 
         // boot
         renderLog();
+        updateHealth();
         loadRealGraph();
         updateStatus();
         connectWS();
         setInterval(updateStatus, 1500);
+        setInterval(updateHealth, 30000);
     </script>
 </body>
 </html>

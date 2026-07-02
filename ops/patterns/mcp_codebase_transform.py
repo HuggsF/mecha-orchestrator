@@ -1,3 +1,4 @@
+# DEPRECATED: Pendente re-arquitetura na Mecha V3
 from mcp.server.fastmcp import FastMCP
 import os
 

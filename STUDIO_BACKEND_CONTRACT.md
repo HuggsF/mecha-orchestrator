@@ -101,3 +101,27 @@ Servidos a partir de `.mecha/ops/` (o servidor faz `chdir` para lá). Ex.: dashb
 - Como ele será hospedado: servido pelo `telegram_bot.py` (estático) **ou** app separado (Vite/Next em outra porta)?
 
 Com isso eu: integro ao repo, troco mocks por `fetch` real nos endpoints acima, aplico o nome **Mecha Huggs Workforce Studio / HWorkforceStudio** e valido a ligação ponta a ponta.
+
+---
+
+## 8. Adendo — 2026-07-02 (MECHA-S1-08: hardening de borda)
+
+**Correção de referência:** o back-end é hoje **FastAPI + uvicorn** (arquivo `ops/patterns/telegram_bot.py`, objeto `app`). A classe `MechaHTTPHandler` citada no topo deste contrato **não existe mais** — foi substituída na migração para FastAPI. Endpoints, portas e CORS descritos nas seções anteriores continuam válidos; a documentação OpenAPI/Swagger fica disponível em `/docs`.
+
+### Bind configurável — `MECHA_BIND_HOST`
+
+- O servidor agora faz bind em **`127.0.0.1` por padrão** (antes: `0.0.0.0`, exposto à LAN sem autenticação).
+- Para acessar o dashboard de outro dispositivo (ex.: **celular na mesma rede**), defina `MECHA_BIND_HOST=0.0.0.0` no ambiente ou no `.env` de `ops/`.
+- A escolha do bind é registrada de forma visível no log de inicialização (`[SEC] bind …`), incluindo a dica de `MECHA_BIND_HOST=0.0.0.0` quando o default seguro estiver ativo.
+- A verificação de porta livre e o fallback de porta dinâmica usam o mesmo host configurado.
+
+### Token opcional de escrita — `MECHA_BUS_TOKEN`
+
+- Se `MECHA_BUS_TOKEN` estiver definido, `POST /api/preempt` (injeção de input no desktop) e `POST /api/bus/publish` (dispara pipelines com custo real de LLM) exigem o header **`X-Mecha-Token`** com o mesmo valor; sem/errado → `401 { "error": … }`.
+- Sem `MECHA_BUS_TOKEN` definido, o comportamento anterior é preservado (fail-open, uso em dev). O modo ativo é logado na inicialização (`[SEC] MECHA_BUS_TOKEN …`).
+- A comparação do token usa `secrets.compare_digest` (constante no tempo).
+- Frontend do Studio: se o operador ativar o token, enviar `X-Mecha-Token` nos `fetch` de escrita (os endpoints de leitura `GET /api/*` seguem abertos).
+
+### Fix do serving de estáticos
+
+- `mecha.html` foi **copiado para `ops/`** (raiz servida pelo `StaticFiles`/`chdir` do servidor), corrigindo o serving do dashboard em `http://localhost:8585/mecha.html` conforme a seção 3 deste contrato.

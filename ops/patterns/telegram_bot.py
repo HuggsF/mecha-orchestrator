@@ -3,6 +3,7 @@ import re
 import sys
 import json
 import time
+import secrets
 import requests
 import logging
 import threading
@@ -46,6 +47,37 @@ PREEMPT_FILE = os.path.join(BASE_DIR, "logs", "claw_preempt.json")
 # Identidade do produto (frontend = Mecha Huggs Workforce Studio / HWorkforceStudio)
 PRODUCT_NAME = "Mecha Huggs Workforce Studio"
 PRODUCT_SLUG = "HWorkforceStudio"
+
+# --- Hardening de borda (MECHA-S1-08) ---
+# Host de bind do servidor HTTP/WS. Default seguro: somente loopback.
+# Para acesso via LAN/celular, defina MECHA_BIND_HOST=0.0.0.0 no ambiente/.env.
+DEFAULT_BIND_HOST = "127.0.0.1"
+WRITE_TOKEN_HEADER = "X-Mecha-Token"
+
+
+def _get_bind_host() -> str:
+    """Retorna o host de bind configurado via MECHA_BIND_HOST (default 127.0.0.1)."""
+    return (os.environ.get("MECHA_BIND_HOST") or DEFAULT_BIND_HOST).strip() or DEFAULT_BIND_HOST
+
+
+def _check_write_token(request: "Request"):
+    """Guarda opcional dos endpoints de escrita (/api/preempt, /api/bus/publish).
+
+    Se MECHA_BUS_TOKEN estiver definido no ambiente, a requisição precisa trazer
+    o header X-Mecha-Token com o mesmo valor; caso contrário retorna Response 401.
+    Sem MECHA_BUS_TOKEN definido, retorna None (comportamento aberto de dev preservado).
+    """
+    expected = os.environ.get("MECHA_BUS_TOKEN")
+    if not expected:
+        return None
+    provided = request.headers.get(WRITE_TOKEN_HEADER) or ""
+    if not secrets.compare_digest(provided, expected):
+        return Response(
+            content=json.dumps({"error": f"Unauthorized: header {WRITE_TOKEN_HEADER} ausente ou invalido"}),
+            media_type="application/json",
+            status_code=401,
+        )
+    return None
 
 # Lock de IO + escrita atômica para os JSONs que o Studio lê via /api/status.
 _IO_LOCK = threading.RLock()
@@ -861,8 +893,11 @@ async def websocket_endpoint(websocket: WebSocket):
     finally:
         event_hub.unsubscribe(websocket)
 
-@app.post("/api/bus/publish", response_model=EventPublishResponse, responses={400: {"model": APIErrorResponse}}, tags=["Event Bus"], summary="Publicar Evento", description="Publica um novo evento envelope estruturado no barramento de eventos.")
-async def publish_event(event: EventPublishRequest):
+@app.post("/api/bus/publish", response_model=EventPublishResponse, responses={400: {"model": APIErrorResponse}, 401: {"model": APIErrorResponse}}, tags=["Event Bus"], summary="Publicar Evento", description="Publica um novo evento envelope estruturado no barramento de eventos. Se MECHA_BUS_TOKEN estiver definido, exige o header X-Mecha-Token.")
+async def publish_event(event: EventPublishRequest, request: Request):
+    denied = _check_write_token(request)
+    if denied is not None:
+        return denied
     event_dict = event.model_dump()
     success, msg = event_hub.publish(event_dict)
     if success:
@@ -932,8 +967,11 @@ async def api_clear_tasks():
     except Exception as e:
         return Response(content=json.dumps({"error": str(e)}), media_type="application/json", status_code=500)
 
-@app.post("/api/preempt", response_model=PreemptCommandResponse, responses={400: {"model": APIErrorResponse}}, tags=["Control & RPA"], summary="Injetar Comando", description="Injeta um comando de controle (click, type, etc.) a ser processado pelo Claw.")
-async def api_preempt(payload: PreemptCommandRequest):
+@app.post("/api/preempt", response_model=PreemptCommandResponse, responses={400: {"model": APIErrorResponse}, 401: {"model": APIErrorResponse}}, tags=["Control & RPA"], summary="Injetar Comando", description="Injeta um comando de controle (click, type, etc.) a ser processado pelo Claw. Se MECHA_BUS_TOKEN estiver definido, exige o header X-Mecha-Token.")
+async def api_preempt(payload: PreemptCommandRequest, request: Request):
+    denied = _check_write_token(request)
+    if denied is not None:
+        return denied
     action = payload.action.strip()
     params = payload.params
     send_preempt_command(action, params)
@@ -946,7 +984,7 @@ def is_port_available(port: int) -> bool:
         return False
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         try:
-            s.bind(("0.0.0.0", port))
+            s.bind((_get_bind_host(), port))
             return True
         except OSError:
             return False
@@ -954,22 +992,34 @@ def is_port_available(port: int) -> bool:
 def start_http_server() -> None:
     """Thread que inicializa o servidor HTTP/WS do dashboard do MECHA, buscando portas livres."""
     os.chdir(STATIC_DIR)
+    bind_host = _get_bind_host()
     ports_to_try = [8585, 8282, 8181, 9999]
     active_port = None
-    
+
     for port in ports_to_try:
         if is_port_available(port):
             active_port = port
             break
-            
+
     if active_port is None:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-            s.bind(("0.0.0.0", 0))
+            s.bind((bind_host, 0))
             active_port = s.getsockname()[1]
-            
+
     logger.info(f"Inicializando {PRODUCT_NAME} ({PRODUCT_SLUG}) — Dashboard HTTP/WS em http://localhost:{active_port} ...")
+    if "MECHA_BIND_HOST" in os.environ:
+        logger.info(f"[SEC] bind {bind_host} (via MECHA_BIND_HOST)")
+    else:
+        logger.warning(
+            f"[SEC] bind {bind_host} (default seguro, somente esta maquina) — "
+            "defina MECHA_BIND_HOST=0.0.0.0 para acesso LAN/celular ao dashboard."
+        )
+    if os.environ.get("MECHA_BUS_TOKEN"):
+        logger.info(f"[SEC] MECHA_BUS_TOKEN definido — POST /api/preempt e /api/bus/publish exigem header {WRITE_TOKEN_HEADER}.")
+    else:
+        logger.warning("[SEC] MECHA_BUS_TOKEN nao definido — endpoints de escrita sem autenticacao (modo dev fail-open).")
     try:
-        uvicorn.run(app, host="0.0.0.0", port=active_port, log_level="warning")
+        uvicorn.run(app, host=bind_host, port=active_port, log_level="warning")
     except Exception as e:
         logger.critical(f"CRITICAL: Servidor HTTP falhou com erro: {e}")
         raise

@@ -9,9 +9,9 @@
     {
         "id": 3,
         "description": "Test Task",
-        "status": "pending",
+        "status": "completed",
         "created_at": "24/06/2026 18:56:58",
-        "completed_at": ""
+        "completed_at": "28/06/2026 22:49:14"
     },
     {
         "id": 4,
@@ -81,6 +81,13 @@
         "description": "Task that fails to publish",
         "status": "pending",
         "created_at": "27/06/2026 09:24:50",
+        "completed_at": ""
+    },
+    {
+        "id": 14,
+        "description": "Fazer os botões funcionarem",
+        "status": "pending",
+        "created_at": "28/06/2026 22:48:56",
         "completed_at": ""
     }
 ]
