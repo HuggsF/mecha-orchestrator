@@ -24,3 +24,25 @@ node_modules/
 
 # Codebase transform state (auto-generated)
 .codebase-transform-state.json
+
+/ops/qdrant_db/
+
+# === Quarentena / lixo estrutural (HITL P2) ===
+ops/quarantine/
+
+# === Logs gerados em runtime ===
+ops/logs/reports/
+ops/logs/conversations/
+
+# === Artefatos de testes ===
+ops/patterns/tests/_pytest_tmp/
+
+# === Arquivos temporários / rascunhos ===
+_test_logic.js
+linear-open-issues.html
+test_mecha_pipeline.md
+*.zip
+
+# === linear-export (lido in place via env SENDSPEED_EXPORT_DIR — P2 HITL) ===
+# Descomente apenas após GO do Hugo para mover:
+# CORE/sendspeed/linear-export/

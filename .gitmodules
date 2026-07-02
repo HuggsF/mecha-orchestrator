@@ -1,0 +1,3 @@
+[submodule "rag-dojo"]
+	path = rag-dojo
+	url = https://github.com/OmegaHuggsTeam/rag-dojo.git
