@@ -1,0 +1,340 @@
+# Linear Export — Sendspeed Workspace
+
+Generated: 2026-07-01T02:28:39Z  
+Total issues: 317
+
+## Counts by statusType
+
+- Started: 3
+- Unstarted: 33
+- Backlog: 11
+- Completed: 270
+
+## Started (3)
+
+- [SEND-515](https://linear.app/sendspeed/issue/SEND-515/1-validar-e-configurar-o-use-case-de-recuperacao-de-cadastro-na-userin) — 1. Validar e configurar o use case de recuperação de cadastro na UserIn — cliente Apostou · No priority · Unassigned
+- [SEND-516](https://linear.app/sendspeed/issue/SEND-516/ingestao-de-eventos-via-webhooks-da-ngx-na-userin) — Ingestão de eventos via webhooks da NGX na UserIn · No priority · pedro.iegler@sendspeed.com
+- [SEND-517](https://linear.app/sendspeed/issue/SEND-517/1-mapear-e-validar-os-gatilhos-de-ui-do-front-da-ngx-para-jornadas) — 1. Mapear e validar os gatilhos de UI do front da NGX para jornadas UserIn (spike) · No priority · Unassigned
+
+## Unstarted (33)
+
+- [SEND-391](https://linear.app/sendspeed/issue/SEND-391/tech-sendsmsexecutor-integracao-api-real-no-journey-backend) — [Tech] SendSmsExecutor integracao API real no journey backend · High · thiago.melin@sendspeed.com
+- [SEND-429](https://linear.app/sendspeed/issue/SEND-429/rcs-em-jornadas-selecao-de-template-com-busca-filtros-e-navegacao-para) — RCS em Jornadas — Seleção de Template com Busca, Filtros e Navegação para Edição · High · Unassigned
+- [SEND-438](https://linear.app/sendspeed/issue/SEND-438/mongodb-dev-read-only-user-govtech-sem-permissao-de-escrita-login) — MongoDB DEV read-only — user `govtech` sem permissão de escrita (login falha) · High · thiago.melin@sendspeed.com
+- [SEND-446](https://linear.app/sendspeed/issue/SEND-446/feature-integrar-encurtador-de-links-na-criacao-de-sms-e-rcs-botoes-de) — Feature: Integrar encurtador de links na criação de SMS e RCS (botões de carrossel) para metrificação de cliques · High · andrei.garcia@externo.sendspeed.com
+- [SEND-452](https://linear.app/sendspeed/issue/SEND-452/feature-preview-fiel-do-rcs-no-editor-de-template-e-suporte-a-emojis) — Feature: Preview fiel do RCS no editor de template e suporte a emojis · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-477](https://linear.app/sendspeed/issue/SEND-477/mai-051-user-story-acionar-journey-com-array-de-entrada) — MAI - 05.1 - User Story — Acionar Journey com Array de Entrada · No priority · Unassigned
+- [SEND-479](https://linear.app/sendspeed/issue/SEND-479/mai-052-user-story-status-pendente-em-mensageria) — MAI - 05.2 - User Story - Status “Pendente” em Mensageria · No priority · Unassigned
+- [SEND-483](https://linear.app/sendspeed/issue/SEND-483/3-padronizacao-e-de-para-de-status-de-callback-por-cliente) — 3. Padronização e de-para de status de callback por cliente · No priority · thiago.melin@sendspeed.com
+- [SEND-487](https://linear.app/sendspeed/issue/SEND-487/5-alerta-adicional-de-saldo-na-ss-control) — 5. Alerta adicional de saldo na SS Control · Urgent · Vinicius Carneiro
+- [SEND-488](https://linear.app/sendspeed/issue/SEND-488/integracao-com-crm-fasttrack) — Integração com CRM Fasttrack · High · andrei.garcia@externo.sendspeed.com
+- [SEND-489](https://linear.app/sendspeed/issue/SEND-489/backoffice-suporte-ao-crm-fasttrack-nas-telas-de-crm-callback-config) — [Backoffice] Suporte ao CRM Fasttrack nas telas de crm-callback-config · High · andrei.garcia@externo.sendspeed.com
+- [SEND-490](https://linear.app/sendspeed/issue/SEND-490/sms-api-adicionar-campo-crm-ao-crm-postback-nos-dtos-e-builders) — [sms-api] Adicionar campo `crm` ao crm_postback nos DTOs e builders · High · andrei.garcia@externo.sendspeed.com
+- [SEND-491](https://linear.app/sendspeed/issue/SEND-491/sms-api-crmcallbackconfigservice-parametrizar-crm-nas-chaves-redis-e) — [sms-api] CrmCallbackConfigService — parametrizar CRM nas chaves Redis e queries DB · High · andrei.garcia@externo.sendspeed.com
+- [SEND-492](https://linear.app/sendspeed/issue/SEND-492/sms-api-rcscallbackservice-roteamento-smarticofasttrack-no) — [sms-api] RcsCallbackService — roteamento Smartico/Fasttrack no forwardCrmPostback · High · andrei.garcia@externo.sendspeed.com
+- [SEND-493](https://linear.app/sendspeed/issue/SEND-493/sms-api-consumer-sms-implementar-forwardcrmpostback-equivalente-ao) — [sms-api] Consumer SMS — implementar forwardCrmPostback equivalente ao fluxo RCS · Medium · andrei.garcia@externo.sendspeed.com
+- [SEND-494](https://linear.app/sendspeed/issue/SEND-494/sms-api-testes-atualizar-specs-e-e2e-para-cobertura-multi-crm-smartico) — [sms-api] Testes — atualizar specs e e2e para cobertura multi-CRM (Smartico + Fasttrack) · Medium · andrei.garcia@externo.sendspeed.com
+- [SEND-495](https://linear.app/sendspeed/issue/SEND-495/api-legada-adicionar-campo-crm-ao-crm-postback-handleapi) — [api-legada] Adicionar campo `crm` ao crm_postback — HandleApi, ValidationService e SmsService · High · andrei.garcia@externo.sendspeed.com
+- [SEND-496](https://linear.app/sendspeed/issue/SEND-496/api-legada-smsconsumer-implementar-forwardcrmpostback-com-roteamento) — [api-legada] SmsConsumer — implementar forwardCrmPostback com roteamento Smartico/Fasttrack · Medium · andrei.garcia@externo.sendspeed.com
+- [SEND-497](https://linear.app/sendspeed/issue/SEND-497/callback-sms-centralizar-parsing-do-crm-postback-em-utilitario-unico) — [callback-sms] Centralizar parsing do crm_postback em utilitário único · High · andrei.garcia@externo.sendspeed.com
+- [SEND-498](https://linear.app/sendspeed/issue/SEND-498/callback-sms-atualizar-tipos-crmpostback-e-smssentinfo-para-contrato) — [callback-sms] Atualizar tipos CrmPostback e SmsSentInfo para contrato multi-CRM · High · andrei.garcia@externo.sendspeed.com
+- [SEND-499](https://linear.app/sendspeed/issue/SEND-499/callback-sms-implementar-fasttrackclient-cliente-http-para-callbacks) — [callback-sms] Implementar FastTrackClient — cliente HTTP para callbacks FastTrack · High · andrei.garcia@externo.sendspeed.com
+- [SEND-500](https://linear.app/sendspeed/issue/SEND-500/callback-sms-atualizar-callbackgrouper-e-batchprocessor-para) — [callback-sms] Atualizar CallbackGrouper e BatchProcessor para roteamento por CRM · High · andrei.garcia@externo.sendspeed.com
+- [SEND-501](https://linear.app/sendspeed/issue/SEND-501/callback-sms-estender-sonamessageprocessor-para-roteamento-fasttrack) — [callback-sms] Estender SonaMessageProcessor para roteamento FastTrack no fallback por phone · High · andrei.garcia@externo.sendspeed.com
+- [SEND-502](https://linear.app/sendspeed/issue/SEND-502/callback-sms-definir-arquitetura-worker-compartilhado-com-routing-vs) — [callback-sms] Definir arquitetura: worker compartilhado com routing vs. worker-fasttrack dedicado · High · andrei.garcia@externo.sendspeed.com
+- [SEND-503](https://linear.app/sendspeed/issue/SEND-503/callback-sms-atualizar-smarticopayloadbuilder-ou-criar) — [callback-sms] Atualizar SmarticoPayloadBuilder ou criar CrmPayloadBuilder por CRM · Medium · andrei.garcia@externo.sendspeed.com
+- [SEND-504](https://linear.app/sendspeed/issue/SEND-504/callback-sms-aguardar-documentacao-fasttrack-ajustar-payload-auth-e) — [callback-sms] ⏳ Aguardar documentação FastTrack — ajustar payload, auth e campos · High · andrei.garcia@externo.sendspeed.com
+- [SEND-505](https://linear.app/sendspeed/issue/SEND-505/implementar-otp-whatsapp-infobip) — Implementar OTP Whatsapp Infobip · High · andrei.garcia@externo.sendspeed.com
+- [SEND-506](https://linear.app/sendspeed/issue/SEND-506/5-mapeamento-ngx-para-integracao-ao-userin) — 5. Mapeamento NGX para Integração ao UserIn · No priority · Unassigned
+- [SEND-508](https://linear.app/sendspeed/issue/SEND-508/2-integracao-de-otp-via-whatsapp) — 2. Integração de OTP via WhatsApp · No priority · Unassigned
+- [SEND-509](https://linear.app/sendspeed/issue/SEND-509/1-fazendinha-automatizada-de-qualidade-de-rota) — 1. Fazendinha Automatizada de Qualidade de Rota · No priority · Unassigned
+- [SEND-512](https://linear.app/sendspeed/issue/SEND-512/1-propagar-o-valor-cobrado-do-cliente-por-mensagem-na-consulta-de) — 1. Propagar o valor cobrado do cliente por mensagem na consulta de dados · No priority · Unassigned
+- [SEND-513](https://linear.app/sendspeed/issue/SEND-513/2-incluir-o-total-cobrado-no-relatorio) — 2. Incluir o total cobrado no relatório · No priority · Unassigned
+- [SEND-514](https://linear.app/sendspeed/issue/SEND-514/3-aumentar-o-filtro-de-periodo-do-relatorio-para-ate-30-dias) — 3. Aumentar o filtro de período do relatório para até 30 dias · No priority · Unassigned
+
+## Backlog (11)
+
+- [SEND-354](https://linear.app/sendspeed/issue/SEND-354/primeiros-passos-cria-componentes-nao-marca-como-concluido) — 🐞 - Primeiros passos - Cria componentes não marca como concluido · No priority · Unassigned
+- [SEND-367](https://linear.app/sendspeed/issue/SEND-367/epic-equipe-and-permissoes) — EPIC - Equipe & Permissões · No priority · Unassigned
+- [SEND-414](https://linear.app/sendspeed/issue/SEND-414/operadores-numericos-para-regras-de-atributo-de-perfil) — 🚀 - Operadores numéricos para regras de Atributo de Perfil · High · Unassigned
+- [SEND-449](https://linear.app/sendspeed/issue/SEND-449/feature-encurtamento-automatico-de-links-nos-botoes-de-rcs) — Feature: Encurtamento automático de links nos botões de RCS · No priority · Unassigned
+- [SEND-450](https://linear.app/sendspeed/issue/SEND-450/objetivos-funcionais-definir-metas-que-validam-o-desempenho-de-uma) — Objetivos funcionais — definir metas que validam o desempenho de uma jornada · Urgent · Unassigned
+- [SEND-471](https://linear.app/sendspeed/issue/SEND-471/user-story-dashboard-geral-da-smartflow) — 📊 User Story — Dashboard Geral da SmartFlow · No priority · thiago.melin@sendspeed.com
+- [SEND-475](https://linear.app/sendspeed/issue/SEND-475/featsmartflow-profile) — feat/smartflow-profile · No priority · Unassigned
+- [SEND-476](https://linear.app/sendspeed/issue/SEND-476/dashboard-geral-smartflow-upgrade) — Dashboard Geral SmartFlow - Upgrade · No priority · Unassigned
+- [SEND-478](https://linear.app/sendspeed/issue/SEND-478/mai-backlog-user-story-envio-de-lista-fria-via-api-com-arquivo) — MAI -[BACKLOG] - User Story - Envio de Lista Fria via API com Arquivo · No priority · Unassigned
+- [SEND-510](https://linear.app/sendspeed/issue/SEND-510/integracao-com-api-de-eventos-ngx-event-webhook-receber-e-processar-16) — 🧩 Integração com API de Eventos NGX (Event Webhook) — receber e processar 16 eventos de iGaming · High · Unassigned
+- [SEND-511](https://linear.app/sendspeed/issue/SEND-511/3-integracao-fasttrack) — 3. Integração FastTrack · No priority · Unassigned
+
+## Completed (270)
+
+- [SEND-10](https://linear.app/sendspeed/issue/SEND-10/autenticacao-segura-de-usuario-da-empresa-cliente) — Autenticação Segura de Usuário da Empresa Cliente · No priority · Unassigned
+- [SEND-11](https://linear.app/sendspeed/issue/SEND-11/implementacao-simplificada-do-tracker-com-coleta-automatica-de-dados) — Implementação Simplificada do Tracker com Coleta Automática de Dados Estruturados e de Interação · No priority · marcelo.motta@sendspeed.com
+- [SEND-12](https://linear.app/sendspeed/issue/SEND-12/associacao-de-historico-anonimo-a-usuario-identificado-com) — Associação de Histórico Anônimo a Usuário Identificado com Persistência de localId e Gerenciamento de sessionId · No priority · Unassigned
+- [SEND-13](https://linear.app/sendspeed/issue/SEND-13/associacao-de-historico-anonimo-a-usuario-identificado-via-localid) — Associação de Histórico Anônimo a Usuário Identificado (via localId + identify) · No priority · Unassigned
+- [SEND-14](https://linear.app/sendspeed/issue/SEND-14/unificacao-do-rastreamento-entre-dispositivos) — Unificação do Rastreamento entre Dispositivos · No priority · Unassigned
+- [SEND-15](https://linear.app/sendspeed/issue/SEND-15/endpoint-de-recuperacao-de-eventos-com-identidade-unificada-por) — Endpoint de Recuperação de Eventos com Identidade Unificada (por Session ID, User ID, localId ou externalId) · No priority · Unassigned
+- [SEND-16](https://linear.app/sendspeed/issue/SEND-16/visualizacao-detalhada-da-jornada-do-usuario-no-painel-de-logs-de) — Visualização Detalhada da Jornada do Usuário no Painel de Logs de Atividade com Paginação e Busca Avançada · No priority · Hugo Fernandes
+- [SEND-17](https://linear.app/sendspeed/issue/SEND-17/geracao-textual-do-embeddingtext-para-cada-evento-rastreado) — Geração Textual do EmbeddingText para Cada Evento Rastreado · No priority · Unassigned
+- [SEND-18](https://linear.app/sendspeed/issue/SEND-18/analise-de-comportamento-via-ia-com-importacao-de-padroes) — Análise de Comportamento via IA com Importação de Padrões · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-19](https://linear.app/sendspeed/issue/SEND-19/criar-tabelas-users-e-companies) — Criar tabelas 'users' e 'companies' · No priority · marcelo.motta@sendspeed.com
+- [SEND-21](https://linear.app/sendspeed/issue/SEND-21/configurador-de-widgets-inteligentes-buyer-agent) — Configurador de Widgets Inteligentes (Buyer Agent) · Urgent · Hugo Fernandes
+- [SEND-22](https://linear.app/sendspeed/issue/SEND-22/tracker-agent-emissao-de-eventos-via-socket-persistencia-mongodb) — Tracker Agent: emissão de eventos via Socket + persistência MongoDB · Urgent · Unassigned
+- [SEND-23](https://linear.app/sendspeed/issue/SEND-23/buffer-manager-behavior-agent) — Buffer Manager (Behavior Agent) · Urgent · Unassigned
+- [SEND-24](https://linear.app/sendspeed/issue/SEND-24/behavior-agent-decisao-de-agir-e-notificacao-em-tempo-real) — Behavior Agent: decisão de agir e notificação em tempo-real · Urgent · Unassigned
+- [SEND-26](https://linear.app/sendspeed/issue/SEND-26/buyeragent-js-front-end-exibir-card-minimizado-e-isolado-de-css) — BuyerAgent JS (Front-end): exibir Card minimizado e isolado de CSS · Urgent · Unassigned
+- [SEND-28](https://linear.app/sendspeed/issue/SEND-28/0-buyer-agent-como-live-agent) — [0] Buyer agent como "live agent" · No priority · Unassigned
+- [SEND-29](https://linear.app/sendspeed/issue/SEND-29/2-visualizar-lista-de-cards-com-metricas) — [2] Visualizar Lista de Cards com Métricas · High · Hugo Fernandes
+- [SEND-30](https://linear.app/sendspeed/issue/SEND-30/3-filtrar-cards-por-periodo) — [3] Filtrar Cards por Período · High · Hugo Fernandes
+- [SEND-31](https://linear.app/sendspeed/issue/SEND-31/4-visualizar-analise-detalhada-de-um-card) — [4] Visualizar Análise Detalhada de um Card · High · Hugo Fernandes
+- [SEND-32](https://linear.app/sendspeed/issue/SEND-32/5-visualizar-usuarios-no-funil-de-conversao) — [5] Visualizar Usuários no Funil de Conversão · High · Hugo Fernandes
+- [SEND-33](https://linear.app/sendspeed/issue/SEND-33/1-registrar-interacoes-com-tracking-especifico) — [1] Registrar Interações com Tracking Específico · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-35](https://linear.app/sendspeed/issue/SEND-35/configuracao-de-gatilho-imediato-tela) — Configuração de Gatilho Imediato [TELA] · High · andrei.garcia@externo.sendspeed.com
+- [SEND-36](https://linear.app/sendspeed/issue/SEND-36/separacao-de-ambientes-de-desenvolvimento) — Separação de Ambientes de Desenvolvimento · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-37](https://linear.app/sendspeed/issue/SEND-37/behavior-analise-comportamental) — Behavior Analise Comportamental · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-38](https://linear.app/sendspeed/issue/SEND-38/analise-de-desempenho-individual-card) — Análise de desempenho individual {Card} · High · andrei.garcia@externo.sendspeed.com
+- [SEND-40](https://linear.app/sendspeed/issue/SEND-40/interface-de-auditoria-do-behavior) — Interface de Auditoria do Behavior · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-42](https://linear.app/sendspeed/issue/SEND-42/ajuste-geral-ponta-a-ponta) — Ajuste Geral - Ponta a Ponta · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-45](https://linear.app/sendspeed/issue/SEND-45/envio-de-evento-do-card-via-tracker-gatilho-imediato) — Envio de Evento do Card via Tracker - Gatilho Imediato · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-46](https://linear.app/sendspeed/issue/SEND-46/identificacao-e-acao-do-buyer-com-evento-do-gatilho-imediato) — Identificação e Ação do Buyer com Evento do Gatilho Imediato · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-48](https://linear.app/sendspeed/issue/SEND-48/persistencia-de-card-customizado) — Persistência de Card Customizado · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-49](https://linear.app/sendspeed/issue/SEND-49/carregamento-de-card-salvo) — Carregamento de Card Salvo · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-50](https://linear.app/sendspeed/issue/SEND-50/exportacao-estrutural-do-card-para-embeds-externos) — Exportação Estrutural do Card para Embeds Externos · Urgent · Unassigned
+- [SEND-51](https://linear.app/sendspeed/issue/SEND-51/companiom-journey-plataforma-bugs-ajustes-e-melhorias-em-aberto-semana) — [Companiom + Journey + Plataforma] – Bugs / Ajustes e Melhorias em aberto – Semana 3 [08/2025] · High · Unassigned
+- [SEND-52](https://linear.app/sendspeed/issue/SEND-52/configuracao-de-tempo-de-exibicao-do-preview-no-gatilho-imediato) — Configuração de tempo de exibição do preview no gatilho imediato · Medium · andrei.garcia@externo.sendspeed.com
+- [SEND-53](https://linear.app/sendspeed/issue/SEND-53/nova-pagina-de-contatos-da-journey) — Nova página de contatos da Journey · High · pedro.iegler@sendspeed.com
+- [SEND-55](https://linear.app/sendspeed/issue/SEND-55/gerenciar-usuarios-e-permissoes-na-conta) — Gerenciar usuários e permissões na conta · Urgent · peterson.marques@sendspeed.com
+- [SEND-56](https://linear.app/sendspeed/issue/SEND-56/bug-editor-de-cards-20-bugs-na-edicao) — [BUG] – Editor de Cards 2.0 -> Bugs na Edição · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-58](https://linear.app/sendspeed/issue/SEND-58/legado-spike-estudo-do-que-precisa-de-manutencao-do-legado-de-sms) — [LEGADO] [SPIKE] Estudo do que precisa de Manutenção do legado de SMS · High · Hugo Fernandes
+- [SEND-59](https://linear.app/sendspeed/issue/SEND-59/legado-reducao-de-custos-na-digitalocean) — [LEGADO] Redução de custos na DigitalOcean · Urgent · peterson.marques@sendspeed.com
+- [SEND-61](https://linear.app/sendspeed/issue/SEND-61/bug-jorney-visao-geral-mostrando-dados-mockados) — [BUG] [JORNEY] Visão Geral mostrando dados mockados · Medium · peterson.marques@sendspeed.com
+- [SEND-62](https://linear.app/sendspeed/issue/SEND-62/bug-journey-pagina-visitantes-nao-funcional) — [BUG] [JOURNEY] Página visitantes não funcional · No priority · peterson.marques@sendspeed.com
+- [SEND-64](https://linear.app/sendspeed/issue/SEND-64/plataforma-menu-lateral-personalizado-por-cliente) — [PLATAFORMA] Menu lateral personalizado por cliente · Urgent · pedro.iegler@sendspeed.com
+- [SEND-65](https://linear.app/sendspeed/issue/SEND-65/legado-lost-list) — [LEGADO] LOST LIST · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-66](https://linear.app/sendspeed/issue/SEND-66/companion-ensino-vetorial-nivel-01) — [COMPANION] Ensino Vetorial Nível 01 · High · Unassigned
+- [SEND-67](https://linear.app/sendspeed/issue/SEND-67/legado-ajustes-dos-bugs-e-revisao-geral-da-plataforma) — [LEGADO] Ajustes dos Bug`s e Revisão Geral da Plataforma · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-68](https://linear.app/sendspeed/issue/SEND-68/bugplataforma-meus-cards-do-companion-abre-tela-antiga-de-edicao-de) — [BUG][PLATAFORMA] “Meus Cards” do Companion abre tela antiga de edição de card · No priority · pedro.iegler@sendspeed.com
+- [SEND-69](https://linear.app/sendspeed/issue/SEND-69/legadospikemanutencao-remover-espelhamento-do-banco-que-causa-lock-e) — [LEGADO][SPIKE][MANUTENÇÃO] Remover espelhamento do banco que causa lock e reduzir custo · No priority · peterson.marques@sendspeed.com
+- [SEND-71](https://linear.app/sendspeed/issue/SEND-71/plataforma-conversoes-personalizadas-funcionando-100percent) — [PLATAFORMA] Conversões “Personalizadas” funcionando 100% · No priority · Hugo Fernandes
+- [SEND-72](https://linear.app/sendspeed/issue/SEND-72/companionvetor-ensino-vetorial-v11-selecionar-dados-da-diario) — [COMPANION][VETOR] - Ensino vetorial v1.1: Selecionar dados da diário · No priority · Hugo Fernandes
+- [SEND-73](https://linear.app/sendspeed/issue/SEND-73/companionvetor-ensino-vetorial-v12-rotina-automatica-diaria) — [COMPANION][VETOR] - Ensino vetorial v1.2: Rotina automática diária · No priority · Hugo Fernandes
+- [SEND-74](https://linear.app/sendspeed/issue/SEND-74/companionvetor-ensino-vetorial-v13-simular-antes-de-aplicar) — [COMPANION][VETOR] — Ensino vetorial v1.3: Simular antes de aplicar · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-75](https://linear.app/sendspeed/issue/SEND-75/companionvetor-ensino-vetorial-v14-usar-o-vetor-nas-decisoes) — [COMPANION][VETOR] — Ensino vetorial v1.4: Usar o vetor nas decisões · No priority · Unassigned
+- [SEND-76](https://linear.app/sendspeed/issue/SEND-76/plataformamelhoria-visitantes-como-item-de-menu-principal) — [PLATAFORMA][MELHORIA] — “Visitantes” como item de menu principal · No priority · pedro.iegler@sendspeed.com
+- [SEND-78](https://linear.app/sendspeed/issue/SEND-78/legadospike-gatilho-para-passar-direto-pela-lost-list) — [LEGADO][SPIKE] - Gatilho para passar direto pela lost list · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-79](https://linear.app/sendspeed/issue/SEND-79/legadospike-tela-de-dashboard-do-lost-list) — [LEGADO][SPIKE] - Tela de Dashboard do Lost List · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-80](https://linear.app/sendspeed/issue/SEND-80/legadospike-manipulacao-dos-telefones-da-lost-list) — [LEGADO][SPIKE] - Manipulação dos telefones da Lost List · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-81](https://linear.app/sendspeed/issue/SEND-81/companionvetor-ensino-vetorial-v121-regra-para-disparar-o-card) — [COMPANION][VETOR] — Ensino vetorial v1.2.1: Regra para disparar o card · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-82](https://linear.app/sendspeed/issue/SEND-82/legado-campanha-teste-para-undelivered-5000-envios-da-base-donald) — [LEGADO] — Campanha teste para Undelivered (5.000 envios da base “Donald”) · High · Unassigned
+- [SEND-84](https://linear.app/sendspeed/issue/SEND-84/companionvetor-vetor-usa-conversoes-personalizadas-continuacao-do-card) — [COMPANION][VETOR] — Vetor usa Conversões “Personalizadas” - (continuação do card “[PLATAFORMA] Conversões ‘Personalizadas’ funcionando 100%”) · No priority · Unassigned
+- [SEND-86](https://linear.app/sendspeed/issue/SEND-86/companionmelhoria-estados-do-card-governam-disparo) — [COMPANION][MELHORIA] — Estados do card governam disparo (ativo/rascunho/pausado/arquivado) · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-87](https://linear.app/sendspeed/issue/SEND-87/companionanalyticsbug-selecao-de-data-e-horario-nao-aplica) — [COMPANION][ANALYTICS][BUG] — Seleção de data e horário não aplica corretamente · No priority · Hugo Fernandes
+- [SEND-88](https://linear.app/sendspeed/issue/SEND-88/journeymelhoria-nova-visao-geral-kpis-por-periodo) — [JOURNEY][MELHORIA] — Nova Visão Geral (KPIs por período) · No priority · Vinicius Carneiro
+- [SEND-89](https://linear.app/sendspeed/issue/SEND-89/plataformamelhoria-mover-a-visao-geral-atual-do-journey-para) — [PLATAFORMA][MELHORIA] — Mover a visão geral atual do Journey para “Visitantes” e remover “análises por IA” · Urgent · Vinicius Carneiro
+- [SEND-91](https://linear.app/sendspeed/issue/SEND-91/legadorefactory-status-do-callback-dos-disparos-pela-infobip) — [LEGADO][REFACTORY] — Status do callback dos disparos pela InfoBip · No priority · Hugo Fernandes
+- [SEND-92](https://linear.app/sendspeed/issue/SEND-92/companionvetor-popar-o-card-personalizado) — [COMPANION][VETOR] - Popar o card personalizado · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-94](https://linear.app/sendspeed/issue/SEND-94/companion-decide-por-conversao-personalizada-disparada-no-tracker-e) — Companion decide por conversão personalizada disparada no Tracker e prioriza cards compatíveis por risco da conversão personalizada (exit_risk/doubt_risk/conversion_risk). · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-95](https://linear.app/sendspeed/issue/SEND-95/logs-de-decisao-gravados-em-companion-decisions-e-evento) — Logs de decisão gravados em companion_decisions e evento events.type=companion_decision com card, conversionType/conversionCode e motivo curto. · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-96](https://linear.app/sendspeed/issue/SEND-96/endpoint-de-decisao-ativo-post-apisessionspredict-conversion) — Endpoint de decisão ativo: POST /api/sessions/predict-conversion. · No priority · Hugo Fernandes
+- [SEND-98](https://linear.app/sendspeed/issue/SEND-98/integracao-tracker-behavior-ativa-deteccao-de-conversao-e-chamada-ao) — Integração Tracker → Behavior ativa (detecção de conversão e chamada ao Analytics); → Buyer Agent escolhe buyer_cards reais. · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-101](https://linear.app/sendspeed/issue/SEND-101/garantir-que-eventos-de-conversao-personalizados-usados-para) — Garantir que eventos de conversão personalizados usados para vetorização estejam disponíveis no mesmo datastore do Analytics (ou criar forward/ingest se bancos forem distintos). · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-102](https://linear.app/sendspeed/issue/SEND-102/validar-fim-a-fim-o-teste-duvida-no-site-real-usando-as-settings-do) — Validar fim a fim o teste “Dúvida” no site real usando as settings do Mongo (não só via script). · No priority · Unassigned
+- [SEND-105](https://linear.app/sendspeed/issue/SEND-105/garantir-evento-de-conversao-disponivel-ao-vetor) — Garantir evento de conversão disponível ao vetor · No priority · Unassigned
+- [SEND-107](https://linear.app/sendspeed/issue/SEND-107/consumir-activeversionid-de-vector-behavior) — Consumir activeVersionId de vector_behavior · No priority · Unassigned
+- [SEND-108](https://linear.app/sendspeed/issue/SEND-108/ranquear-card-via-vetor-ativo-vector) — Ranquear card via vetor ativo (vector) · No priority · Unassigned
+- [SEND-109](https://linear.app/sendspeed/issue/SEND-109/registrar-versionid-e-sourcevector-nas-decisoes) — Registrar versionId e source=vector nas decisões · No priority · Unassigned
+- [SEND-110](https://linear.app/sendspeed/issue/SEND-110/criar-evento-companion-decision-com-quem-disparou) — Criar evento companion_decision com quem disparou · No priority · Unassigned
+- [SEND-111](https://linear.app/sendspeed/issue/SEND-111/toggle-behavior-enableddisabled-fallback) — Toggle behavior: enabled/disabled + fallback · No priority · Unassigned
+- [SEND-130](https://linear.app/sendspeed/issue/SEND-130/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-131](https://linear.app/sendspeed/issue/SEND-131/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-132](https://linear.app/sendspeed/issue/SEND-132/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-133](https://linear.app/sendspeed/issue/SEND-133/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-134](https://linear.app/sendspeed/issue/SEND-134/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-135](https://linear.app/sendspeed/issue/SEND-135/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-136](https://linear.app/sendspeed/issue/SEND-136/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-137](https://linear.app/sendspeed/issue/SEND-137/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-138](https://linear.app/sendspeed/issue/SEND-138/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-139](https://linear.app/sendspeed/issue/SEND-139/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-140](https://linear.app/sendspeed/issue/SEND-140/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-141](https://linear.app/sendspeed/issue/SEND-141/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-146](https://linear.app/sendspeed/issue/SEND-146/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-147](https://linear.app/sendspeed/issue/SEND-147/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-148](https://linear.app/sendspeed/issue/SEND-148/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-149](https://linear.app/sendspeed/issue/SEND-149/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-154](https://linear.app/sendspeed/issue/SEND-154/ler-companion-settings-do-mongo-no-companiondecisionservice) — Ler companion_settings do Mongo no CompanionDecisionService · No priority · Unassigned
+- [SEND-155](https://linear.app/sendspeed/issue/SEND-155/popular-versionid-nas-decisoes-via-vector-behavioractiveversionid) — Popular versionId nas decisões via vector_behavior.activeVersionId · No priority · Unassigned
+- [SEND-156](https://linear.app/sendspeed/issue/SEND-156/garantir-evento-de-conversao-disponivel-ao-vetor) — Garantir evento de conversão disponível ao vetor · No priority · Unassigned
+- [SEND-157](https://linear.app/sendspeed/issue/SEND-157/teste-e2e-duvida-com-settings-reais-e-logs) — Teste E2E Dúvida com settings reais e logs · No priority · Unassigned
+- [SEND-158](https://linear.app/sendspeed/issue/SEND-158/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-159](https://linear.app/sendspeed/issue/SEND-159/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-160](https://linear.app/sendspeed/issue/SEND-160/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-161](https://linear.app/sendspeed/issue/SEND-161/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-166](https://linear.app/sendspeed/issue/SEND-166/diagnostico-reproduzir-cenario-com-postmanscripts) — Diagnóstico: reproduzir cenário com Postman/scripts · No priority · Unassigned
+- [SEND-167](https://linear.app/sendspeed/issue/SEND-167/implementacao-ajustes-no-projeto-analytics) — Implementação: ajustes no projeto analytics · No priority · Unassigned
+- [SEND-168](https://linear.app/sendspeed/issue/SEND-168/validacao-testes-automaticos-e-e2e) — Validação: testes automáticos e E2E · No priority · Unassigned
+- [SEND-169](https://linear.app/sendspeed/issue/SEND-169/documentacao-comentario-com-resultados-e-atualizacao-do-readmepostman) — Documentação: comentário com resultados e atualização do README/Postman · No priority · Unassigned
+- [SEND-170](https://linear.app/sendspeed/issue/SEND-170/calculo-de-tempo-medio-por-conversao) — Cálculo de Tempo Médio por Conversão · Urgent · Hugo Fernandes
+- [SEND-173](https://linear.app/sendspeed/issue/SEND-173/ajuste-behavior-liberar-liderbet-para-receber-eventos) — Ajuste Behavior liberar liderbet para receber eventos · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-175](https://linear.app/sendspeed/issue/SEND-175/kafka-em-stg) — Kafka em STG · Urgent · pedro.iegler@sendspeed.com
+- [SEND-177](https://linear.app/sendspeed/issue/SEND-177/triggerlogin-desativacao-do-behavior) — TriggerLogin (desativação do behavior) · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-178](https://linear.app/sendspeed/issue/SEND-178/consulta-simplificada-de-condicionais) — Consulta Simplificada de Condicionais · Urgent · Vinicius Carneiro
+- [SEND-204](https://linear.app/sendspeed/issue/SEND-204/melhoria-buyer-minimizar-chat-ao-clicar-fora) — [MELHORIA] Buyer — Minimizar chat ao clicar fora · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-205](https://linear.app/sendspeed/issue/SEND-205/melhoria-buyer-x-no-preview-do-card) — [MELHORIA] Buyer — “X” no preview do card · Urgent · pedro.iegler@sendspeed.com
+- [SEND-206](https://linear.app/sendspeed/issue/SEND-206/melhoria-buyer-minimizar-ao-clicar-no-cta) — [MELHORIA] Buyer — Minimizar ao clicar no CTA · High · andrei.garcia@externo.sendspeed.com
+- [SEND-207](https://linear.app/sendspeed/issue/SEND-207/melhoria-buyer-forma-de-desativar-apos-ativo-x-superior) — [MELHORIA] Buyer — Forma de desativar após ativo (X superior) · Urgent · pedro.iegler@sendspeed.com
+- [SEND-220](https://linear.app/sendspeed/issue/SEND-220/sendspeed-legado-shortcode-link-dedicado) — SENDSPEED LEGADO - SHORTCODE LINK DEDICADO · No priority · Unassigned
+- [SEND-221](https://linear.app/sendspeed/issue/SEND-221/melhoria-som-do-card) — [MELHORIA] Som do Card · Urgent · pedro.iegler@sendspeed.com
+- [SEND-222](https://linear.app/sendspeed/issue/SEND-222/melhoria-tipo-modal-pop-up-no-meio-da-tela) — [MELHORIA] Tipo Modal (pop-up no meio da tela) · Urgent · peterson.marques@sendspeed.com
+- [SEND-223](https://linear.app/sendspeed/issue/SEND-223/melhoria-substituir-imagem-do-buyer) — [MELHORIA] Substituir Imagem do Buyer · Urgent · pedro.iegler@sendspeed.com
+- [SEND-224](https://linear.app/sendspeed/issue/SEND-224/melhoria-pulsar-modal) — [MELHORIA] Pulsar Modal · Urgent · pedro.iegler@sendspeed.com
+- [SEND-225](https://linear.app/sendspeed/issue/SEND-225/melhoria-roleta) — [MELHORIA] ROLETA · Urgent · peterson.marques@sendspeed.com
+- [SEND-226](https://linear.app/sendspeed/issue/SEND-226/melhoria-rota-dedicada-donald-betbet) — [MELHORIA] ROTA DEDICADA DONALD + BET.BET · Urgent · Unassigned
+- [SEND-227](https://linear.app/sendspeed/issue/SEND-227/criacao-de-cards-trafego) — CRIAÇÃO DE CARDS - TRÁFEGO · Urgent · peterson.marques@sendspeed.com
+- [SEND-229](https://linear.app/sendspeed/issue/SEND-229/legadomelhoria-configuracao-de-rota-dedicada-via-api) — [LEGADO][MELHORIA] CONFIGURAÇÃO DE ROTA DEDICADA VIA API · No priority · Hugo Fernandes
+- [SEND-230](https://linear.app/sendspeed/issue/SEND-230/legadomelhoria-configurar-cron-para-novo-fornecedor-dedicado) — [LEGADO][MELHORIA] Configurar CRON para novo fornecedor dedicado · No priority · Vinicius Carneiro
+- [SEND-231](https://linear.app/sendspeed/issue/SEND-231/legadomelhoria-configurar-callback-para-novo-fornecedor-dedicado) — [LEGADO][MELHORIA] Configurar callback para novo fornecedor dedicado · No priority · Hugo Fernandes
+- [SEND-232](https://linear.app/sendspeed/issue/SEND-232/legadomelhoria-configurar-entrada-principal-para-aceitar-parametros-de) — [LEGADO][MELHORIA] Configurar entrada principal para aceitar parâmetros de fornecedor dedicado · No priority · Hugo Fernandes
+- [SEND-233](https://linear.app/sendspeed/issue/SEND-233/legadomelhoria-configurar-acumulador-em-status-para-novo-fornecedor) — [LEGADO][MELHORIA] Configurar acumulador em status para novo fornecedor · No priority · Hugo Fernandes
+- [SEND-234](https://linear.app/sendspeed/issue/SEND-234/melhoria-modal-da-roleta-com-z-index-prioritario-e-fundo) — [MELHORIA] Modal da Roleta com z-index Prioritário e Fundo Semitransparente · Urgent · peterson.marques@sendspeed.com
+- [SEND-235](https://linear.app/sendspeed/issue/SEND-235/melhoria-aba-de-segmentos-de-usuarios-user-segmentation-tab) — [MELHORIA] Aba de Segmentos de Usuários (User Segmentation Tab) · Urgent · Vinicius Carneiro
+- [SEND-237](https://linear.app/sendspeed/issue/SEND-237/criacao-da-jornada-segmentoregras-dentro-da-plataforma) — Criação da jornada Segmento/Regras dentro da plataforma. · Urgent · Vinicius Carneiro
+- [SEND-238](https://linear.app/sendspeed/issue/SEND-238/criar-inteligencia-segmentoregras-de-segmento-dentro-do-tracker) — Criar inteligência Segmento/regras de segmento dentro do Tracker. · Urgent · Vinicius Carneiro
+- [SEND-239](https://linear.app/sendspeed/issue/SEND-239/melhoria-garantir-escalabilidade-do-tracker-nova-socket) — [MELHORIA] Garantir Escalabilidade do Tracker (Nova Socket) · Urgent · Vinicius Carneiro
+- [SEND-240](https://linear.app/sendspeed/issue/SEND-240/companion-smartblock-topbar-com-countdown) — [COMPANION] SmartBlock {TopBar} com Countdown · Urgent · Vinicius Carneiro
+- [SEND-242](https://linear.app/sendspeed/issue/SEND-242/companionmelhoria-roleta-pos-fechamento-de-modal-ser-disparada-pelo) — [COMPANION][MELHORIA] Roleta Pós-Fechamento de Modal Ser Disparada Pelo Tracker - enableModal() · Urgent · Vinicius Carneiro
+- [SEND-245](https://linear.app/sendspeed/issue/SEND-245/tela-de-jornada-produto-criar-mockup) — [TELA DE JORNADA] - PRODUTO CRIAR MOCKUP · No priority · Vinicius Carneiro
+- [SEND-248](https://linear.app/sendspeed/issue/SEND-248/melhoria-persistir-registro-padronizado-no-banco-userin-hooks-atraves) — [MELHORIA] Persistir registro padronizado no banco userin_hooks através da AntiCorruptionLayer (UserIn Endpoint) · Urgent · Vinicius Carneiro
+- [SEND-249](https://linear.app/sendspeed/issue/SEND-249/melhoria-validacao-e-autenticacao-do-fluxo-de-registro-via-modulo) — [MELHORIA] Validação e autenticação do fluxo de registro via módulo webHookCactus usando apiKey · Urgent · Vinicius Carneiro
+- [SEND-250](https://linear.app/sendspeed/issue/SEND-250/melhoria-integracao-de-segmentacoes-no-card) — [MELHORIA] Integração de segmentações no card. · Urgent · Vinicius Carneiro
+- [SEND-251](https://linear.app/sendspeed/issue/SEND-251/melhoria-criar-tela-de-visualizacao-de-jornadas-no-analytics-com) — [MELHORIA] Criar tela de visualização de jornadas no Analytics com campos obrigatórios · Urgent · Vinicius Carneiro
+- [SEND-260](https://linear.app/sendspeed/issue/SEND-260/importacao-de-regras-da-roleta-do-gtm-para-plataforma) — Importação de regras da roleta do GTM para plataforma · Urgent · Vinicius Carneiro
+- [SEND-261](https://linear.app/sendspeed/issue/SEND-261/criacao-de-empresa-userin-como-admin-geral-da-plataforma) — Criação de empresa UserIn como admin geral da plataforma. · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-264](https://linear.app/sendspeed/issue/SEND-264/criacao-da-empresa-bulls-api-codigo-gtm) — Criação da empresa Bulls + API + Código GTM · Urgent · Vinicius Carneiro
+- [SEND-265](https://linear.app/sendspeed/issue/SEND-265/criacao-de-template-de-jornada) — Criação de Template de Jornada · Urgent · peterson.marques@sendspeed.com
+- [SEND-268](https://linear.app/sendspeed/issue/SEND-268/criacao-de-template-de-regra) — Criação de Template de Regra · Urgent · Vinicius Carneiro
+- [SEND-269](https://linear.app/sendspeed/issue/SEND-269/criacao-da-biblioteca) — Criação da Biblioteca · Urgent · peterson.marques@sendspeed.com
+- [SEND-270](https://linear.app/sendspeed/issue/SEND-270/criacao-do-template-de-componentes) — Criação do Template de Componentes · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-271](https://linear.app/sendspeed/issue/SEND-271/criacao-de-regra-na-parte-de-jornada) — Criação de regra na parte de jornada · Urgent · peterson.marques@sendspeed.com
+- [SEND-273](https://linear.app/sendspeed/issue/SEND-273/integracao-dos-templates-as-bibliotecas) — Integração dos Templates ás Bibliotecas. · Urgent · peterson.marques@sendspeed.com
+- [SEND-274](https://linear.app/sendspeed/issue/SEND-274/regras-obrigatorias-pre-configuradas) — Regras obrigatórias pré-configuradas. · Urgent · Vinicius Carneiro
+- [SEND-275](https://linear.app/sendspeed/issue/SEND-275/capturar-e-persistir-query-params-da-url-em-campo-estruturado-url) — Capturar e persistir query params da URL em campo estruturado `url_params` nos eventos · No priority · Vinicius Carneiro
+- [SEND-276](https://linear.app/sendspeed/issue/SEND-276/compilacao-de-algumas-informacoes-do-userin-hooks-events) — Compilação de algumas informações do userin_hooks + events · Urgent · Vinicius Carneiro
+- [SEND-277](https://linear.app/sendspeed/issue/SEND-277/integracao-de-campanhas-disparadas-via-smartico-para-senduin) — Integração de campanhas disparadas via Smartico para Send/Uin · Urgent · Hugo Fernandes
+- [SEND-278](https://linear.app/sendspeed/issue/SEND-278/local-de-adicao-de-valores-na-plataforma) — Local de adição de valores na plataforma · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-281](https://linear.app/sendspeed/issue/SEND-281/desenvolvimento-do-smartblock) — Desenvolvimento do Smartblock · Urgent · peterson.marques@sendspeed.com
+- [SEND-283](https://linear.app/sendspeed/issue/SEND-283/condicoes-de-regra-baseadas-na-primeira-ultima-e-url-atual-do-usuario) — Condições de regra baseadas na primeira, última e URL atual do usuário · Urgent · pedro.iegler@sendspeed.com
+- [SEND-286](https://linear.app/sendspeed/issue/SEND-286/subir-regras-novas-relacionadas-aos-segmentos) — Subir regras novas relacionadas aos segmentos · Urgent · pedro.iegler@sendspeed.com
+- [SEND-290](https://linear.app/sendspeed/issue/SEND-290/ultima-etapa) — Ultima Etapa · No priority · pedro.iegler@sendspeed.com
+- [SEND-292](https://linear.app/sendspeed/issue/SEND-292/rota-otp-sendspeed) — Rota OTP [Sendspeed] · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-294](https://linear.app/sendspeed/issue/SEND-294/detalhe-tecnico-da-solucao-de-melhoria-implementada) — detalhe tecnico da solucao de melhoria implementada · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-295](https://linear.app/sendspeed/issue/SEND-295/seletor-de-rotas-dentro-da-smartico) — Seletor de rotas dentro da Smartico. · No priority · Hugo Fernandes
+- [SEND-296](https://linear.app/sendspeed/issue/SEND-296/subir-nova-tela-do-smart-block) — Subir nova tela do Smart Block · High · Vinicius Carneiro
+- [SEND-297](https://linear.app/sendspeed/issue/SEND-297/subir-nova-feature-de-mini-games) — Subir nova feature de Mini Games · High · Vinicius Carneiro
+- [SEND-299](https://linear.app/sendspeed/issue/SEND-299/subir-nova-tela-do-modal) — Subir nova tela do Modal. · High · Vinicius Carneiro
+- [SEND-302](https://linear.app/sendspeed/issue/SEND-302/bug-expedite-donald-sem-callback-por-1-semana) — BUG EXPEDITE - DONALD SEM CALLBACK por 1 SEMANA · Urgent · thiago.melin@sendspeed.com
+- [SEND-303](https://linear.app/sendspeed/issue/SEND-303/bug-expedite-envio-de-mensagens-nao-chegam) — BUG EXPEDITE - ENVIO DE MENSAGENS NAO CHEGAM! · No priority · thiago.melin@sendspeed.com
+- [SEND-304](https://linear.app/sendspeed/issue/SEND-304/refactory-envio-de-mensagem-send) — [REFACTORY] Envio de mensagem send. · No priority · thiago.melin@sendspeed.com
+- [SEND-305](https://linear.app/sendspeed/issue/SEND-305/subir-o-flow-builder-refinar) — Subir o Flow Builder {REFINAR} · High · Vinicius Carneiro
+- [SEND-312](https://linear.app/sendspeed/issue/SEND-312/bugs-e-melhorias-journey-builder-userin-perda-de-configuracoes-ao-sair) — Bugs e melhorias Journey Builder UserIn - Perda de configurações ao sair sem salvar · High · paulo.ribeiro@sendspeed.com
+- [SEND-313](https://linear.app/sendspeed/issue/SEND-313/bugs-e-melhorias-journey-builder-userin-botao-organizar-sem) — Bugs e melhorias Journey Builder UserIn - Botão 'Organizar' sem funcionalidade · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-314](https://linear.app/sendspeed/issue/SEND-314/titulo-bugs-e-melhorias-journey-builder-userin-selecao-multipla-e) — Título: Bugs e melhorias Journey Builder UserIn - Seleção múltipla e deleção de cards · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-315](https://linear.app/sendspeed/issue/SEND-315/bugs-e-melhorias-journey-builder-userin-componentes-nao-disponiveis) — Bugs e melhorias Journey Builder UserIn - Componentes não disponíveis (Webhook e Entrar no Segmento) · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-316](https://linear.app/sendspeed/issue/SEND-316/bugs-e-melhorias-journey-builder-userin-minimapa-sem-interacao) — Bugs e melhorias Journey Builder UserIn - Minimapa sem interação · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-317](https://linear.app/sendspeed/issue/SEND-317/bugs-e-melhorias-journey-builder-userin-botao-frequencia-de-execucao) — Bugs e melhorias Journey Builder UserIn - Botão 'Frequência de Execução' não intuitivo e texto duplicado · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-318](https://linear.app/sendspeed/issue/SEND-318/bugs-e-melhorias-journey-builder-userin-front-cortando-conteudo-e) — Bugs e melhorias Journey Builder UserIn - Front cortando conteúdo e botão de copiar trigger · Medium · paulo.ribeiro@sendspeed.com
+- [SEND-319](https://linear.app/sendspeed/issue/SEND-319/bugs-e-melhorias-journey-builder-userin-inputs-com-selecao-cortada) — Bugs e melhorias Journey Builder UserIn - Inputs com seleção cortada (Adicionar Tag e Atributo do Usuário) · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-320](https://linear.app/sendspeed/issue/SEND-320/bugs-e-melhorias-journey-builder-userin-regra-da-plataforma-com) — Bugs e melhorias Journey Builder UserIn - Regra da Plataforma com dropdown cortado e texto confuso · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-321](https://linear.app/sendspeed/issue/SEND-321/bugs-e-melhorias-journey-builder-userin-remover-tag-com-selecao) — Bugs e melhorias Journey Builder UserIn - Remover Tag com seleção múltipla bugada · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-322](https://linear.app/sendspeed/issue/SEND-322/bugs-e-melhorias-journey-builder-userin-ir-para-jornada-com-conteudo) — Bugs e melhorias Journey Builder UserIn - Ir para Jornada com conteúdo cortado · No priority · paulo.ribeiro@sendspeed.com
+- [SEND-323](https://linear.app/sendspeed/issue/SEND-323/nova-rotina-processamento-calback-atraves-do-arquivo-do-fornecedor) — Nova Rotina Processamento Calback através do arquivo do fornecedor · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-324](https://linear.app/sendspeed/issue/SEND-324/funcionando-apenas-1-fluxo-por-jornada) — 🐞 - Funcionando apenas 1 fluxo por jornada. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-325](https://linear.app/sendspeed/issue/SEND-325/lentidao-excessiva-na-plataforma) — 🐞 - Lentidão excessiva na plataforma · Urgent · Vinicius Carneiro
+- [SEND-326](https://linear.app/sendspeed/issue/SEND-326/elemento-visivel-nao-funciona) — 🐞 - Elemento visivel não funciona. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-327](https://linear.app/sendspeed/issue/SEND-327/copiar-varios-componentes-no-fluxo-do-builder) — 🚀 - Copiar varios componentes no fluxo do builder · Urgent · pedro.iegler@sendspeed.com
+- [SEND-328](https://linear.app/sendspeed/issue/SEND-328/menu-de-configuracao-da-box-no-fluxo) — 🐞 - Menu de configuração da box no fluxo. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-329](https://linear.app/sendspeed/issue/SEND-329/criacao-da-empresa-sevenx-homolog) — 🚀 - Criação da empresa SevenX Homolog · Urgent · Hugo Fernandes
+- [SEND-334](https://linear.app/sendspeed/issue/SEND-334/substituir-componente-de-calendario) — Substituir componente de calendario · High · Vinicius Carneiro
+- [SEND-336](https://linear.app/sendspeed/issue/SEND-336/criacao-de-webhook-e-api-key-para-betbet-e-donald) — Criação de Webhook e API Key para Bet.bet e Donald · No priority · peterson.marques@sendspeed.com
+- [SEND-337](https://linear.app/sendspeed/issue/SEND-337/implementacao-do-sistema-de-log) — 🚀 - Implementação do sistema de log · Urgent · pedro.iegler@sendspeed.com
+- [SEND-338](https://linear.app/sendspeed/issue/SEND-338/implementacao-do-sistema-de-drag-and-drop) — 🚀 - Implementação do sistema de drag and drop · Urgent · pedro.iegler@sendspeed.com
+- [SEND-343](https://linear.app/sendspeed/issue/SEND-343/aviso-ao-clicar-no-botao-provisionar-igaming) — 🚀 - Aviso ao clicar no botão provisionar iGaming · Urgent · pedro.iegler@sendspeed.com
+- [SEND-344](https://linear.app/sendspeed/issue/SEND-344/caixas-de-objetos-duplicados) — 🐞 - Caixas de objetos duplicados. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-345](https://linear.app/sendspeed/issue/SEND-345/bugs-ontologia-userin-campo-de-pesquisa-nao-funciona) — Bugs Ontologia UserIn - Campo de pesquisa não funciona · High · paulo.ribeiro@sendspeed.com
+- [SEND-346](https://linear.app/sendspeed/issue/SEND-346/possibilidade-de-deletar-objetos-core-e-system) — 🐞 - Possibilidade de deletar objetos core e system. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-347](https://linear.app/sendspeed/issue/SEND-347/melhorias-userin-erros-ortograficos-na-plataforma) — Melhorias UserIn - Erros ortográficos na plataforma · High · paulo.ribeiro@sendspeed.com
+- [SEND-348](https://linear.app/sendspeed/issue/SEND-348/bugs-ontologia-userin-bug-visual-no-botao-de-copiar-codigo) — Bugs Ontologia UserIn - Bug visual no botão de copiar código · High · paulo.ribeiro@sendspeed.com
+- [SEND-349](https://linear.app/sendspeed/issue/SEND-349/bugs-ontologia-userin-cards-de-grupos-abrem-tela-geral-em-vez-de-tela) — Bugs Ontologia UserIn - Cards de Grupos abrem tela geral em vez de tela específica · High · paulo.ribeiro@sendspeed.com
+- [SEND-350](https://linear.app/sendspeed/issue/SEND-350/persistencia-no-banco-de-dados-ao-deletar-um-objeto-no-grafo) — 🐞 - Persistencia no banco de dados ao deletar um objeto no Grafo · Urgent · pedro.iegler@sendspeed.com
+- [SEND-351](https://linear.app/sendspeed/issue/SEND-351/retirar-objetos-de-feature-e-produto-do-provisionar-igaming) — 🚀 - Retirar objetos de Feature e Produto do Provisionar iGaming · Urgent · pedro.iegler@sendspeed.com
+- [SEND-353](https://linear.app/sendspeed/issue/SEND-353/erro-ao-deletar-a-relacao) — 🐞 - Erro ao deletar a relação. · Urgent · pedro.iegler@sendspeed.com
+- [SEND-355](https://linear.app/sendspeed/issue/SEND-355/categoria-salva-no-banco-de-dados-como-apenas-como-game) — 🚀 - categória salva no banco de dados como apenas como "game" · Urgent · Vinicius Carneiro
+- [SEND-356](https://linear.app/sendspeed/issue/SEND-356/atualizacao-de-nomenclatura-ajustes-visuais-de-nomes-em-toda-a) — Atualização de Nomenclatura — Ajustes visuais de nomes em toda a plataforma · High · paulo.ribeiro@sendspeed.com
+- [SEND-358](https://linear.app/sendspeed/issue/SEND-358/atualizacao-imediata-de-dados-do-usuario-via-webhook) — 🚀 - Atualização imediata de dados do usuário via Webhook · No priority · Vinicius Carneiro
+- [SEND-369](https://linear.app/sendspeed/issue/SEND-369/sprint-us-02-fila-kafka-unificada-para-execucao-de-jornadas) — [SPRINT] US-02 — Fila Kafka Unificada para Execução de Jornadas · Urgent · pedro.antunes@sendspeed.com
+- [SEND-370](https://linear.app/sendspeed/issue/SEND-370/sprint-us-01-webhook-externo-por-jornada-com-campo-meta) — [SPRINT] US-01 — Webhook Externo por Jornada (com campo meta) · Urgent · pedro.antunes@sendspeed.com
+- [SEND-371](https://linear.app/sendspeed/issue/SEND-371/sprint-us-03-disparos-externos-criam-jornadas-externalcampaignid) — [SPRINT] US-03 — Disparos Externos Criam Jornadas (externalCampaignId -> journeyId ) · Urgent · pedro.antunes@sendspeed.com
+- [SEND-372](https://linear.app/sendspeed/issue/SEND-372/sprint-us-04-sms-real-na-jornada-sendspeed-api) — [SPRINT] US-04 — SMS Real na Jornada (SendSpeed API) · Urgent · pedro.antunes@sendspeed.com
+- [SEND-373](https://linear.app/sendspeed/issue/SEND-373/sprint-us-05-envio-de-rcs-na-jornada-adapter-api-editor) — [SPRINT] US-05 — Envio de RCS na Jornada (Adapter + API + Editor) · Urgent · pedro.antunes@sendspeed.com
+- [SEND-374](https://linear.app/sendspeed/issue/SEND-374/sprint-us-06-analytics-unificado-journeyexecution-para-todos-os-tipos) — [SPRINT] US-06 — Analytics Unificado + JourneyExecution para Todos os Tipos · Urgent · pedro.antunes@sendspeed.com
+- [SEND-375](https://linear.app/sendspeed/issue/SEND-375/bugs-audiencia-userin-bug-visual-no-modal-de-mapear-colunas-com-muitas) — Bugs Audiência UserIn - Bug visual no modal de mapear colunas com muitas colunas · Urgent · Hugo Fernandes
+- [SEND-376](https://linear.app/sendspeed/issue/SEND-376/nao-e-possivel-deletar-componentes) — 🐞 - Não é possivel deletar componentes. · Urgent · Vinicius Carneiro
+- [SEND-377](https://linear.app/sendspeed/issue/SEND-377/disparo-de-sms-em-massa-via-modulo-de-campanhas) — 🚀 - Disparo de SMS em massa via módulo de Campanhas · Medium · Unassigned
+- [SEND-378](https://linear.app/sendspeed/issue/SEND-378/disparo-de-sms-automatizado-via-no-de-acao-no-journey-builder) — 🚀 - Disparo de SMS automatizado via nó de ação no Journey Builder · High · thiago.melin@sendspeed.com
+- [SEND-379](https://linear.app/sendspeed/issue/SEND-379/disparo-de-rcs-em-massa-via-modulo-de-campanhas) — 🚀 - Disparo de RCS em massa via módulo de Campanhas · Medium · Unassigned
+- [SEND-380](https://linear.app/sendspeed/issue/SEND-380/disparo-de-rcs-automatizado-via-no-de-acao-no-journey-builder) — 🚀 - Disparo de RCS automatizado via nó de ação no Journey Builder · Medium · thiago.melin@sendspeed.com
+- [SEND-381](https://linear.app/sendspeed/issue/SEND-381/jornada-e2e-webhook-trigger-condicao-disparo-sms-via-gatilho-webhook) — 🚀 - Jornada E2E: Webhook → Trigger → Condição → Disparo SMS (via Gatilho Webhook, sem registro) · Urgent · Vinicius Carneiro
+- [SEND-382](https://linear.app/sendspeed/issue/SEND-382/implementacao-da-top-bar) — Implementação da Top Bar · High · Unassigned
+- [SEND-384](https://linear.app/sendspeed/issue/SEND-384/metricas-de-atribuicao-last-touch-de-smsrcs-no-journey-analytics) — 🚀 - Métricas de atribuição Last Touch de SMS/RCS no Journey Analytics · Medium · Unassigned
+- [SEND-385](https://linear.app/sendspeed/issue/SEND-385/instalacao-e-configuracao-do-microsoft-clarity-userin) — Instalação e configuração do Microsoft Clarity — UserIn · High · Unassigned
+- [SEND-386](https://linear.app/sendspeed/issue/SEND-386/reprocessamento-e-analise-de-dados-de-black-list-na-sendspeed) — 🚀 - Reprocessamento e análise de dados de Black List na Sendspeed · No priority · thiago.melin@sendspeed.com
+- [SEND-387](https://linear.app/sendspeed/issue/SEND-387/deploy-da-chipfarm-do-bruno-heidrich-para-monitoramento-de) — 🚀 - Deploy da chipfarm do Bruno Heidrich para monitoramento de fornecedores SMS · No priority · Unassigned
+- [SEND-395](https://linear.app/sendspeed/issue/SEND-395/tech-executar-processamento-blacklist) — [Tech] Executar processamento BlackList · No priority · Unassigned
+- [SEND-396](https://linear.app/sendspeed/issue/SEND-396/arquitetura-multi-queue-kafka-4-filas-especializadas-por-padrao-de) — Arquitetura Multi-Queue Kafka — 4 filas especializadas por padrão de tráfego · Urgent · pedro.antunes@sendspeed.com
+- [SEND-411](https://linear.app/sendspeed/issue/SEND-411/regra-de-nao-click-nao-funciona-corretamente) — 🐞 - Regra de "não click" não funciona corretamente · Urgent · Hugo Fernandes
+- [SEND-412](https://linear.app/sendspeed/issue/SEND-412/ajustar-e-refinar-lista-de-objetivos-com-os-objetivos-da-empres-bet) — 🐞 - AJUSTAR E REFINAR LISTA DE OBJETIVOS COM OS OBJETIVOS DA EMPRES (BET) · No priority · Unassigned
+- [SEND-413](https://linear.app/sendspeed/issue/SEND-413/regra-de-url-lastcurrent-com-gatilho-acesso-logado-nao-dispara) — 🐞 - Regra de URL (last/current) com gatilho "acesso logado" não dispara · Urgent · Hugo Fernandes
+- [SEND-415](https://linear.app/sendspeed/issue/SEND-415/desativar-gerar-jornada-com-ia-do-frontend-http-401) — 🐞 - Desativar "Gerar Jornada com IA" do frontend (HTTP 401) · Urgent · Hugo Fernandes
+- [SEND-416](https://linear.app/sendspeed/issue/SEND-416/implementacao-das-telas-de-componentes-userin-cards-modais-smart) — Implementação das telas de Componentes UserIn - Cards, Modais, Smart Blocks e Mini Games · Medium · paulo.ribeiro@sendspeed.com
+- [SEND-417](https://linear.app/sendspeed/issue/SEND-417/autosave-do-journey-builder-desativado-por-padrao-e-modal-de-salvar) — 🐞 - AutoSave do Journey Builder desativado por padrão e modal de salvar aparece incorretamente · Urgent · Unassigned
+- [SEND-419](https://linear.app/sendspeed/issue/SEND-419/criacao-de-template-rcs) — 🚀 - Criação de Template RCS · Urgent · Vinicius Carneiro
+- [SEND-420](https://linear.app/sendspeed/issue/SEND-420/liquid-resolver-variaveis-do-payload-do-webhook-nos-templates) — 🚀 - Liquid: Resolver variáveis do payload do webhook nos templates · Urgent · Vinicius Carneiro
+- [SEND-421](https://linear.app/sendspeed/issue/SEND-421/no-de-enviar-rcs-na-jornada-com-selecao-de-template) — 🚀 - Nó de Enviar RCS na Jornada com seleção de template · Urgent · Vinicius Carneiro
+- [SEND-422](https://linear.app/sendspeed/issue/SEND-422/analytics-de-envio-falha-e-status-do-rcs-na-jornada) — 🚀 - Analytics de envio, falha e status do RCS na Jornada · Urgent · Vinicius Carneiro
+- [SEND-423](https://linear.app/sendspeed/issue/SEND-423/analytics-de-acesso-e-registro-atribuidos-a-jornada-rcs) — 🚀 - Analytics de acesso e registro atribuídos à Jornada RCS · Urgent · Vinicius Carneiro
+- [SEND-424](https://linear.app/sendspeed/issue/SEND-424/autosave-pergunta-se-quer-salvar-ao-sair) — 🐞 Autosave pergunta se quer salvar ao sair · Urgent · Unassigned
+- [SEND-425](https://linear.app/sendspeed/issue/SEND-425/implementar-validacao-de-regras-de-envio-de-sms) — 📱 Implementar validação de regras de envio de SMS · Urgent · Unassigned
+- [SEND-426](https://linear.app/sendspeed/issue/SEND-426/implementar-validacao-de-regras-de-envio-de-rcs) — 📨 Implementar validação de regras de envio de RCS · High · Unassigned
+- [SEND-427](https://linear.app/sendspeed/issue/SEND-427/e2e-smartico-inbound-webhook-gatilho-externo-disparo-de-jornada-sem) — 🚀 - E2E: Smartico Inbound Webhook → Gatilho Externo → Disparo de Jornada (sem registro) · Urgent · Vinicius Carneiro
+- [SEND-428](https://linear.app/sendspeed/issue/SEND-428/especificacoes-rcs-validacoes-alertas-e-orientacoes-por-formato) — Especificações RCS — Validações, Alertas e Orientações por Formato · Medium · Vinicius Carneiro
+- [SEND-430](https://linear.app/sendspeed/issue/SEND-430/editor-rcs-permitir-alterar-formato-e-nome-em-qualquer-momento) — Editor RCS — Permitir Alterar Formato e Nome em Qualquer Momento · Urgent · Vinicius Carneiro
+- [SEND-431](https://linear.app/sendspeed/issue/SEND-431/rcs-remover-seletor-de-tamanho-individual-de-cada-card-do-carrossel) — RCS - Remover seletor de tamanho individual de cada card do carrossel · High · Unassigned
+- [SEND-432](https://linear.app/sendspeed/issue/SEND-432/bug-link-criar-template-no-no-rcs-da-jornada-redireciona-para-pagina) — Bug — Link "Criar template" no nó RCS da jornada redireciona para página errada · Urgent · Vinicius Carneiro
+- [SEND-433](https://linear.app/sendspeed/issue/SEND-433/bug-remover-objetivo-da-jornada) — Bug: Remover Objetivo da Jornada · Urgent · Hugo Fernandes
+- [SEND-434](https://linear.app/sendspeed/issue/SEND-434/condicao-de-atributo-de-perfil-nao-funciona-na-jornada) — 🐞 - Condição de Atributo de Perfil não funciona na Jornada · Urgent · Vinicius Carneiro
+- [SEND-435](https://linear.app/sendspeed/issue/SEND-435/no-aguardar-nao-funciona-em-jornadas-externas-offsite) — 🐞 - Nó "Aguardar" não funciona em Jornadas Externas (Offsite) · Urgent · Unassigned
+- [SEND-436](https://linear.app/sendspeed/issue/SEND-436/expedite-visao-geral-segmentos-dados-errados-em-algumas-empresas-e) — 🐞 - [EXPEDITE] Visão Geral (Segmentos): dados errados em algumas empresas e tela não carrega em outras · Urgent · Vinicius Carneiro
+- [SEND-437](https://linear.app/sendspeed/issue/SEND-437/preview-do-payload-no-gatilho-inbound-externo) — 🚀 — Preview do payload no gatilho Inbound Externo · Urgent · Vinicius Carneiro
+- [SEND-439](https://linear.app/sendspeed/issue/SEND-439/investigate-send-435-analisar-journeyoffsiteprocessor-vs-insite-delay) — [INVESTIGATE] SEND-435: Analisar journeyOffsiteProcessor vs InSite delay engine · Urgent · Unassigned
+- [SEND-440](https://linear.app/sendspeed/issue/SEND-440/fix-send-435-implementar-delay-scheduling-no-offsite-processor) — [FIX] SEND-435: Implementar delay scheduling no offsite processor · Urgent · Unassigned
+- [SEND-441](https://linear.app/sendspeed/issue/SEND-441/qa-send-435-validar-fix-do-no-aguardar-em-jornadas-offsite) — [QA] SEND-435: Validar fix do no Aguardar em jornadas offsite · High · Unassigned
+- [SEND-442](https://linear.app/sendspeed/issue/SEND-442/docs-send-435-rca-rag-chunk-close-loop) — [DOCS] SEND-435: RCA + RAG chunk + close loop · Medium · Unassigned
+- [SEND-443](https://linear.app/sendspeed/issue/SEND-443/endpoint-apiauthlogin-retorna-endpoint-nao-encontrado-no-ambiente-dev) — 🐞 - Endpoint /api/auth/login retorna "Endpoint não encontrado" no ambiente DEV · Urgent · Hugo Fernandes
+- [SEND-444](https://linear.app/sendspeed/issue/SEND-444/feature-atribuir-conversoes-as-jornadas-que-impactaram-o-usuario) — Feature: Atribuir conversões às jornadas que impactaram o usuário · Urgent · Vinicius Carneiro
+- [SEND-447](https://linear.app/sendspeed/issue/SEND-447/barra-de-filtros-e-paginacao-journey-builder-e-journey-analytics) — Barra de filtros e paginação — Journey Builder e Journey Analytics · Medium · paulo.ribeiro@sendspeed.com
+- [SEND-448](https://linear.app/sendspeed/issue/SEND-448/consolidacao-de-canais-crie-em-um-lugar-orquestre-no-builder) — Consolidação de Canais - "Crie em um lugar, orquestre no Builder" · High · paulo.ribeiro@sendspeed.com
+- [SEND-451](https://linear.app/sendspeed/issue/SEND-451/feature-campo-de-imagem-via-link-na-criacao-de-template-rcs) — Feature: Campo de imagem via link na criação de template RCS · Urgent · Vinicius Carneiro
+- [SEND-453](https://linear.app/sendspeed/issue/SEND-453/feature-envio-de-card-avancado-no-rcs-da-userin) — Feature: Envio de card avançado no RCS da Userin · Urgent · Vinicius Carneiro
+- [SEND-454](https://linear.app/sendspeed/issue/SEND-454/feature-envio-de-video-e-gif-em-mensagens-rcs) — Feature: Envio de vídeo e GIF em mensagens RCS · No priority · andrei.garcia@externo.sendspeed.com
+- [SEND-456](https://linear.app/sendspeed/issue/SEND-456/envio-de-arquivos-via-rcs-com-integracao-completa-ao-userin) — 🚀 - Envio de arquivos via RCS com integração completa ao UserIn · Urgent · andrei.garcia@externo.sendspeed.com
+- [SEND-469](https://linear.app/sendspeed/issue/SEND-469/modulo-de-disparo-de-lista-fria-sms-rcs) — Módulo de Disparo de Lista Fria (SMS + RCS) · Urgent · Vinicius Carneiro
+- [SEND-470](https://linear.app/sendspeed/issue/SEND-470/monitoramento-de-entrega-via-fazendinha) — 🧩Monitoramento de Entrega via “Fazendinha” · No priority · thiago.melin@sendspeed.com
+- [SEND-472](https://linear.app/sendspeed/issue/SEND-472/alteracoes-roleta-pos-feedback-do-cliente) — Alterações roleta pós feedback do cliente · Urgent · paulo.ribeiro@sendspeed.com
+- [SEND-473](https://linear.app/sendspeed/issue/SEND-473/qualidade-de-lista-segmentos-de-lista) — Qualidade de Lista + Segmentos de Lista · Urgent · Vinicius Carneiro
+- [SEND-474](https://linear.app/sendspeed/issue/SEND-474/gestao-de-tokens-por-rota-na-sendspeed) — Gestão de Tokens por Rota na SendSpeed · No priority · Unassigned
+- [SEND-480](https://linear.app/sendspeed/issue/SEND-480/3-bugs-comentados) — 3 bugs comentados · No priority · Unassigned
+- [SEND-481](https://linear.app/sendspeed/issue/SEND-481/auditoria-de-dados) — Auditoria de dados · No priority · Unassigned
+- [SEND-482](https://linear.app/sendspeed/issue/SEND-482/envio-de-token-para-topico-kafka) — Envio de token para tópico KAFKA · No priority · Unassigned
+- [SEND-484](https://linear.app/sendspeed/issue/SEND-484/4-observabilidade-de-callback-e-padronizacao-para-o-modelo-sevenx-como) — 4. Observabilidade de callback e padronização para o modelo SevenX como default · No priority · Unassigned
+- [SEND-485](https://linear.app/sendspeed/issue/SEND-485/1-lista-fria-sem-fallback-obrigatorio-e-sem-deduplicacao-de-numeros-no) — 1. Lista fria sem fallback obrigatório e sem deduplicação de numeros no upload · Urgent · thiago.melin@sendspeed.com
+- [SEND-486](https://linear.app/sendspeed/issue/SEND-486/2-refatoracao-da-estrutura-de-jornadas) — 2. Refatoração da estrutura de jornadas · High · thiago.melin@sendspeed.com
+- [SEND-507](https://linear.app/sendspeed/issue/SEND-507/4-validacao-dos-use-cases-bulls) — 4. Validação dos Use Cases — Bulls · No priority · Unassigned

@@ -88,6 +88,10 @@ def validate_ontology(ontology: dict, root_dir: str) -> list:
             if name and not (base / name).exists():
                 errors.append(f"[{domain.get('id')}] componente inexistente: {name}")
         for sub in domain.get("subdomains", []):
+            # Subdomains marcados como "logical" nao possuem diretorio fisico proprio.
+            # Exemplos: modulos MCP, squads logicos, entidades sem path no filesystem.
+            if sub.get("type") == "logical":
+                continue
             sdir = _resolve_domain_dir(root_path, sub.get("id", ""))
             if not sdir.is_dir():
                 errors.append(f"[{sub.get('id')}] subdomain path nao existe: {sdir}")

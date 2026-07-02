@@ -1,10 +1,11 @@
 {
   "name": "MECHA Multi-Agent Orchestrator Ontology",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "generated_at": "2026-07-01T23:42:00Z",
   "generated_by": "debate-hiansen-henrique-rodolfo",
-  "curated_at": "2026-07-01",
-  "curated_by": "debate-o6-phase0-phase1",
+  "curated_at": "2026-07-02",
+  "curated_by": "debate-o6-s2-sprint",
+  "changelog_v2.2.0": "Drift fix: neo4j_mcp_server.py, rag_client.py, schemas/, neo4j_ontology_ingest.py, sendspeed_mcp_server.py, ingest_sendspeed_linear.py adicionados a ops/patterns; mecha.html path corrigido (ops); squads fantasma removidos do dominio squads; squads reais + sendspeed registrados; linear-export adicionado como Knowledge Base; dominio sendspeed criado com 5 modulos MCP.",
   "root": "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha",
   "layers": {
     "kernel":        {"description": "Governanca e validacao transversal (Pydantic, AST, emoji rails)", "domains": ["kernel"]},
@@ -32,6 +33,7 @@
         {"name": "mecha_app.py", "type": "Module"},
         {"name": "mecha.ps1", "type": "CLI"},
         {"name": "mecha.html", "type": "UI"},
+        {"name": "neo4j_ontology_ingest.py", "type": "Module"},
         {"name": "build_mecha.ps1", "type": "Script"},
         {"name": "profile.ps1", "type": "Config"}
       ],
@@ -63,12 +65,16 @@
             {"name": "hermes_auditor.py", "type": "Module"},
             {"name": "ide_backend.py", "type": "Module"},
             {"name": "ingest_conversations_qdrant.py", "type": "Module"},
+            {"name": "ingest_sendspeed_linear.py", "type": "Module"},
             {"name": "load_skills_qdrant.py", "type": "Module"},
             {"name": "mcp_codebase_transform.py", "type": "Module"},
             {"name": "mecha_mcp_server.py", "type": "Module"},
+            {"name": "neo4j_mcp_server.py", "type": "Module"},
             {"name": "neo4j_orchestration_bridge.py", "type": "Module"},
             {"name": "qa_squad_runner.py", "type": "Module"},
             {"name": "qdrant_client_helper.py", "type": "Module"},
+            {"name": "rag_client.py", "type": "Module"},
+            {"name": "sendspeed_mcp_server.py", "type": "Module"},
             {"name": "shura_daemon.py", "type": "Module"},
             {"name": "shura_gate.py", "type": "Module"},
             {"name": "squad_orchestrator.py", "type": "Module"},
@@ -76,6 +82,11 @@
             {"name": "telegram_relay.py", "type": "Module"},
             {"name": "webview_toolkit_mcp.py", "type": "Module"}
           ]
+        },
+        {
+          "id": "ops/patterns/schemas",
+          "description": "Schemas de validação e contratos de dados (Pydantic, JSON Schema).",
+          "components": []
         },
         {
           "id": "ops/patterns/tests",
@@ -86,7 +97,9 @@
             {"name": "test_freescout.py", "type": "Test"},
             {"name": "test_mecha_bus.py", "type": "Test"},
             {"name": "test_phase1_pure_logic.py", "type": "Test"},
-            {"name": "test_phase3_api_network.py", "type": "Test"}
+            {"name": "test_phase3_api_network.py", "type": "Test"},
+            {"name": "test_workspace_root_contract.py", "type": "Test"},
+            {"name": "test_sendspeed_absorption.py", "type": "Test"}
           ]
         }
       ]
@@ -122,7 +135,73 @@
       "type": "Knowledge Base",
       "path": "CORE",
       "description": "Base de conhecimento versionada (~50 notas markdown). Fonte de verdade para RAG e grafo. Pós-dedup: ~50 arquivos únicos + 1 divergente.",
-      "components": []
+      "components": [],
+      "subdomains": [
+        {
+          "id": "CORE/sendspeed",
+          "description": "Conhecimento curado do domínio SendSpeed (5 docs markdown com frontmatter validado): callbacks, journeys, channels, integrations, contracts.",
+          "components": [
+            {"name": "callbacks.md",    "type": "Documentation"},
+            {"name": "journeys.md",     "type": "Documentation"},
+            {"name": "channels.md",     "type": "Documentation"},
+            {"name": "integrations.md", "type": "Documentation"},
+            {"name": "contracts.md",    "type": "Documentation"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "linear-export",
+      "type": "Knowledge Base",
+      "path": "linear-export",
+      "description": "Export bruto do Linear (317 issues SEND-*). Fonte de ingestão — lido in place via SENDSPEED_EXPORT_DIR. Não movido sem GO do Hugo (P2 HITL). Indexado em Qdrant collection sendspeed_knowledge via ingest_sendspeed_linear.py.",
+      "components": [
+        {"name": "index.json", "type": "Index"}
+      ]
+    },
+    {
+      "id": "sendspeed",
+      "type": "Knowledge Domain",
+      "path": "CORE/sendspeed",
+      "description": "Domínio de produto SendSpeed absorvido no MECHA (debate O6 #2, 2026-07-01). Conhecimento curado em CORE/sendspeed/; 317 issues no linear-export; MCP server sendspeed-mecha (17 tools read-only); squad sendspeed_squad com 6 agentes especializados; collection Qdrant sendspeed_knowledge.",
+      "components": [
+        {"name": "sendspeed_mcp_server.py",    "type": "Module",  "defined_in": "ops/patterns"},
+        {"name": "sendspeed_squad.json",       "type": "Config",  "defined_in": "intelligence/squads"},
+        {"name": "sendspeed_workflows.json",   "type": "Config",  "defined_in": "intelligence/squads"},
+        {"name": "ingest_sendspeed_linear.py", "type": "Module",  "defined_in": "ops/patterns"}
+      ],
+      "subdomains": [
+        {
+          "id": "sendspeed::catalog",
+          "type": "logical",
+          "description": "Módulo sendspeed_catalog — 5 tools: sendspeed_status, sendspeed_module_map, sendspeed_find_issue, sendspeed_search, sendspeed_gaps.",
+          "components": []
+        },
+        {
+          "id": "sendspeed::callbacks",
+          "type": "logical",
+          "description": "Módulo sendspeed_callbacks — 3 tools: crm_postback_contract, crm_status_depara, callback_pipeline_map. Épica multi-CRM Smartico+FastTrack (SEND-488).",
+          "components": []
+        },
+        {
+          "id": "sendspeed::journeys",
+          "type": "logical",
+          "description": "Módulo sendspeed_journeys — 4 tools: journey_engine_map, journey_trigger_contract, journey_objective_attribution, journey_catalog.",
+          "components": []
+        },
+        {
+          "id": "sendspeed::channels",
+          "type": "logical",
+          "description": "Módulo sendspeed_channels — 2 tools: channel_send_spec, otp_flow_spec. Canais SMS/RCS/WhatsApp+OTP Infobip.",
+          "components": []
+        },
+        {
+          "id": "sendspeed::integrations",
+          "type": "logical",
+          "description": "Módulo sendspeed_integrations — 3 tools: igaming_webhook_pattern, webhook_security_spec, crm_adapter_registry. iGaming NGX/UserIn.",
+          "components": []
+        }
+      ]
     },
     {
       "id": "intelligence",
@@ -140,12 +219,14 @@
             {"name": "devops_squad.json", "type": "Config"},
             {"name": "product_squad.json", "type": "Config"},
             {"name": "tribunal_squad.json", "type": "Config"},
+            {"name": "sendspeed_squad.json", "type": "Config"},
             {"name": "code_workflows.json", "type": "Config"},
             {"name": "devops_workflows.json", "type": "Config"},
             {"name": "qa_workflows.json", "type": "Config"},
             {"name": "product_workflows.json", "type": "Config"},
             {"name": "orchestration_workflows.json", "type": "Config"},
-            {"name": "tribunal_workflows.json", "type": "Config"}
+            {"name": "tribunal_workflows.json", "type": "Config"},
+            {"name": "sendspeed_workflows.json", "type": "Config"}
           ]
         },
         {
@@ -174,11 +255,15 @@
       "id": "squads",
       "type": "Logical Domain",
       "path": "intelligence/squads",
-      "description": "Squads são entidades LÓGICAS definidas em intelligence/squads/*.json e executadas pelos runners de ops/patterns. Diretórios físicos vazios (FRONT_VANGUARD, INFRA_LEGION, VECTOR_CORPS) removidos no Phase 0 do debate O6 (2026-07-01) — zero referências de código.",
+      "description": "Squads são entidades LÓGICAS definidas em intelligence/squads/*.json. Squads físicos vazios (FRONT_VANGUARD, INFRA_LEGION, VECTOR_CORPS) removidos no Phase 0 debate O6 — zero referências de código.",
       "components": [
-        {"name": "FRONT_VANGUARD", "type": "Squad", "defined_in": "intelligence/squads"},
-        {"name": "INFRA_LEGION", "type": "Squad", "defined_in": "intelligence/squads"},
-        {"name": "VECTOR_CORPS", "type": "Squad", "defined_in": "intelligence/squads"}
+        {"name": "dev_squad.json",       "type": "Squad"},
+        {"name": "qa_squad.json",        "type": "Squad"},
+        {"name": "qa_2_squad.json",      "type": "Squad"},
+        {"name": "devops_squad.json",    "type": "Squad"},
+        {"name": "product_squad.json",   "type": "Squad"},
+        {"name": "tribunal_squad.json",  "type": "Squad"},
+        {"name": "sendspeed_squad.json", "type": "Squad"}
       ]
     },
     {
