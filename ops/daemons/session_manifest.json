@@ -1,0 +1,29 @@
+{
+  "session": {
+    "id": "2026-06-28-mecha-tooling",
+    "title": "MechaShell + host-bridge + daemons + ingestao",
+    "date": "2026-06-28"
+  },
+  "artifacts": [
+    {"id": "art-mechashell", "name": "MechaShell (lean DC)", "kind": "tool/mcp", "path": "dc-lean/src/mecha_shell.py", "pillar": "TOOLING",
+     "summary": "Servidor MCP enxuto de 6 tools (run/read/write/edit/ls/find); ~448 tokens de schema vs ~5920 do Desktop Commander (-92%); paridade funcional 10/10."},
+    {"id": "art-skill-mechashell", "name": "skill mecha-shell", "kind": "skill", "path": "dc-lean/gemini/skills/mecha-shell", "pillar": "TOOLING",
+     "summary": "Guia de uso enxuto do MechaShell com progressive disclosure (nao pesa no schema)."},
+    {"id": "art-skill-hostbridge", "name": "skill host-bridge-diagnostics", "kind": "skill", "path": ".mecha/ops/daemons/daemonize", "pillar": "OBSERVABILITY",
+     "summary": "Ponte sandbox->host via Desktop Commander; verifica o Gemeo Digital; v2 enumera candidatos e checa 3 causas de grafo vazio."},
+    {"id": "art-skill-daemonize", "name": "skill daemonize", "kind": "skill", "path": ".mecha/ops/daemons/daemonize", "pillar": "GOVERNANCE",
+     "summary": "Transforma agendamento (cron) em daemon resiliente; bundle do mecha_daemon.py."},
+    {"id": "art-daemon-engine", "name": "mecha_daemon.py", "kind": "daemon/engine", "path": ".mecha/ops/daemons/mecha_daemon.py", "pillar": "GOVERNANCE",
+     "summary": "Motor de daemon: lockfile single-instance, fail-closed, backoff, heartbeat/status, shutdown gracioso."},
+    {"id": "art-cost-monitor", "name": "cost_monitor daemon", "kind": "daemon", "path": ".mecha/ops/daemons/cost_monitor.py", "pillar": "OBSERVABILITY",
+     "summary": "Monitora o custo de tokens do MechaShell a cada 6h; loga em cost_log.csv e avisa no plato."},
+    {"id": "art-twin-monitor", "name": "digital_twin_monitor daemon", "kind": "daemon", "path": ".mecha/ops/daemons/digital_twin_monitor.py", "pillar": "OBSERVABILITY",
+     "summary": "Monitor continuo do Neo4j; alerta grafo zerado / twin parado / transicao para zero; status.json p/ o painel Electron."},
+    {"id": "art-design-doc", "name": "INTEGRACAO_RAGDOJO_OMEGA_MECHA", "kind": "doc/adr", "path": ".mecha/INTEGRACAO_RAGDOJO_OMEGA_MECHA.md", "pillar": "GOVERNANCE",
+     "summary": "Pipeline de graduacao rag-dojo->Omega/Mecha; padroniza Qdrant+Neo4j; clean-room preservado; validado 100% pelo dynamic_typing."},
+    {"id": "finding-twin-real", "name": "Finding: o twin real e mecha_ontology_graph", "kind": "finding", "path": "-", "pillar": "KNOWLEDGE",
+     "summary": "cdc_neo4j esta vazio e sem volume; o Gemeo Digital real e mecha_ontology_graph (349 nos, 24 labels, volume nomeado infrastructure_neo4j_data) - dar docker start, NAO re-ingerir."},
+    {"id": "finding-bridge-drift", "name": "Finding: drift id vs qdrant_id", "kind": "finding", "path": "-", "pillar": "KNOWLEDGE",
+     "summary": "Ingester canonico e dorkling_ingestion; scripts antigos buscam qdrant_id (sondas descartaveis); mecha-qdrant/omega_qdrant tem ~75 pontos."}
+  ]
+}

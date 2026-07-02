@@ -1,0 +1,15 @@
+{
+  "_comment": "Mescle em ~/.gemini/config/mcp_config.json (Antigravity/Gemini). Requer 'uv' instalado (pip install uv). O Neo4j precisa estar VIVO. Tools expostas: get_neo4j_schema, read_neo4j_cypher, write_neo4j_cypher.",
+  "mcpServers": {
+    "mecha-neo4j": {
+      "command": "uvx",
+      "args": ["mcp-neo4j-cypher@0.6.0", "--transport", "stdio"],
+      "env": {
+        "NEO4J_URI": "bolt://localhost:7687",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "rootroot",
+        "NEO4J_DATABASE": "neo4j"
+      }
+    }
+  }
+}
