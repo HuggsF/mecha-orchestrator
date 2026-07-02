@@ -1,506 +1,249 @@
 {
   "name": "MECHA Multi-Agent Orchestrator Ontology",
-  "version": "1.0.0",
+  "version": "2.0.0",
+  "generated_at": "2026-07-01T23:42:00Z",
+  "generated_by": "debate-hiansen-henrique-rodolfo",
   "root": "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha",
   "domains": [
     {
       "id": "ops",
       "type": "Core Domain",
-      "path": ".mecha/ops",
-      "description": "Domínio responsável pelos fluxos de ops",
+      "path": "ops",
+      "description": "Núcleo operacional — scripts, daemons, CLI SDK, dashboard, build e infraestrutura local.",
       "components": [
+        {"name": "bootstrap.js", "type": "Module"},
+        {"name": "bootstrap_project.py", "type": "Module"},
+        {"name": "enviar_relatorio_telegram.py", "type": "Module"},
+        {"name": "generate_ontology.py", "type": "Module"},
+        {"name": "mecha_app.py", "type": "Module"},
+        {"name": "mecha.ps1", "type": "CLI"},
+        {"name": "mecha.html", "type": "UI"},
+        {"name": "build_mecha.ps1", "type": "Script"},
+        {"name": "profile.ps1", "type": "Config"}
+      ],
+      "subdomains": [
         {
-          "name": "bootstrap.js",
-          "type": "Module"
+          "id": "ops/patterns",
+          "description": "Componentes Python — toda a execução funcional (Claw, squads, bots, RAG, testes).",
+          "components": [
+            {"name": "agent_bus.py", "type": "Module"},
+            {"name": "amanda_teams_bot.py", "type": "Module"},
+            {"name": "antigravity.py", "type": "Module"},
+            {"name": "awesome_bots_orchestrator.py", "type": "Module"},
+            {"name": "claw_brain.py", "type": "Module"},
+            {"name": "claw_canvas.py", "type": "Module"},
+            {"name": "claw_comfy.py", "type": "Module"},
+            {"name": "claw_control.py", "type": "Module"},
+            {"name": "claw_cv.py", "type": "Module"},
+            {"name": "claw_freescout.py", "type": "Module"},
+            {"name": "claw_graph.py", "type": "Module"},
+            {"name": "claw_loop.py", "type": "Module"},
+            {"name": "claw_ocr.py", "type": "Module"},
+            {"name": "claw_squad_bridge.py", "type": "Module"},
+            {"name": "claw_vision.py", "type": "Module"},
+            {"name": "code_squad_runner.py", "type": "Module"},
+            {"name": "cross_squad_router.py", "type": "Module"},
+            {"name": "devops_squad_runner.py", "type": "Module"},
+            {"name": "dorkling_rag_ingester.py", "type": "Module"},
+            {"name": "ghost_worker.py", "type": "Module"},
+            {"name": "hermes_auditor.py", "type": "Module"},
+            {"name": "ide_backend.py", "type": "Module"},
+            {"name": "ingest_conversations_qdrant.py", "type": "Module"},
+            {"name": "load_skills_qdrant.py", "type": "Module"},
+            {"name": "mcp_codebase_transform.py", "type": "Module"},
+            {"name": "mecha_mcp_server.py", "type": "Module"},
+            {"name": "neo4j_orchestration_bridge.py", "type": "Module"},
+            {"name": "qa_squad_runner.py", "type": "Module"},
+            {"name": "qdrant_client_helper.py", "type": "Module"},
+            {"name": "shura_daemon.py", "type": "Module"},
+            {"name": "shura_gate.py", "type": "Module"},
+            {"name": "squad_orchestrator.py", "type": "Module"},
+            {"name": "telegram_bot.py", "type": "Module"},
+            {"name": "telegram_relay.py", "type": "Module"},
+            {"name": "webview_toolkit_mcp.py", "type": "Module"}
+          ]
         },
         {
-          "name": "enviar_relatorio_telegram.py",
-          "type": "Module"
-        },
-        {
-          "name": "generate_ontology.py",
-          "type": "Module"
-        },
-        {
-          "name": "mecha_app.py",
-          "type": "Module"
+          "id": "ops/patterns/tests",
+          "description": "Suites de teste unitário e E2E.",
+          "components": [
+            {"name": "test_e2e_eventbus.py", "type": "Test"},
+            {"name": "test_e2e_tribunal.py", "type": "Test"},
+            {"name": "test_freescout.py", "type": "Test"},
+            {"name": "test_mecha_bus.py", "type": "Test"},
+            {"name": "test_phase1_pure_logic.py", "type": "Test"},
+            {"name": "test_phase3_api_network.py", "type": "Test"}
+          ]
         }
       ]
-    },
-    {
-      "id": "squads",
-      "type": "Core Domain",
-      "path": ".mecha/squads",
-      "description": "Domínio responsável pelos fluxos de squads",
-      "components": []
     },
     {
       "id": "rag-dojo",
       "type": "Core Domain",
-      "path": ".mecha/rag-dojo",
-      "description": "**RAG Spiral Training** — do zero ao estado da arte em 6 espirais.",
+      "path": "rag-dojo",
+      "description": "RAG Spiral Training — repositório autônomo com 6 espirais (chunks → graph → orchestration → cognitive → economics → state-of-art).",
       "components": [
-        {
-          "name": "CLAUDE.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "cli.py",
-          "type": "Module"
-        },
-        {
-          "name": "contracts.py",
-          "type": "Module"
-        },
-        {
-          "name": "guia_patterns_funcionais_v2.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "pipeline_factory.py",
-          "type": "Module"
-        },
-        {
-          "name": "README.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "replication_checklist_bulletproof_v2.md",
-          "type": "Documentation"
-        }
+        {"name": "cli.py", "type": "Module"},
+        {"name": "contracts.py", "type": "Module"},
+        {"name": "pipeline_factory.py", "type": "Module"},
+        {"name": "Dockerfile", "type": "Config"},
+        {"name": "Makefile", "type": "Config"},
+        {"name": "pyproject.toml", "type": "Config"},
+        {"name": "CLAUDE.md", "type": "Documentation"},
+        {"name": "README.md", "type": "Documentation"},
+        {"name": "guia_patterns_funcionais_v2.md", "type": "Documentation"},
+        {"name": "replication_checklist_bulletproof_v2.md", "type": "Documentation"}
+      ],
+      "subdomains": [
+        {"id": "rag-dojo/spiral_01_chunks", "description": "Espiral 1 — Chunking e embeddings básicos."},
+        {"id": "rag-dojo/spiral_02_graph", "description": "Espiral 2 — Graph RAG."},
+        {"id": "rag-dojo/spiral_03_orchestration", "description": "Espiral 3 — Orquestração de pipelines."},
+        {"id": "rag-dojo/spiral_04_cognitive", "description": "Espiral 4 — RAG cognitivo."},
+        {"id": "rag-dojo/spiral_05_economics", "description": "Espiral 5 — Economia de tokens e custo."},
+        {"id": "rag-dojo/spiral_06_state_of_art", "description": "Espiral 6 — Estado da arte."}
       ]
     },
     {
-      "id": "kernel",
-      "type": "Core Domain",
-      "path": ".mecha/kernel",
-      "description": "Domínio responsável pelos fluxos de kernel",
-      "components": []
-    },
-    {
-      "id": "behavior",
-      "type": "Core Domain",
-      "path": ".mecha/behavior",
-      "description": "Domínio responsável pelos fluxos de behavior",
+      "id": "CORE",
+      "type": "Knowledge Base",
+      "path": "CORE",
+      "description": "Base de conhecimento versionada (~50 notas markdown). Fonte de verdade para RAG e grafo. Pós-dedup: ~50 arquivos únicos + 1 divergente.",
       "components": []
     },
     {
       "id": "intelligence",
       "type": "Core Domain",
-      "path": ".mecha/intelligence",
-      "description": "Domínio responsável pelos fluxos de intelligence",
-      "components": []
-    },
-    {
-      "id": "foundation",
-      "type": "Core Domain",
-      "path": ".mecha/foundation",
-      "description": "Domínio responsável pelos fluxos de foundation",
-      "components": []
-    },
-    {
-      "id": "governance",
-      "type": "Core Domain",
-      "path": ".mecha/governance",
-      "description": "Domínio responsável pelos fluxos de governance",
-      "components": []
-    },
-    {
-      "id": "test_db",
-      "type": "Core Domain",
-      "path": ".mecha/test_db",
-      "description": "Domínio responsável pelos fluxos de test_db",
-      "components": []
-    },
-    {
-      "id": "docs",
-      "type": "Core Domain",
-      "path": ".mecha/docs",
-      "description": "Domínio responsável pelos fluxos de docs",
-      "components": [
+      "path": "intelligence",
+      "description": "Definições organizacionais — squads JSON, playbooks de execução, regras de orquestração.",
+      "subdomains": [
         {
-          "name": "ANTIGRAVITY_BRIDGE_PROMPT.md",
-          "type": "Documentation"
+          "id": "intelligence/squads",
+          "description": "Definições JSON dos squads (dev, qa, devops, product, tribunal).",
+          "components": [
+            {"name": "dev_squad.json", "type": "Config"},
+            {"name": "qa_squad.json", "type": "Config"},
+            {"name": "qa_2_squad.json", "type": "Config"},
+            {"name": "devops_squad.json", "type": "Config"},
+            {"name": "product_squad.json", "type": "Config"},
+            {"name": "tribunal_squad.json", "type": "Config"},
+            {"name": "code_workflows.json", "type": "Config"},
+            {"name": "devops_workflows.json", "type": "Config"},
+            {"name": "qa_workflows.json", "type": "Config"},
+            {"name": "product_workflows.json", "type": "Config"},
+            {"name": "orchestration_workflows.json", "type": "Config"},
+            {"name": "tribunal_workflows.json", "type": "Config"}
+          ]
         },
         {
-          "name": "EVENT_BUS.md",
-          "type": "Documentation"
+          "id": "intelligence/playbooks",
+          "description": "Playbooks de execução para RPA e DevSquad.",
+          "components": [
+            {"name": "devsquad_ast_validator.md", "type": "Documentation"},
+            {"name": "devsquad_pydantic_contracts.md", "type": "Documentation"},
+            {"name": "devsquad_qdrant_rag.md", "type": "Documentation"},
+            {"name": "devsquad_ttl_cache.md", "type": "Documentation"},
+            {"name": "rpa_crm_trigger.md", "type": "Documentation"},
+            {"name": "rpa_demo.md", "type": "Documentation"},
+            {"name": "rpa_obsidian_log.md", "type": "Documentation"}
+          ]
+        },
+        {
+          "id": "intelligence/rules",
+          "description": "Regras de orquestração.",
+          "components": [
+            {"name": "orchestration_rules.json", "type": "Config"}
+          ]
         }
       ]
     },
     {
-      "id": "CORE",
-      "type": "Core Domain",
-      "path": ".mecha/CORE",
-      "description": "Domínio responsável pelos fluxos de CORE",
+      "id": "squads",
+      "type": "Logical Domain",
+      "path": "intelligence/squads",
+      "description": "Squads são entidades LÓGICAS definidas em intelligence/squads/*.json e executadas pelos runners de ops/patterns. Diretórios físicos vazios (FRONT_VANGUARD, INFRA_LEGION, VECTOR_CORPS) removidos no Phase 0 do debate O6 (2026-07-01) — zero referências de código.",
       "components": [
-        {
-          "name": "AI-OS-META-SEGMENTED.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "aprendizado-vanessa(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "aprendizado-vanessa.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "arquitetura-projeto(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "arquitetura-projeto.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "claudio-requisitos-v1.1(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "claudio-requisitos-v1.1.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-arcgis-sde-postgresql(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-arcgis-sde-postgresql.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-cdp-browser-debug(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-cdp-browser-debug.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-etl-convenios(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-etl-convenios.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-rag-chromadb(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "conhecimento-rag-chromadb.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "diretriz-ai-os-meta-segmented(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "diretriz-ai-os-meta-segmented.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-credenciais(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-credenciais.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-gdrive-leitura(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-gdrive-leitura.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-memoria-somente-drive(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-memoria-somente-drive.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-monitoramento-eventos(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-monitoramento-eventos.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-padrao-codigo-vanessa(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-padrao-codigo-vanessa.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-rotina-sessao(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-rotina-sessao.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-separacao-projetos(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-separacao-projetos.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-sincronia-dna-vanessa(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-sincronia-dna-vanessa.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-tom-personalidade(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "feedback-tom-personalidade.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "gemini-sync.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "mapa-de-estudo-vanessa(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "mapa-de-estudo-vanessa.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "MEMORY(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "memory-work-etl-consulta-portal(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "memory-work-etl-consulta-portal.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "memory-work-etl-gdrive(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "memory-work-etl-gdrive.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "MEMORY.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "migracao-maquina(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "migracao-maquina.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-arcgis-prefeitura(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-arcgis-prefeitura.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-claudio-bot(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-claudio-bot.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-rag-vanessa(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "projeto-rag-vanessa.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "repo-claudio-kb(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "repo-claudio-kb.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "validacao-pipeline(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "validacao-pipeline.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-05(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-05.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-15(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-15.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-16(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-16.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-17(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-17.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-18(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-18.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-22(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-22.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-24(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-24-b(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-24-b.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-24.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-25(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-25.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-26(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-26-b(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-26-b.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-26.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-27(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-27-b(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-27-b.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-27.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-30(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-30.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-31(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-03-31.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-02(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-02.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-03(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-03.md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-06(1).md",
-          "type": "Documentation"
-        },
-        {
-          "name": "vanessa-sessao-2026-04-06.md",
-          "type": "Documentation"
+        {"name": "FRONT_VANGUARD", "type": "Squad", "defined_in": "intelligence/squads"},
+        {"name": "INFRA_LEGION", "type": "Squad", "defined_in": "intelligence/squads"},
+        {"name": "VECTOR_CORPS", "type": "Squad", "defined_in": "intelligence/squads"}
+      ]
+    },
+    {
+      "id": "kernel",
+      "type": "Core Domain",
+      "path": "kernel",
+      "description": "Camada de governança e validação transversal (Pydantic + AST + emoji rails). Destino canônico dos validadores.",
+      "subdomains": [
+        {
+          "id": "kernel/validators",
+          "description": "Validadores de governança.",
+          "components": [
+            {"name": "dynamic_typing.py", "type": "Module"}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "docs",
+      "type": "Supporting Domain",
+      "path": "docs",
+      "description": "Documentação técnica de integração.",
+      "components": [
+        {"name": "ANTIGRAVITY_BRIDGE_PROMPT.md", "type": "Documentation"},
+        {"name": "EVENT_BUS.md", "type": "Documentation"}
+      ]
+    },
+    {
+      "id": "test_db",
+      "type": "Supporting Domain",
+      "path": "test_db",
+      "description": "Coverage reports e testes de integração de banco.",
+      "components": [
+        {"name": "coverage_report_amanda.md", "type": "Test"},
+        {"name": "coverage_report_loop.md", "type": "Test"},
+        {"name": "coverage_report_ocr.md", "type": "Test"},
+        {"name": "coverage_report_telegram.md", "type": "Test"},
+        {"name": "coverage_report_vision_control.md", "type": "Test"},
+        {"name": "meta.json", "type": "Config"}
+      ]
+    },
+    {
+      "id": "orchestrator-core",
+      "type": "Core Domain",
+      "path": "../ORCHESTRATOR_CORE",
+      "description": "Orchestrator Core system — real-time operational and cognitive dual-write CDC pipelines, SaaS tenant manager, and central observability interface.",
+      "subdomains": [
+        {
+          "id": "orchestrator-core/frontend",
+          "description": "Vite/React Observability Dashboard UI.",
+          "components": [
+            {"name": "observability-portal", "type": "UI"}
+          ]
+        },
+        {
+          "id": "orchestrator-core/observability-api",
+          "description": "FastAPI metrics, logs, and traces provider.",
+          "components": [
+            {"name": "main.py", "type": "Module"}
+          ]
+        },
+        {
+          "id": "orchestrator-core/saas",
+          "description": "Clean Architecture SaaS manager (auth, billing, tenants).",
+          "components": [
+            {"name": "tenant_manager.py", "type": "Module"},
+            {"name": "billing.py", "type": "Module"},
+            {"name": "auth.py", "type": "Module"}
+          ]
+        },
+        {
+          "id": "orchestrator-core/labs",
+          "description": "CDC pipeline and machine learning inference API (Debezium + Kafka + XGBoost + Neo4j).",
+          "components": [
+            {"name": "ignition.py", "type": "Script"},
+            {"name": "ml_inference_api.py", "type": "Module"},
+            {"name": "cognitive_middleware.py", "type": "Module"},
+            {"name": "second_brain_ingestor.py", "type": "Module"}
+          ]
         }
       ]
     }

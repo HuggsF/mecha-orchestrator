@@ -21,3 +21,6 @@ ops/venv_build/
 
 # === Node / Husky ===
 node_modules/
+
+# Codebase transform state (auto-generated)
+.codebase-transform-state.json

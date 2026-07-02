@@ -198,7 +198,7 @@ Rodar `cycle_manager` (spiral_06) sobre o stack de produção em modo *guardrail
 
 1. **Fronteira de sentido único:** dado real **nunca** entra no dojo; só contrato/componente sai.
 2. **Carta do dojo intacta:** as 7 regras invioláveis continuam valendo dentro de `.mecha/rag-dojo`.
-3. **Kill-lixo:** artefatos de graduação (zips, capturas) são removidos após o PR — Lei do Claw.
+3. **Ephemeral Asset Pruning (Kill-lixo):** artefatos de graduação (zips, capturas) são removidos após o PR — Lei do Claw.
 4. **Segredos:** `.env` permanece no pod; nada de credencial real no repo do dojo.
 
 ### 6.2 Decisões que o System Design precisa bater o martelo
@@ -211,7 +211,7 @@ Rodar `cycle_manager` (spiral_06) sobre o stack de produção em modo *guardrail
 ### 6.3 Validação (AST + Pydantic + emoji rails)
 
 Este doc deve passar pelo validador de governança antes do merge:
-`python .mecha/ops/patterns/dynamic_typing.py --validate .mecha/INTEGRACAO_RAGDOJO_OMEGA_MECHA.md`
+`python .mecha/kernel/validators/dynamic_typing.py --validate .mecha/INTEGRACAO_RAGDOJO_OMEGA_MECHA.md`
 — hierarquia H1→H2→H3 sem saltos, frontmatter `emoji_rail` presente.
 
 ## 7. Próximo passo
