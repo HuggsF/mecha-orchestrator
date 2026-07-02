@@ -2,12 +2,12 @@
 
 > Derivado da matriz do `synthesis_report.md` (debate O6, 2026-07-01). Phase 0 executada.
 
-## Phase 1 (aprovada — em execução)
+## Phase 1 (executada em 2026-07-01)
 
-- [ ] Item 7 — ORCHESTRATOR_CORE: `scripts/` + `ingestion/`, mover 15 scripts da raiz sem renomear (backup em `_archive/`, py_compile + verify pós-move)
-- [ ] Item 8 — Materializar `rag_client.py` (facade Qdrant+Neo4j) em `ops/patterns/`
-- [ ] Item 9 — `generate_ontology.py`: validação estrutural + diff contra filesystem antes de escrever
-- [ ] Item 10 — Mapear domínio→camada na `mecha_ontology.json` (bloco `layers`)
+- [x] Item 7 — ORCHESTRATOR_CORE reorganizado: `ingestion/` (graphrag, kafka, verify, middleware, test_producer) + `scripts/` (11 probes/diag). py_compile 14 OK; verify_ingestion PONTE INTACTA + score 0.74
+- [x] Item 8 — `rag_client.py` materializado em `ops/patterns/` (vector_search, graph_query, hybrid_search; fail-safe)
+- [x] Item 9 — `generate_ontology.py` blindado: validação contra filesystem + guard anti-clobber de versão curada (+ backup .bak). Guard testado: recusou v1.0.0 sobre v2.1.0
+- [x] Item 10 — Bloco `layers` (10 camadas) na `mecha_ontology.json` v2.1.0
 
 ## P2 (backlog — exige decisão humana)
 

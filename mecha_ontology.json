@@ -1,9 +1,23 @@
 {
   "name": "MECHA Multi-Agent Orchestrator Ontology",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "generated_at": "2026-07-01T23:42:00Z",
   "generated_by": "debate-hiansen-henrique-rodolfo",
+  "curated_at": "2026-07-01",
+  "curated_by": "debate-o6-phase0-phase1",
   "root": "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha",
+  "layers": {
+    "kernel":        {"description": "Governanca e validacao transversal (Pydantic, AST, emoji rails)", "domains": ["kernel"]},
+    "execution":     {"description": "Runners, bots, Claw engine, agent bus", "domains": ["ops"]},
+    "knowledge":     {"description": "Fonte de verdade (vault Obsidian/CORE)", "domains": ["CORE"]},
+    "index":         {"description": "Indices derivados: Qdrant (vetorial) + Neo4j (grafo) via rag_client", "domains": ["ops"]},
+    "ingestion":     {"description": "Esteiras de ingestao e CDC", "domains": ["ops", "orchestrator-core"]},
+    "observability": {"description": "Metricas, logs e traces", "domains": ["orchestrator-core"]},
+    "interface":     {"description": "Studio, Teams, Telegram, CLI mecha.ps1, dashboards", "domains": ["ops", "orchestrator-core"]},
+    "orchestration": {"description": "Definicoes logicas de squads e workflows", "domains": ["squads", "intelligence"]},
+    "training":      {"description": "RAG Spiral Training (nao-producao)", "domains": ["rag-dojo"]},
+    "quality":       {"description": "Testes e coverage", "domains": ["ops", "test_db"]}
+  },
   "domains": [
     {
       "id": "ops",

@@ -12,7 +12,7 @@
 | Análise Rodolfo             | DONE   | 6 findings — §2.3 |
 | Síntese + conflitos         | DONE   | 3 conflitos, tiebreaker Henrique — §3 |
 | Matriz P0/P1/P2             | DONE   | 11 ações — §4 |
-| HITL Go/No-Go               | WAITING| Nenhuma deleção/movimentação executada |
+| HITL Go/No-Go               | GO     | GO Phase 0+1 aprovado — matriz 1-10 executada em 2026-07-01, smokes verdes |
 
 ## Pré-requisitos O6 (modo cirúrgico — WARNING, não bloqueante)
 - S1 doc-first-bootstrap: INCOMPLETO — ARCHITECTURE.md e NEXT_STEPS.md são stubs de template

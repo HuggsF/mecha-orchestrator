@@ -153,3 +153,28 @@ Nenhuma ação da matriz foi executada. Aguardando Go/No-Go do líder técnico:
 Rollback: `git reset --hard` no commit anterior à execução (por item, commits isolados).
 
 *Gerado pelo debate O6 — Hiansen // Henrique // Rodolfo — orquestrado via Cowork.*
+
+---
+
+## 6. Execução (GO Phase 0+1 — 2026-07-01)
+
+| # | Ação | Status | Evidência de smoke |
+|---|------|--------|--------------------|
+| 1 | Ontologia corrigida (kernel, squads lógicos, paths, +componentes) | DONE | JSON válido v2.1.0, 9 domínios |
+| 2 | Squads físicos vazios removidos | DONE | grep: zero refs de código; rmdir sem erro |
+| 3 | Debris arquivado (4 zips), (1) divergente renomeado, test_db/OC dissolvido | DONE | `_archive/o6-cleanup-2026-07-01/` |
+| 4 | Suíte unificada em tests/ + conftest central | DONE | pytest --collect-only: 280 testes, 0 erros de import |
+| 5 | conhecimento-rag-chromadb.md deprecated | DONE | frontmatter status/superseded_by |
+| 6 | ARCHITECTURE.md + NEXT_STEPS.md reais; state file criado | DONE | O6 in_progress no state |
+| 7 | ORCHESTRATOR_CORE: ingestion/ + scripts/ (16 arquivos, backup prévio) | DONE | py_compile 14 OK; verify_ingestion: PONTE INTACTA, score 0.7444 |
+| 8 | rag_client.py (facade Qdrant+Neo4j) | DONE | py_compile OK; graph fail-safe |
+| 9 | generate_ontology.py com validação + anti-clobber | DONE | guard recusou v1.0.0 sobre v2.1.0 (exit 1) |
+| 10 | layers na ontologia (10 camadas) | DONE | JSON válido |
+| 11 | OneDrive + git aninhado rag-dojo | P2 | pendente decisão humana |
+
+Commits (.mecha, branch squad/qa/test-loop): 57dde6e (ontologia+docs), 427dabd (higienização), f326576 (testes) + Phase 1 na sequência. rag-dojo: fix do transform-status (O6 no registry).
+
+**Avisos registrados pelo executor:**
+- ORCHESTRATOR_CORE não é repositório git — rollback do item 7 é o backup em `_archive/o6-pre-move-backup-OC/`. Recomendação: `git init` (decisão humana).
+- Os commits varreram também alterações pré-existentes pendentes na working tree (dedup antigo do CORE, edições em ide_backend/qdrant_client_helper/telegram_bot) — estavam não-commitadas antes da sessão.
+- `ops/qdrant_db/` (dados vivos do Qdrant) está versionado no git e sincronizado no OneDrive — recomendação forte do Rodolfo: gitignorar + excluir do sync (P2).
