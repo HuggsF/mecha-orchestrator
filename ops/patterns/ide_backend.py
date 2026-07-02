@@ -252,6 +252,36 @@ async def stream_workflow(
         "outputs": list(env.keys()),
     })
 
+    # Auto-Ingestão
+    yield _sse("ingestion_start", {"message": "Iniciando auto-ingestão RAG dos resultados..."})
+    try:
+        import os
+        import asyncio
+        docs_dir = os.path.join(WORKSPACE_ROOT, "docs")
+        os.makedirs(docs_dir, exist_ok=True)
+        log_path = os.path.join(docs_dir, f"workflow_latest_output.md")
+        
+        with open(log_path, "w", encoding="utf-8") as f:
+            f.write(f"# Execução Automática\n\n**Workflow:** {workflow_name}\n**Pipeline:** {pipeline_key}\n\n")
+            for k, v in env.items():
+                f.write(f"## {k}\n\n{v}\n\n")
+
+        mecha_dir = os.path.join(WORKSPACE_ROOT, ".mecha")
+        proc = await asyncio.create_subprocess_exec(
+            "python", "ops/patterns/dorkling_rag_ingester.py",
+            cwd=mecha_dir,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode == 0:
+            yield _sse("ingestion_done", {"message": "Resultados recém-gerados foram ingeridos no Qdrant com sucesso!"})
+        else:
+            err_msg = stderr.decode('utf-8', errors='replace').strip()
+            yield _sse("error", {"message": f"Aviso de Ingestão: {err_msg}"})
+    except Exception as e:
+        yield _sse("error", {"message": f"Falha na auto-ingestão: {str(e)}"})
+
 # ── Models ─────────────────────────────────────────────────────────────────────
 class ComposerRequest(BaseModel):
     squad_name: str

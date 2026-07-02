@@ -29,9 +29,19 @@ if os.path.exists(env_path):
 
 class QdrantRAGClient:
     def __init__(self):
-        # Initialize client in disk path (persistence on disk)
-        os.makedirs(DB_PATH, exist_ok=True)
-        self.client = QdrantClient(path=DB_PATH)
+        # Check if Qdrant container is active, fallback to local path if not
+        qdrant_url = os.environ.get("QDRANT_URL", "http://localhost:6333")
+        try:
+            import urllib.request
+            # Quick check if server is active
+            urllib.request.urlopen(qdrant_url, timeout=1.0)
+            self.client = QdrantClient(url=qdrant_url)
+            print(f"[Qdrant RAG] Conectado ao Qdrant via HTTP ({qdrant_url})")
+        except Exception:
+            os.makedirs(DB_PATH, exist_ok=True)
+            self.client = QdrantClient(path=DB_PATH)
+            print(f"[Qdrant RAG] Usando Qdrant local em disco ({DB_PATH})")
+            
         self.model = None
         self.vector_size = 384  # Default MiniLM embedding size
         self._init_model()

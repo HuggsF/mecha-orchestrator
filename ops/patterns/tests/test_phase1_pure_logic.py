@@ -17,6 +17,9 @@ import importlib
 from io import StringIO
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add kernel/validators to path for dynamic_typing
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "kernel", "validators")))
+
 
 
 # =============================================================================

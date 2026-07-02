@@ -68,7 +68,7 @@ else:
     sys.path.insert(0, os.path.join(BASE_DIR, "patterns"))
 
 try:
-    from dynamic_typing import validate_event_envelope
+    from kernel.validators.dynamic_typing import validate_event_envelope
 except ImportError:
     def validate_event_envelope(data: dict):
         return True, "Fallback"
