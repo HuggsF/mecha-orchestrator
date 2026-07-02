@@ -1,0 +1,18 @@
+{
+  "_comment": "Config MCP local do MECHA. Fonte unica de conexao Neo4j via neo4j-mecha (stdio, read-only). Aponte seu Antigravity/Claude para este arquivo (Settings > MCP) ou copie a entrada 'neo4j-mecha' para o config global do app e reinicie.",
+  "mcpServers": {
+    "neo4j-mecha": {
+      "command": "python",
+      "args": [
+        "C:\\Users\\huggs\\OneDrive\\Documentos\\workspace\\.mecha\\ops\\patterns\\neo4j_mcp_server.py"
+      ],
+      "env": {
+        "NEO4J_URI": "bolt://localhost:7687",
+        "NEO4J_USER": "neo4j",
+        "NEO4J_PASS": "rootroot",
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "description": "Grafo MECHA (Digital Twin): ontologia v2.1.0 + second_brain. Tools: neo4j_status, cypher_read (read-only guard), ontology_domains, ontology_layers, find_component, neighbors."
+    }
+  }
+}
